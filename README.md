@@ -1,4 +1,4 @@
-# Mission Architect
+# COSMO QUEST
 
 **Developed by Team Turbobits** for the **NASA Space Apps Challenge 2026**
 
