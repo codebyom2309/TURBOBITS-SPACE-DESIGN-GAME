@@ -22,6 +22,14 @@ const CONTRACTS = {
   mars_rover: { req: [["mars_climate"], ["lunar_lander"]], rep: 35, reward: 260 },
   europa: { req: [["mars_climate"]], rep: 50, reward: 350 },
   mars_base: { req: [["lunar_base"], ["mars_rover"]], rep: 60, reward: 800 },
+  ocean_biosphere: { req: [["wildfire"]], rep: 4, reward: 135 },
+  gnss_constellation: { req: [["storm_watch", "ocean_biosphere"]], rep: 6, reward: 155 },
+  space_debris: { req: [["storm_watch", "ocean_biosphere"]], rep: 8, reward: 170 },
+  lunar_relay: { req: [["lunar_ice"]], rep: 14, reward: 185 },
+  kinetic_impactor: { req: [["asteroid_prospector"]], rep: 22, reward: 230 },
+  metallic_psyche: { req: [["asteroid_sample"]], rep: 30, reward: 295 },
+  mars_areosat: { req: [["mars_climate"]], rep: 28, reward: 285 },
+  titan_orbiter: { req: [["europa"]], rep: 46, reward: 540 },
 };
 const PARTNER_REP = { esa: 0, isro: 10, jaxa: 20, csa: 30 };
 const MILESTONES = [
@@ -123,7 +131,9 @@ function avail(field, obj) {
 function partnerOpen(pk) { return !inCareer() || agency().rep >= (PARTNER_REP[pk] || 0); }
 // technologies a contract's reference design uses that the agency doesn't own yet
 function researchNeeded(sc) {
-  const a = agency(), d = S.cat.DEFAULTS[sc], need = new Set();
+  const a = agency();
+  if (!a || !a.tech) return [];
+  const d = S.cat.DEFAULTS[sc], need = new Set();
   const add = (f, k) => { const t = TECH_OF[`${f}:${k}`]; if (t && !a.tech.includes(t) && !TECH[t].offer) need.add(t); };
   for (const f of ["launch_vehicle", "bus", "solar", "battery", "comms", "ground", "computer", "adcs", "propulsion", "edl",
     "shape", "seats", "heatshield", "abort", "landing"]) if (d[f]) add(f, d[f]);
@@ -220,6 +230,7 @@ function openHQ() {
   };
   $("#hqDiffSeg").innerHTML = a.log.length ? "" : Object.entries(S.cat.DIFFICULTY).map(([k, d]) => `<button class="btn small ${k === a.difficulty ? "on" : ""}" data-d="${k}">${d.name}</button>`).join("");
   $$("#hqDiffSeg button").forEach((b) => b.onclick = () => { const x = agency(); x.difficulty = b.dataset.d; saveAgency(x); openHQ(); });
+  if (typeof renderCareerCampaign === "function") renderCareerCampaign();
 }
 
 // Time passes: every January the agency receives its budget (more if its reputation is high).

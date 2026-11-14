@@ -84,6 +84,7 @@ function drawPad(g, W, gy, armOut, blinkOn, lv = "falcon9", clamped = true) {
 
 // ---------------------------------------------------------------------------- title screen
 function titleScene(canvas) {
+  if (typeof window.cosmoBgScene === "function") return window.cosmoBgScene(canvas);
   const g = canvas.getContext("2d"), W = canvas.width, H = canvas.height;
   const rnd = _rng(42), layers = [0.02, 0.06, 0.15].map((sp, i) => ({ sp, pts: Array.from({ length: [90, 50, 22][i] }, () => [rnd() * W, rnd() * H * 0.8, rnd()]) }));
   const sat = { x: -20 }, rockets = [], meteors = [], moon = new Image();
@@ -100,29 +101,7 @@ function titleScene(canvas) {
       g.fillRect(Math.floor(x), Math.floor(p[1]), i === 2 && tw ? 2 : 1, 1);
     }));
     if (moon.complete) g.drawImage(moon, 34, 22);
-    // meteors
-    if (rnd() < 0.006) meteors.push({ x: rnd() * W, y: rnd() * 40, life: 22 });
-    meteors.forEach((m) => { for (let k = 0; k < 8; k++) { g.fillStyle = `rgba(255,255,255,${(1 - k / 8) * m.life / 22})`; g.fillRect(m.x - k * 2, m.y - k, 2, 1); } m.x += 4; m.y += 2; m.life--; });
-    while (meteors.length && meteors[0].life <= 0) meteors.shift();
-    // satellite crossing
-    sat.x += 0.35; if (sat.x > W + 30) sat.x = -30;
-    const sy = 120 - Math.sin(sat.x / W * Math.PI) * 30;
-    g.fillStyle = "#3d6fa8"; g.fillRect(sat.x - 12, sy - 1, 8, 3); g.fillRect(sat.x + 5, sy - 1, 8, 3);
-    g.fillStyle = "#8fb3e8"; g.fillRect(sat.x - 12, sy, 8, 1); g.fillRect(sat.x + 5, sy, 8, 1);
-    g.fillStyle = "#d8aa45"; g.fillRect(sat.x - 3, sy - 3, 7, 6); g.fillStyle = "#f4efe2"; g.fillRect(sat.x, sy - 6, 1, 3);
-    if (t % 20 < 4) { g.fillStyle = "#ff3b2b"; g.fillRect(sat.x + 3, sy - 3, 1, 1); }
-    // Earth
     earthLimb(g, W, H, H + 342, 370, t * 0.25);
-    // a rocket climbs from the horizon now and then
-    if (t % 260 === 60) rockets.push({ s: 0, x: 60 + rnd() * 200 });
-    rockets.forEach((rk) => {
-      rk.s++;
-      const p = rk.s / 160, x = rk.x + p * 70, y = H - 14 - p * 110 + p * p * 40;
-      for (let k = 1; k < 30; k++) { const q = Math.max(0, p - k * 0.006), tx = rk.x + q * 70, ty = H - 14 - q * 110 + q * q * 40;
-        g.fillStyle = `rgba(233,227,214,${0.5 * (1 - k / 30)})`; g.fillRect(tx, ty, 1, 1); }
-      g.fillStyle = "#f4efe2"; g.fillRect(x, y - 2, 1, 3); g.fillStyle = rk.s % 4 < 2 ? "#ffd96b" : "#d9792b"; g.fillRect(x, y + 1, 1, 2);
-    });
-    while (rockets.length && rockets[0].s > 160) rockets.shift();
   }
   clearInterval(titleScene._iv);
   titleScene._iv = setInterval(frame, 60);
@@ -130,23 +109,58 @@ function titleScene(canvas) {
   return frame;
 }
 
-// Round mission patch for the title (48x48).
+// Round mission patch / COSMO QUEST rocket-orbit emblem (56x56).
 function missionPatch() {
-  return sprite(48, 48, (r) => {
-    for (let y = 0; y < 48; y++) for (let x = 0; x < 48; x++) {
-      const d = Math.hypot(x + 0.5 - 24, y + 0.5 - 24);
-      if (d > 23.5) continue;
-      r(x, y, 1, 1, d > 21 ? "#1d1a17" : d > 19 ? "#c99a3c" : d > 18 ? "#1d1a17" : y > 34 ? "#2f5a9c" : "#141a33");
-      const e = Math.hypot((x - 24) / 15, (y - 25) / 6);
-      if (d < 18 && Math.abs(e - 1) < 0.08) r(x, y, 1, 1, "#e9e3d6");
+  return sprite(56, 56, (r) => {
+    const cx = 28, cy = 28;
+    // Outer ring & dark space interior
+    for (let y = 0; y < 56; y++) for (let x = 0; x < 56; x++) {
+      const d = Math.hypot(x + 0.5 - cx, y + 0.5 - cy);
+      if (d <= 22.5) {
+        if (d > 20.8) r(x, y, 1, 1, "#d8a348");
+        else if (d > 19.4) r(x, y, 1, 1, "#101c33");
+        else {
+          const isEarth = y > 37 + Math.round(((x - cx) / 14) ** 2 * 3);
+          r(x, y, 1, 1, isEarth ? "#2b62a6" : "#0b1528");
+        }
+      }
     }
-    [[12, 12], [33, 9], [36, 18], [16, 20], [28, 14]].forEach(([x, y]) => r(x, y, 1, 1, "#f4efe2"));
-    r(23, 10, 2, 2, "#b3372d"); r(22, 12, 4, 3, "#b3372d"); r(22, 15, 4, 13, "#f4efe2"); r(23, 18, 2, 2, "#3d6fa8");
-    r(20, 24, 2, 5, "#b3372d"); r(26, 24, 2, 5, "#b3372d"); r(22, 28, 4, 2, "#4b4b4b"); r(23, 30, 2, 3, "#ffd96b");
-    r(22, 31, 1, 2, "#d9792b"); r(25, 31, 1, 2, "#d9792b");
-    for (let x = 6; x < 42; x++) {
-      const yy = 35 + Math.round(((x - 24) / 18) ** 2 * 3);
-      if (Math.hypot(x - 24, yy - 24) < 18) r(x, yy, 1, 1, "#4f7a34");
+    // Earth atmosphere highlight + green continent patch
+    for (let x = 10; x < 46; x++) {
+      const ey = 37 + Math.round(((x - cx) / 14) ** 2 * 3);
+      if (Math.hypot(x - cx, ey - cy) < 19) {
+        r(x, ey, 1, 1, "#7fb8f2");
+        if (x > 16 && x < 24) r(x, ey + 2, 1, 3, "#4f8a42");
+        if (x > 30 && x < 38) r(x, ey + 3, 1, 2, "#4f8a42");
+      }
+    }
+    // Stars inside badge
+    [[15, 16], [39, 14], [18, 24], [38, 23], [21, 13]].forEach(([x, y]) => r(x, y, 1, 1, "#f3ebd8"));
+    r(19, 17, 1, 3, "#9ec4ef"); r(18, 18, 3, 1, "#9ec4ef");
+    r(36, 17, 1, 3, "#f3ebd8"); r(35, 18, 3, 1, "#f3ebd8");
+    // Back half of tilted orbital swoosh
+    for (let a = Math.PI; a < Math.PI * 2; a += 0.04) {
+      const rx = Math.round(cx + Math.cos(a) * 25), ry = Math.round(cy + 3 + Math.sin(a) * 7.5 - Math.cos(a) * 3);
+      if (rx >= 0 && rx < 56 && ry >= 0 && ry < 56) r(rx, ry, 2, 2, a < Math.PI * 1.4 ? "#c94032" : "#e0a342");
+    }
+    // Exhaust plume on Earth horizon
+    r(26, 33, 4, 4, "#f0b84a"); r(27, 32, 2, 4, "#fff2bd");
+    r(24, 36, 8, 2, "#e8eff7"); r(22, 37, 12, 1, "#b8d2ef");
+    // Rocket body
+    r(27, 10, 2, 2, "#c94032");
+    r(26, 12, 4, 3, "#c94032");
+    r(26, 15, 4, 15, "#f4efe2");
+    r(29, 15, 1, 15, "#cfc6b4");
+    r(27, 18, 2, 3, "#3c74b8");
+    r(24, 25, 2, 5, "#c94032"); r(30, 25, 2, 5, "#c94032");
+    r(23, 28, 1, 3, "#c94032"); r(32, 28, 1, 3, "#c94032");
+    r(26, 30, 4, 2, "#465063");
+    // Front half of tilted orbital swoosh
+    for (let a = 0; a <= Math.PI; a += 0.03) {
+      const rx = Math.round(cx + Math.cos(a) * 25), ry = Math.round(cy + 3 + Math.sin(a) * 7.5 - Math.cos(a) * 3);
+      if (rx >= 0 && rx < 56 && ry >= 0 && ry < 56) {
+        r(rx, ry, 2, 2, Math.abs(a - Math.PI * 0.5) < 0.7 ? "#d94f3d" : "#e0a342");
+      }
     }
   });
 }

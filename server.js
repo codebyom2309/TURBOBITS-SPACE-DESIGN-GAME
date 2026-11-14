@@ -2,6 +2,7 @@
  * Mission Architect - Node.js Server & Google AI Studio Runner
  * Serves static assets from web/ and proxies or handles /api/* routes.
  */
+import 'dotenv/config';
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -9,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { spawn, spawnSync } from 'node:child_process';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const PORT = parseInt(process.env.PORT || '8600', 10);
+const PORT = parseInt(process.env.PORT || '3000', 10);
 const PY_PORT = PORT === 8600 ? 8601 : PORT + 10;
 const WEB_DIR = path.join(__dirname, 'web');
 const DATA_DIR = path.join(__dirname, 'data');
@@ -54,12 +55,13 @@ function detectPython() {
 const pythonCmd = detectPython();
 let pyProcess = null;
 let pyReady = false;
+let pyExited = false;
 
 if (pythonCmd) {
   console.log(`[Node Runner] Detected Python: ${pythonCmd}. Spawning Python backend on port ${PY_PORT}...`);
-  pyProcess = spawn(pythonCmd, ['server.py'], {
+  pyProcess = spawn(pythonCmd, ['-u', 'server.py'], {
     cwd: __dirname,
-    env: { ...process.env, PORT: String(PY_PORT) },
+    env: { ...process.env, PORT: String(PY_PORT), PYTHONUNBUFFERED: '1' },
     stdio: ['ignore', 'pipe', 'pipe']
   });
 
@@ -78,15 +80,34 @@ if (pythonCmd) {
   pyProcess.on('exit', (code) => {
     console.log(`[Node Runner] Python backend exited with code ${code}.`);
     pyReady = false;
+    pyExited = true;
   });
 
-  process.on('exit', () => {
-    if (pyProcess) {
-      try { pyProcess.kill(); } catch (_) {}
+  const cleanup = () => {
+    if (pyProcess && !pyExited) {
+      try { pyProcess.kill('SIGTERM'); } catch (_) {}
     }
-  });
+  };
+  process.on('exit', cleanup);
+  process.on('SIGINT', () => { cleanup(); process.exit(0); });
+  process.on('SIGTERM', () => { cleanup(); process.exit(0); });
 } else {
   console.log('[Node Runner] Python runtime not detected. Operating in native Node.js mode.');
+}
+
+function waitForPython(timeoutMs = 5000) {
+  if (!pyProcess || pyReady || pyExited) {
+    return Promise.resolve(pyReady);
+  }
+  return new Promise((resolve) => {
+    const start = Date.now();
+    const timer = setInterval(() => {
+      if (pyReady || pyExited || Date.now() - start >= timeoutMs) {
+        clearInterval(timer);
+        resolve(pyReady);
+      }
+    }, 50);
+  });
 }
 
 // Helper to serve static files
@@ -103,7 +124,7 @@ function serveStatic(req, res, filePath) {
     res.writeHead(200, {
       'Content-Type': contentType,
       'Content-Length': stats.size,
-      'Cache-Control': filePath.endsWith('.html') ? 'no-cache' : 'public, max-age=3600'
+      'Cache-Control': 'no-store, no-cache, must-revalidate'
     });
     fs.createReadStream(filePath).pipe(res);
   });
@@ -171,12 +192,15 @@ function fallbackApi(req, res) {
 }
 
 // Create Main HTTP Server
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   let pathname = decodeURIComponent(parsedUrl.pathname);
 
   // API Requests
   if (pathname.startsWith('/api/')) {
+    if (pyProcess && !pyReady && !pyExited) {
+      await waitForPython();
+    }
     if (pyProcess && pyReady) {
       proxyToPython(req, res);
     } else {
@@ -207,6 +231,7 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Mission Architect server listening on http://localhost:${PORT}`);
+  console.log(`Mission Architect server listening on http://0.0.0.0:${PORT}`);
 });
+
 

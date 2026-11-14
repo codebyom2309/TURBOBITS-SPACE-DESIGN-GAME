@@ -10,8 +10,33 @@ from . import db
 logger = logging.getLogger(__name__)
 
 
+import time
+
+_MEM_DESIGNS: list[dict[str, Any]] = []
+_MEM_NEXT_DESIGN_ID = 1
+
+
 def list_designs(user_id: int | None = None, player_name: str | None = None, limit: int = 50) -> list[dict[str, Any]]:
     """List saved designs for a user or player."""
+    if not db.is_available():
+        rows = [
+            d for d in _MEM_DESIGNS
+            if (user_id and d.get("user_id") == user_id)
+            or (player_name and player_name != "anonymous" and d.get("player_name") == player_name)
+        ]
+        rows = sorted(rows, key=lambda d: -d.get("at", 0))[:limit]
+        return [
+            {
+                "id": d["id"],
+                "name": d["name"],
+                "scenario": d["scenario"],
+                "design": d["design"],
+                "flight": d["flight"],
+                "at": d["at"],
+            }
+            for d in rows
+        ]
+
     try:
         if user_id:
             rows = db.fetch_all(
@@ -63,10 +88,26 @@ def save_design(
     player_name: str = "anonymous",
 ) -> dict[str, Any]:
     """Save or create a new design in the drawer."""
+    global _MEM_NEXT_DESIGN_ID
+    clean_name = (name or "Untitled").strip()[:100]
+    if not db.is_available():
+        did = str(_MEM_NEXT_DESIGN_ID)
+        _MEM_NEXT_DESIGN_ID += 1
+        _MEM_DESIGNS.append({
+            "id": did,
+            "user_id": user_id,
+            "player_name": player_name[:50],
+            "name": clean_name,
+            "scenario": scenario[:50],
+            "design": design,
+            "flight": flight,
+            "at": int(time.time() * 1000),
+        })
+        return {"ok": True, "id": did, "name": clean_name}
+
     try:
         design_str = json.dumps(design)
         flight_str = json.dumps(flight) if flight else None
-        clean_name = (name or "Untitled").strip()[:100]
 
         row_id = db.execute_commit(
             """INSERT INTO saved_designs (user_id, player_name, name, scenario, design_json, flight_json)
@@ -81,6 +122,18 @@ def save_design(
 
 def delete_design(design_id: int | str, user_id: int | None = None, player_name: str | None = None) -> bool:
     """Delete a saved design with ownership check."""
+    if not db.is_available():
+        before = len(_MEM_DESIGNS)
+        _MEM_DESIGNS[:] = [
+            d for d in _MEM_DESIGNS
+            if not (
+                str(d["id"]) == str(design_id)
+                and (not user_id or d.get("user_id") == user_id)
+                and (not player_name or user_id or d.get("player_name") == player_name)
+            )
+        ]
+        return len(_MEM_DESIGNS) < before
+
     try:
         if user_id:
             count = db.execute_commit("DELETE FROM saved_designs WHERE id = %s AND user_id = %s", (design_id, user_id))

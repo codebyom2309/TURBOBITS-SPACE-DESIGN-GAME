@@ -171,6 +171,78 @@ const CLIENTS = {
       ok: "We measured the ice shell. The ocean is real. Now we need to go back.",
       bad: "The radiation won. We learned a lot, but not what we came for.",
       lost: "Silence from Jupiter. The hardest kind of news." } },
+  ocean_biosphere: { name: "Dr. Elena Vance", org: "Global Ocean & Cryosphere Institute",
+    look: { skin: "#d9a57c", skinD: "#b07f5a", hair: "#2b2018", hairStyle: "bun", coat: "#1e4e68", shirt: "#e9e3d6", glasses: true },
+    letter: ["Earth's oceans absorb half of our carbon emissions, and tiny phytoplankton blooms do the heavy lifting.",
+      "I need a polar-orbiting observatory that maps ocean color, coastal algae blooms, and polar sea-ice thickness every single week.",
+      "Spectrometers generate a flood of data—pair your instruments with an X-band transmitter that can get every gigabit home."],
+    quotes: { good: "We can track plankton blooms and polar ice melt across every ocean basin in real time.",
+      ok: "Good global ocean coverage, though some coastal passes were clipped.",
+      bad: "We got snapshots, not the continuous biosphere record we needed.",
+      lost: "The oceans are changing fast, and our sensor is gone." } },
+  gnss_constellation: { name: "Dir. Marcus Vance", org: "Orbital Navigation & Timing Authority",
+    look: { skin: "#8d5a3b", skinD: "#6b4229", hair: "#cfc9bf", hairStyle: "short", coat: "#2c3b55", shirt: "#e9e3d6", tie: "#c9a227", badge: true },
+    letter: ["Every aircraft, ship, and docking spacecraft relies on high-altitude navigation beacons and continuous weather relay.",
+      "Park a five-year sentinel in geostationary orbit to monitor magnetospheric radiation storms and profile atmospheric water vapor.",
+      "Remember: reaching geostationary altitude takes 1,500 m/s of delta-v after the launcher drops you off."],
+    quotes: { good: "Five years of rock-solid navigation timing and storm telemetry from geostationary orbit.",
+      ok: "The beacon works, though station-keeping margins were tight.",
+      bad: "Drift and instrument gaps compromised the timing network.",
+      lost: "Stranded in transfer orbit. A costly navigation failure." } },
+  space_debris: { name: "Capt. Kenji Takahashi", org: "Orbital Debris & Space Situational Office",
+    look: { skin: "#e3c19c", skinD: "#b8957a", hair: "#16141a", hairStyle: "short", coat: "#3b3f4a", shirt: "#e9e3d6", badge: true },
+    letter: ["A paint fleck at 28,000 km/h hits like a bowling ball. Before we launch more astronauts, we must map the debris shells in Low Earth Orbit.",
+      "Fly an active Synthetic Aperture Radar and particle detector in polar orbit to catalog centimetre-scale fragments and radiation belts.",
+      "Radar is power-hungry in shadow—size your solar wings and batteries carefully."],
+    quotes: { good: "We cataloged twelve thousand debris fragments and cleared safe orbital corridors for human spaceflight.",
+      ok: "We mapped the worst debris shells, though radar power was tight.",
+      bad: "The radar browned out too often to build a complete catalog.",
+      lost: "Ironically, our debris tracker is now another piece of orbital debris." } },
+  lunar_relay: { name: "Eng. Chloé Laurent", org: "Cislunar Communications Directorate",
+    look: { skin: "#efd2bd", skinD: "#c9a891", hair: "#6b4229", hairStyle: "long", coat: "#2f4a5e", shirt: "#e9e3d6", glasses: true },
+    letter: ["Landers at the lunar south pole sit in deep craters where Earth is barely above the horizon. One ridge in the way and they go radio-silent.",
+      "Put a long-endurance relay and laser-altimetry orbiter into a stable frozen lunar orbit for four years.",
+      "Keep its fuel burn low and its pointing steady so our surface crews never lose their link home."],
+    quotes: { good: "Four years of unbroken south-pole relay coverage and pinpoint laser elevation maps.",
+      ok: "The relay link held, though coverage dipped over the far-side basins.",
+      bad: "Our surface teams had to ration data every lunar day.",
+      lost: "South pole crews are back to direct-to-Earth blackouts." } },
+  kinetic_impactor: { name: "Dr. Mateo Silva", org: "Planetary Defense Coordination Office",
+    look: { skin: "#c48d63", skinD: "#9a6a47", hair: "#1f1a17", hairStyle: "short", coat: "#5a3a6e", shirt: "#e9e3d6", tie: "#a8322a", badge: true },
+    letter: ["Finding a hazardous asteroid is only half the job—we have to prove we can deflect one before an impactor has our name on it.",
+      "Rendezvous with a binary near-Earth asteroid, observe the kinetic impact plume at sub-metre resolution, and measure the orbital shift.",
+      "You'll need a sharp telescope camera, precision star-tracker pointing, and a laser altimeter to model the crater."],
+    quotes: { good: "We measured the orbital deflection to the millimetre. Earth now has a tested planetary shield.",
+      ok: "We confirmed the deflection, though the ejecta plume imagery blurred.",
+      bad: "We arrived, but missed the critical crater and momentum measurements.",
+      lost: "Lost in deep space before intercept. The asteroid flies on unwatched." } },
+  metallic_psyche: { name: "Dr. Freya Lindqvist", org: "Deep Space Geophysics Lab",
+    look: { skin: "#e8c4a6", skinD: "#c29c80", hair: "#c9a86a", hairStyle: "bun", coat: "#3d3550", shirt: "#e9e3d6", glasses: true },
+    letter: ["We cannot drill to Earth's iron core, so we are flying to one that was stripped bare in the early Solar System.",
+      "Orbit a metallic asteroid for three years, measure its ancient magnetic field, and map its iron-nickel craters.",
+      "It's a long cruise out to the belt—pack a magnetometer boom, an IR spectrometer, and plenty of propellant."],
+    quotes: { good: "A fossil planetary core mapped in exquisite detail. Textbooks are being rewritten.",
+      ok: "Solid magnetic data, though the mineral maps are incomplete.",
+      bad: "Five years of flight for only a fraction of the core survey.",
+      lost: "The metallic world remains silent in the asteroid belt." } },
+  mars_areosat: { name: "Dr. Tariq Al-Mansoor", org: "Mars Subsurface & Relay Network",
+    look: { skin: "#b8845c", skinD: "#8c6140", hair: "#1a1716", hairStyle: "short", coat: "#7a3b26", shirt: "#e9e3d6", beard: true, glasses: true },
+    letter: ["Future astronauts on Mars will need two things from orbit: buried glaciers they can mine for water, and a high-speed data relay.",
+      "Use aerobraking to drop into a low 300 km circular Mars orbit and sweep the plains with ice-penetrating radar.",
+      "Radar only penetrates the crust from low altitude—do not park this spacecraft in a high elliptical orbit."],
+    quotes: { good: "Massive subsurface water-ice sheets mapped across mid-latitudes, plus a rock-solid Mars relay.",
+      ok: "We found buried ice, though downlink bottlenecks slowed the mapping.",
+      bad: "Wrong orbit for the radar—the subsurface glaciers stayed hidden.",
+      lost: "Lost during Mars arrival. Surface missions will have to wait." } },
+  titan_orbiter: { name: "Dr. Nadia Rostova", org: "Outer Ocean Worlds Directorate",
+    look: { skin: "#efd2bd", skinD: "#c9a891", hair: "#5a3a22", hairStyle: "long", coat: "#1d3a5e", shirt: "#e9e3d6", badge: true },
+    letter: ["Geysers of water and organic molecules are erupting from fractures at the south pole of an outer-system ice moon.",
+      "Fly a flagship orbiter equipped with a mass spectrometer, ice-penetrating radar, and magnetometer right through those plumes.",
+      "Out at 5.2 AU, sunlight is a trickle and radiation is fierce. Combine giant solar wings with nuclear RTGs and our 70-metre DSN dishes."],
+    quotes: { good: "Complex organic molecules sampled directly from an alien ocean plume! A historic triumph.",
+      ok: "We flew through the plumes and survived, though some radar passes were lost.",
+      bad: "Power and radiation starved the instruments during the plume encounters.",
+      lost: "Our flagship went silent in the outer Solar System." } },
 };
 
 const TABS = [
@@ -325,14 +397,25 @@ function toast(msg, ms = 2600) {
 }
 function show(id) {
   $$(".screen").forEach((s) => s.classList.toggle("active", s.id === id));
-  if (id === "title") titleScene($("#titleStars"));
+  const isCosmo = ["title", "story", "prologue", "select", "hq", "hall"].includes(id);
+  const isWarmPage = ["select", "hq", "hall"].includes(id);
+  document.documentElement.classList.toggle("title-mode", isCosmo);
+  document.documentElement.classList.toggle("warm-page-mode", isWarmPage);
+  fit();
+  if (id !== "prologue" && typeof stopPrologue === "function") stopPrologue();
+  if (id === "title") {
+    titleScene($("#titleStars"));
+    if (typeof refreshCosmoBanners === "function") refreshCosmoBanners();
+  }
 }
-// Desktop/tablet landscape: the 1280x720 stage is scaled to fit. Phones / narrow portrait: a scrolling mobile layout.
+// Desktop/tablet landscape: the 1280x720 stage is scaled to fit. Phones / narrow portrait / COSMO QUEST title-mode: responsive layout.
 function fit() {
   const mobile = innerWidth < 820 || (innerWidth < innerHeight && innerWidth < 1000);
   document.documentElement.classList.toggle("mobile", mobile);
   const st = $("#stage");
-  if (mobile) { st.style.transform = ""; S.scale = 1; return; }
+  if (mobile || document.documentElement.classList.contains("title-mode")) {
+    st.style.transform = ""; S.scale = 1; return;
+  }
   const s = Math.min(innerWidth / 1280, innerHeight / 720);
   S.scale = s; st.style.transform = `scale(${s}) translate(-50%,-50%)`; st.style.transformOrigin = "0 0";
 }
@@ -349,7 +432,11 @@ const level = () => (S.design && S.design.difficulty) || "normal";
 // ---------------------------------------------------------------------------- boot
 // Make sure program.js and career.js really ran (a slow or dropped download would leave the game half-built).
 async function ensureScripts() {
-  const need = [["program.js", () => typeof renderManifest === "function"], ["career.js", () => typeof openHQ === "function"]];
+  const need = [
+    ["program.js", () => typeof renderManifest === "function"],
+    ["career.js", () => typeof openHQ === "function"],
+    ["campaign.js", () => typeof renderSelectScreen === "function"],
+  ];
   for (const [file, ok] of need) {
     for (let i = 0; i < 40 && !ok(); i++) await wait(50);
     if (!ok()) await new Promise((done) => { const sc = document.createElement("script"); sc.src = `${file}?retry=${Date.now()}`; sc.onload = sc.onerror = done; document.body.appendChild(sc); });
@@ -357,15 +444,23 @@ async function ensureScripts() {
 }
 async function boot() {
   await ensureScripts();
+  document.documentElement.classList.add("title-mode");
   fit(); addEventListener("resize", fit);
   titleScene($("#titleStars"));
-  $("#titlePlanet").src = planet("europa", 64);
+  if ($("#titlePlanet")) $("#titlePlanet").src = planet("europa", 64);
   $("#titlePatch").src = missionPatch();
   S.player = store.get("player", "");
-  $("#playerName").value = S.player;
-  $("#playerName").addEventListener("input", (e) => { S.player = e.target.value.trim(); store.set("player", S.player); });
+  if ($("#playerName")) {
+    $("#playerName").value = S.player;
+    $("#playerName").addEventListener("input", (e) => {
+      S.player = e.target.value.trim();
+      store.set("player", S.player);
+      if (typeof refreshStatusBar === "function") refreshStatusBar();
+    });
+  }
   S.cat = await api("catalog");
   $$("[data-go]").forEach((b) => b.addEventListener("click", () => go(b.dataset.go)));
+  if (typeof initCosmoMenu === "function") initCosmoMenu();
   wireDesk(); wireLobby(); wireNews();
   drawer.sync();
   if (typeof syncCareerFromCloud === "function") syncCareerFromCloud();
@@ -379,7 +474,7 @@ async function boot() {
     $("#title").appendChild(box);
     box.querySelectorAll("[data-snd]").forEach((b) => b.addEventListener("click", () => setTimeout(() => SFX[b.dataset.snd](), 120)));
   }
-  if (location.hash === "#selftest") { const sc = document.createElement("script"); sc.src = "selftest.js"; document.body.appendChild(sc); }
+  if (location.hash === "#selftest") { const sc = document.createElement("script"); sc.src = "/selftest.js"; document.body.appendChild(sc); }
   const [k, v] = location.hash.slice(1).split("=");
   if (k === "career") { S.mode = "career"; if (v === "all") store.set("career", Object.fromEntries(ORDER.slice(0, 5).map((o) => [o, { grade: "B", score: 600 }]))); openSelect(); }
   if (k === "tutorial") { go("tutorial"); for (let n = 0; n < Number(v || 0); n++) tutAdvance(); }
@@ -409,13 +504,22 @@ async function boot() {
 function go(where) {
   stopPoll();
   if (where === "title") return show("title");
+  if (where === "story") return typeof openStory === "function" ? openStory() : show("title");
+  if (where === "prologue") return typeof openPrologue === "function" ? openPrologue() : show("title");
   if (where === "career") return openHQ();
   if (where === "free") { S.mode = where; return openSelect(); }
   if (where === "tutorial") { S.mode = "career"; startMission("wildfire", null, { tutorial: true }); S.design.difficulty = "easy"; renderAll(); evaluateSoon(0); return; }
   if (where === "team") { if (!S.player) return nameFirst(); return openLobby(); }
   if (where === "hall") return openHall();
 }
-function nameFirst() { $("#playerName").focus(); $("#playerName").placeholder = "Enter a name first"; }
+function nameFirst() {
+  if (typeof openProfileModal === "function") {
+    openProfileModal(() => { if (S.player) openLobby(); });
+  } else if ($("#playerName")) {
+    $("#playerName").focus();
+    $("#playerName").placeholder = "Enter a name first";
+  }
+}
 
 // ---------------------------------------------------------------------------- mission select
 function progress() { return store.get("career", {}); }
@@ -425,12 +529,21 @@ function unlocked(sc) {
   const prev = progress()[ORDER[i - 1]]; return prev && PASS.includes(prev.grade);
 }
 function openSelect() {
-  $("#selectTitle").textContent = S.mode === "career" ? "Career: choose today's mission file" : "Free design: any mission";
-  $("#sandboxWrap").classList.toggle("hidden", S.mode !== "free");
+  if ($("#selectTitle")) {
+    $("#selectTitle").textContent = S.mode === "career" ? "CAREER: MISSION DOSSIERS" : "FREE DESIGN: MISSION SELECTION";
+  }
+  if ($("#sandboxWrap")) $("#sandboxWrap").classList.toggle("hidden", S.mode !== "free");
   const diff = store.get("difficulty", "normal");
-  $("#difficultySeg").innerHTML = Object.entries(S.cat.DIFFICULTY).map(([k, d]) =>
-    `<button class="btn ${k === diff ? "on" : ""}" data-d="${k}">${d.name}</button>`).join("");
-  $$("#difficultySeg button").forEach((b) => b.onclick = () => { store.set("difficulty", b.dataset.d); openSelect(); });
+  if ($("#difficultySeg")) {
+    $("#difficultySeg").innerHTML = Object.entries(S.cat.DIFFICULTY).map(([k, d]) =>
+      `<button class="btn ${k === diff ? "on" : ""}" data-d="${k}">${d.name}</button>`).join("");
+    $$("#difficultySeg button").forEach((b) => b.onclick = () => { store.set("difficulty", b.dataset.d); openSelect(); });
+  }
+  if (typeof renderSelectScreen === "function") {
+    renderSelectScreen();
+    show("select");
+    return;
+  }
   const prog = progress();
   $("#folders").innerHTML = ORDER.map((k, i) => {
     const s = S.cat.SCENARIOS[k], lock = !unlocked(k), best = prog[k];
@@ -463,14 +576,109 @@ function startMission(sc, design, opts = {}) {
   }
   S.design = d; S.tab = S.cat.SCENARIOS[sc].kind === "program" ? "manifest" : "orbit"; S.introShown = false; S.ev = null; S._prevOk = undefined; S._prevMet = null;
   openDesk();
-  const tut = () => { if (opts.tutorial || (!design && S.mode === "career" && sc === "wildfire" && !store.get("tutorialDone", false) && !S.tut)) startTutorial(true); };
-  if (!design && !S.noLetter) openLetter(tut); else tut();
+  const afterLetter = () => {
+    if (opts.tutorial || (!design && S.mode === "career" && sc === "wildfire" && !store.get("tutorialDone", false) && !S.tut)) {
+      startTutorial(true);
+    } else if (!design) {
+      maybeShowEngineerIntro();
+    }
+  };
+  if (!design && !S.noLetter) openLetter(afterLetter); else afterLetter();
 }
+
+// ---------------------------------------------------------------------------- Engineer Contextual Introduction
+function maybeShowEngineerIntro(force = false) {
+  const box = $("#engIntroCard");
+  if (!box || !S.design) return;
+  if (!force && (location.hash === "#selftest" || S.noSave || S.tut || level() !== "normal")) {
+    box.classList.add("hidden");
+    return;
+  }
+  S._engIntroDismissed = S._engIntroDismissed || {};
+  if (!force && S._engIntroDismissed[S.design.scenario]) {
+    box.classList.add("hidden");
+    return;
+  }
+  const k = kindNow();
+  let introMsg = "Welcome to the Engineering Desk. Your mission begins with the spacecraft bus and orbital trajectory. The bus is the structural foundation that houses your avionics, power systems and scientific instruments. Let's configure your spacecraft step by step.";
+  let nextTab = !S.design.bus ? "bus" : "orbit";
+  let nextLabel = !S.design.bus ? "SELECT SPACECRAFT BUS \u2192" : "CONFIGURE ORBIT \u2192";
+  if (k === "program") {
+    introMsg = "Welcome to the Engineering Desk. Your program begins with the multi-launch manifest. Sequence your core station modules, power trusses, cargo resupply and crew rotations across each launch window step by step.";
+    nextTab = "manifest";
+    nextLabel = "PLAN LAUNCH MANIFEST \u2192";
+  } else if (k === "vehicle") {
+    introMsg = "Welcome to the Engineering Desk. Your mission begins with the spacecraft hull and crew cabin. Balance aerodynamic shape, reusable heat shielding and launch escape systems to keep crew risk below 1 in 270 flights.";
+    nextTab = "hull";
+    nextLabel = "CONFIGURE HULL \u2192";
+  }
+
+  box.innerHTML = `
+    <div class="eng-intro-head">
+      <span class="eng-intro-badge">ENGINEER ORIENTATION &middot; STEP-BY-STEP BRIEFING</span>
+      <div class="eng-intro-actions">
+        <button type="button" class="btn tiny eng-intro-skip" id="engIntroSkip">Skip</button>
+        <button type="button" class="btn small eng-intro-go" id="engIntroContinue">${esc(nextLabel)}</button>
+      </div>
+    </div>
+    <p class="eng-intro-body" id="engIntroText" title="Click to reveal full text"></p>`;
+  box.classList.remove("hidden");
+
+  const txtEl = $("#engIntroText");
+  clearInterval(maybeShowEngineerIntro._iv);
+  let idx = 0;
+  const step = () => {
+    idx = Math.min(introMsg.length, idx + 3);
+    if (txtEl) txtEl.textContent = introMsg.slice(0, idx);
+    if (idx % 9 < 3 && introMsg[idx - 1] !== " ") SFX.type();
+    if (idx >= introMsg.length) clearInterval(maybeShowEngineerIntro._iv);
+  };
+  maybeShowEngineerIntro._iv = setInterval(step, 22);
+  step();
+
+  if (txtEl) {
+    txtEl.onclick = () => {
+      clearInterval(maybeShowEngineerIntro._iv);
+      txtEl.textContent = introMsg;
+    };
+  }
+  const dismiss = () => {
+    clearInterval(maybeShowEngineerIntro._iv);
+    S._engIntroDismissed[S.design.scenario] = true;
+    box.classList.add("hidden");
+  };
+  const skipBtn = $("#engIntroSkip");
+  if (skipBtn) skipBtn.onclick = () => { SFX.click(); dismiss(); };
+  const goBtn = $("#engIntroContinue");
+  if (goBtn) {
+    goBtn.onclick = () => {
+      SFX.page();
+      const target = !S.design.bus ? "bus" : !(S.design.orbit || S.design.site) ? "orbit" : nextTab;
+      dismiss();
+      if (S.tab !== target) goLab(target);
+    };
+  }
+}
+function syncEngineerIntroState() {
+  const box = $("#engIntroCard");
+  if (!box || box.classList.contains("hidden") || !S.design) return;
+  const goBtn = $("#engIntroContinue");
+  if (S.design.bus && (S.design.orbit || S.design.site)) {
+    clearInterval(maybeShowEngineerIntro._iv);
+    S._engIntroDismissed = S._engIntroDismissed || {};
+    S._engIntroDismissed[S.design.scenario] = true;
+    box.classList.add("hidden");
+  } else if (goBtn && S.design.bus) {
+    goBtn.textContent = "CONFIGURE ORBIT \u2192";
+  }
+}
+window.maybeShowEngineerIntro = maybeShowEngineerIntro;
 
 // ---------------------------------------------------------------------------- desk
 function openDesk() {
   show("desk");
   $("#stampMark").classList.add("hidden");
+  if (location.hash === "#selftest" && $("#engIntroCard")) $("#engIntroCard").classList.add("hidden");
   renderAll(); evaluateSoon(0);
 }
 
@@ -506,6 +714,7 @@ async function setField(field, value) {
 }
 
 function renderAll() {
+  syncEngineerIntroState();
   renderTop(); renderRequest(); renderTabs(); renderBinder(); drawBlueprint(); renderClient();
   if (S.ev) renderEval();
 }
@@ -782,12 +991,16 @@ function typeSpeech(text) {
 
 // ---------------------------------------------------------------------------- incoming letter (mission start)
 function openLetter(then) {
-  const c = CLIENTS[S.design.scenario], s = scen(), m = $("#letter");
+  const c = CLIENTS[S.design.scenario] || CLIENTS.wildfire, s = scen(), m = $("#letter");
   $("#letterImg").src = portrait(c.look, "neutral");
   $("#letterFrom").textContent = c.name;
   $("#letterOrg").textContent = c.org;
-  $("#letterDay").textContent = S.mode === "career" ? `DAY ${ORDER.indexOf(S.design.scenario) + 1}` : "FREE DESIGN";
+  const mMeta = window.MISSION_META && window.MISSION_META[S.design.scenario];
+  $("#letterDay").textContent = S.mode === "career"
+    ? (mMeta ? `STAGE ${mMeta.stageNum} · MISSION ${mMeta.num}` : `DAY ${ORDER.indexOf(S.design.scenario) + 1}`)
+    : (mMeta ? `FREE DESIGN · MISSION ${mMeta.num}` : "FREE DESIGN");
   $("#letterPitch").innerHTML = `${icon("coin")} ${fmt(s.budget * S.cat.DIFFICULTY[S.design.difficulty].budget_mult)} M$ &middot; ${esc(S.cat.DESTINATIONS[s.destination].name)} &middot; ${s.min_years}+ yr`;
+  if (typeof enhanceLetterModal === "function") enhanceLetterModal(S.design.scenario);
   const body = $("#letterBody");
   body.innerHTML = c.letter.map(() => "<p></p>").join("") + `<p class="sig">${esc(c.name)}</p>`;
   m.classList.remove("hidden");
@@ -966,10 +1179,10 @@ function renderBinder() {
       <div class="tot"><span>Available</span><span>${fmt(P.generation)} W</span></div></div>`;
   }
   for (const field of tab.fields) {
-    h += `<h4>${fieldLabel(field)}</h4>`;
+    h += `<h4 data-field-head="${field}">${fieldLabel(field)}</h4>`;
     if (field === "rtg") {
       const R = S.cat.RTG;
-      h += `<div class="cards"><div class="card rtgcard ${S.design.rtg ? "sel" : ""} " style="cursor:default">
+      h += `<div class="cards" data-field-cards="rtg"><div class="card rtgcard ${S.design.rtg ? "sel" : ""} " style="cursor:default">
         <div class="ci">${icon("rtg", 32)}</div><div class="cn">${esc(R.name)}</div>
         <div class="cs">${R.power} W each · ${R.mass} kg · ${R.cost} M$</div>
         <div class="stepper"><button class="btn tiny" data-rtg="-1" ${canEdit("rtg") ? "" : "disabled"}>-</button>
@@ -979,7 +1192,7 @@ function renderBinder() {
       continue;
     }
     const opts = optionsFor(field, true);
-    h += `<div class="cards">` + Object.entries(opts).map(([k, o]) => {
+    h += `<div class="cards" data-field-cards="${field}">` + Object.entries(opts).map(([k, o]) => {
       const sel = MULTI.has(field) ? S.design[field].includes(k) : S.design[field] === k;
       const lockT = field === "partners" ? (!partnerOpen(k) ? `Opens at agency reputation ${PARTNER_REP[k]}` : null)
         : !isUnlocked(field, k) ? lockText(TECH_OF[`${field}:${k}`]) : null;
@@ -1062,16 +1275,76 @@ function renderReview() {
     html += !miss && !nb && !nw ? `<div class="issue">${icon("check")}<span>All requirements met.</span></div>` : "";
     html += `<div class="req-small">Flight Director rules: the board does not explain itself. Check the numbers.</div>`;
   } else {
-    html += ev.issues.length ? ev.issues.map((i, n) =>
-      `<div class="issue" data-n="${n}">${icon(ICON_OF[i.severity])}<span>${esc(i.text)}</span><span class="why">${esc(i.why)}</span></div>`).join("")
+    html += ev.issues.length ? ev.issues.map((i, n) => {
+      const tgt = checklistTarget(i);
+      const attrs = tgt ? `data-goto="${esc(tgt.label)}" data-goto-tab="${esc(tgt.tab)}" data-goto-field="${esc(tgt.field)}"` : "";
+      return `<div class="issue ${tgt ? "actionable" : ""}" data-n="${n}" ${attrs}>${icon(ICON_OF[i.severity])}<span>${esc(i.text)}</span><span class="why">${esc(i.why)}</span></div>`;
+    }).join("")
       : `<div class="issue">${icon("check")}<span>No findings. Nice, clean design.</span></div>`;
   }
   $("#issues").innerHTML = html;
-  $$("#issues .issue[data-n]").forEach((el) => el.onclick = () => { SFX.paper(); el.classList.toggle("open"); });
+  $$("#issues .issue[data-n]").forEach((el) => el.onclick = () => {
+    SFX.paper();
+    el.classList.toggle("open");
+    const tabId = el.dataset.gotoTab, field = el.dataset.gotoField;
+    if (tabId) jumpToEngineeringField(tabId, field);
+  });
   $("#bpLabel").textContent = S.design.bus ? `${S.cat.BUSES[S.design.bus].name} · dry ${fmt(m.dry)} kg · fuel ${fmt(m.propellant)} kg · Δv ${fmt(m.dv)} m/s` : "";
   const ready = ev.ok && (S.mode !== "team" || Object.values(S.approvals).every(Boolean));
   $("#launchBtn").textContent = S.mode === "team" ? "Launch" : "Approve & launch";
   $("#launchBtn").disabled = S.mode === "team" && !ready;
+}
+
+function checklistTarget(i) {
+  const t = i.text || "";
+  let f = issueField(i);
+  if (!f) {
+    if (/launch date/i.test(t)) f = "window";
+    else if (/launch vehicle|rocket|launcher/i.test(t)) f = "launch_vehicle";
+    else if (/orbit|landing site/i.test(t)) f = "orbit";
+    else if (/instrument|Required goal/i.test(t)) f = "instruments";
+    else if (/spacecraft bus|\bbus\b|slots/i.test(t)) f = "bus";
+    else if (/solar array|Solar/i.test(t)) f = "solar";
+    else if (/\bRTG/i.test(t)) f = "rtg";
+    else if (/battery|eclipse|night/i.test(t)) f = "battery";
+    else if (/attitude control|pointing/i.test(t)) f = "adcs";
+    else if (/propulsion|propellant|engine|\bΔv\b/i.test(t)) f = "propulsion";
+    else if (/antenna/i.test(t)) f = "comms";
+    else if (/ground network|ground|hear you/i.test(t)) f = "ground";
+    else if (/flight computer|computer|radiation|Recorder/i.test(t)) f = "computer";
+    else if (/landing system|return capsule|parachute|airbag|sky crane|landed mass/i.test(t)) f = "edl";
+    else if (/hull shape/i.test(t)) f = "shape";
+    else if (/crew size|seats/i.test(t)) f = "seats";
+    else if (/heat shield/i.test(t)) f = "heatshield";
+    else if (/escape system|abort/i.test(t)) f = "abort";
+    else if (/landing method/i.test(t)) f = "landing";
+    else if (/at least one launch|manifest/i.test(t) || i.area === "program") f = "manifest";
+    else if (i.area === "cost") f = S.design.partners.length < S.cat.MAX_PARTNERS ? "partners" : "launch_vehicle";
+  }
+  if (!f) return null;
+  const tabId = f === "manifest" ? "manifest" : FIELD_TAB[f];
+  const tabObj = tabs().find((tb) => tb.id === tabId);
+  if (!tabObj) return null;
+  return { field: f, tab: tabId, label: `${tabObj.label.toUpperCase()} \u2192` };
+}
+
+function jumpToEngineeringField(tabId, field) {
+  if (S.tab !== tabId) goLab(tabId);
+  requestAnimationFrame(() => {
+    const binder = $("#binder");
+    if (!binder) return;
+    const head = binder.querySelector(`h4[data-field-head="${field}"]`);
+    const cards = binder.querySelector(`.cards[data-field-cards="${field}"]`);
+    const target = cards || head;
+    if (head) head.scrollIntoView({ behavior: "smooth", block: "start" });
+    else if (target) target.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    if (cards) {
+      cards.classList.remove("checklist-focus");
+      void cards.offsetWidth;
+      cards.classList.add("checklist-focus");
+      setTimeout(() => cards.classList.remove("checklist-focus"), 1500);
+    }
+  });
 }
 
 function renderApprovals() {
@@ -1089,83 +1362,354 @@ function renderApprovals() {
   });
 }
 
-// ---------------------------------------------------------------------------- blueprint (spacecraft drawing)
+// ---------------------------------------------------------------------------- blueprint (spacecraft drawing & interactive bus workspace)
 function drawBlueprint() {
   const cv = $("#bp"), g = cv.getContext("2d"), W = cv.width, H = cv.height, d = S.design;
   const r = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); };
-  r(0, 0, W, H, "#1d3a5e");
-  for (let x = 0; x < W; x += 10) r(x, 0, 1, H, "rgba(156,192,234,.15)");
-  for (let y = 0; y < H; y += 10) r(0, y, W, 1, "rgba(156,192,234,.15)");
-  const L = "#dce9f8", M = "#9cc0ea", D = "#5b86b8";
+
+  // Technical blueprint background with major & minor drafting grid + corner fiducials
+  r(0, 0, W, H, "#193454");
+  for (let x = 0; x < W; x += 10) r(x, 0, 1, H, x % 40 === 0 ? "rgba(156,192,234,.24)" : "rgba(156,192,234,.11)");
+  for (let y = 0; y < H; y += 10) r(0, y, W, 1, y % 40 === 0 ? "rgba(156,192,234,.24)" : "rgba(156,192,234,.11)");
+  // Corner registration fiducials
+  const fid = "rgba(220,233,248,.45)";
+  r(4, 18, 6, 1, fid); r(4, 18, 1, 6, fid);
+  r(W - 10, 18, 6, 1, fid); r(W - 5, 18, 1, 6, fid);
+  r(4, H - 18, 6, 1, fid); r(4, H - 23, 1, 6, fid);
+  r(W - 10, H - 18, 6, 1, fid); r(W - 5, H - 23, 1, 6, fid);
+
+  const L = "#dce9f8", M = "#9cc0ea", D = "#4e79ac", GOLD = "#d4a644", GOLD_HI = "#f2cf76", GOLD_SH = "#8f691e";
   let empty = $(".blueprint .bp-empty");
-  if (isProgram()) { if (empty) empty.remove(); return drawProgramBlueprint(g, W, H); }
-  if (kindNow() === "vehicle") { if (empty) empty.remove(); drawVehicle(g, d, W / 2, H / 2 + 6, d.shape === "winged" ? 2.4 : 3, "blue");
-    $("#bpSlots").textContent = S.ev && S.ev.vehicle ? `${fmt(S.ev.vehicle.mass / 1000, 1)} t · ${S.ev.vehicle.seats} seats · ${S.ev.vehicle.flights} flights` : "Your crew vehicle"; return; }
-  if (!d.bus) {
-    if (!empty) { empty = document.createElement("div"); empty.className = "bp-empty"; $(".blueprint").appendChild(empty); }
-    empty.textContent = "No bus selected. Pick one in the BUS tab.";
-    $("#bpSlots").textContent = d.instruments.length ? `${d.instruments.length} instrument(s) waiting for a bus` : "Empty drawing board";
+  const qNav = $("#bpQuickNav");
+
+  if (isProgram()) {
+    if (empty) empty.remove();
+    if (qNav) qNav.innerHTML = `<button type="button" class="bp-qbtn" data-bp-go="manifest">MANIFEST</button><button type="button" class="bp-qbtn" data-bp-go="partners">PARTNERS</button>`;
+    wireBpQuickNav();
+    return drawProgramBlueprint(g, W, H);
+  }
+  if (kindNow() === "vehicle") {
+    if (empty) empty.remove();
+    if (qNav) qNav.innerHTML = `<button type="button" class="bp-qbtn" data-bp-go="hull">HULL</button><button type="button" class="bp-qbtn" data-bp-go="shield">SHIELD</button><button type="button" class="bp-qbtn" data-bp-go="safety">SAFETY</button><button type="button" class="bp-qbtn" data-bp-go="launch">ROCKET</button>`;
+    wireBpQuickNav();
+    drawVehicle(g, d, W / 2, H / 2 + 6, d.shape === "winged" ? 2.4 : 3, "blue");
+    $("#bpSlots").textContent = S.ev && S.ev.vehicle ? `${fmt(S.ev.vehicle.mass / 1000, 1)} t · ${S.ev.vehicle.seats} seats · ${S.ev.vehicle.flights} flights` : "Your crew vehicle";
     return;
   }
+
+  // Interactive Spacecraft Bus Selection Workspace when no bus is chosen yet
+  if (!d.bus) {
+    if (qNav) qNav.innerHTML = "";
+    if (!empty) {
+      empty = document.createElement("div");
+      empty.className = "bp-empty bp-bus-workspace";
+      $(".blueprint").appendChild(empty);
+    } else {
+      empty.className = "bp-empty bp-bus-workspace";
+    }
+    const buses = optionsFor("bus", true) || S.cat.BUSES;
+    empty.innerHTML = `
+      <div class="bp-ws-head">
+        <span class="bp-ws-title">SELECT SPACECRAFT BUS TO INITIALIZE BLUEPRINT</span>
+        <button type="button" class="bp-ws-tabbtn" data-bp-open-bus="1">BUS TAB &rarr;</button>
+      </div>
+      <div class="bp-ws-grid">
+        ${Object.entries(buses).map(([k, b]) => {
+          const unlocked = isUnlocked("bus", k);
+          const techKey = TECH_OF[`bus:${k}`];
+          const shortName = b.name.replace(" bus", "");
+          return `
+            <button type="button" class="bp-bus-opt ${unlocked ? "" : "locked"}" data-pick-bus="${k}" data-bus-tech="${unlocked ? "" : (techKey || "")}" title="${esc(b.learn || b.name)}">
+              <span class="bp-bopt-ic">${icon(PART_ICON.bus(k), 20)}</span>
+              <span class="bp-bopt-info">
+                <b>${esc(shortName)}</b>
+                <small>${b.slots} slot${b.slots > 1 ? "s" : ""} &middot; ${fmt(b.max_dry)} kg &middot; ${b.cost} M$</small>
+              </span>
+              ${unlocked ? `<span class="bp-bopt-pick">SELECT</span>` : `<span class="bp-bopt-lock">${icon("lock", 10)} R&amp;D</span>`}
+            </button>`;
+        }).join("")}
+      </div>`;
+
+    empty.querySelectorAll("[data-pick-bus]").forEach((btn) => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const k = btn.dataset.pickBus;
+        const tech = btn.dataset.busTech;
+        if (tech && !isUnlocked("bus", k)) {
+          openLock(tech);
+          return;
+        }
+        setField("bus", k);
+      };
+    });
+    const openBusTabBtn = empty.querySelector("[data-bp-open-bus]");
+    if (openBusTabBtn) {
+      openBusTabBtn.onclick = (e) => {
+        e.stopPropagation();
+        goLab("bus");
+      };
+    }
+    $("#bpSlots").textContent = d.instruments.length ? `${d.instruments.length} instrument(s) waiting for a bus` : "Step 1: Choose a Spacecraft Bus";
+    return;
+  }
+
   if (empty) empty.remove();
-  const cx = 100, cy = 58, s = { cubesat: 12, smallsat: 20, medium: 28, flagship: 36 }[d.bus];
-  const wing = { none: 0, body: 0, small: 18, medium: 28, large: 40, giant: 56 }[d.solar] || 0;
+
+  // Populate quick-jump subsystem buttons on active blueprint
+  if (qNav) {
+    qNav.innerHTML = [
+      ["bus", "BUS"],
+      ["power", "POWER"],
+      ["prop", "ENGINE"],
+      ["comms", "COMMS"],
+      ["instr", "PAYLOAD"]
+    ].map(([tid, lbl]) => `<button type="button" class="bp-qbtn ${S.tab === tid ? "on" : ""}" data-bp-go="${tid}">${lbl}</button>`).join("");
+    wireBpQuickNav();
+  }
+
+  const cx = 100, cy = 58, s = { cubesat: 14, smallsat: 22, medium: 30, flagship: 38 }[d.bus] || 22;
+  const wing = { none: 0, body: 0, compact: 13, small: 20, medium: 30, large: 42, giant: 58 }[d.solar] || 0;
+
+  // 1. Articulated Solar Array Wings with trusses, cell strings & specular highlights
   if (wing) {
-    const ph = Math.max(10, s * 0.6);
+    const ph = Math.max(10, Math.round(s * 0.62));
     for (const side of [-1, 1]) {
-      const x0 = side < 0 ? cx - s / 2 - 4 - wing : cx + s / 2 + 4;
-      r(side < 0 ? cx - s / 2 - 4 : cx + s / 2, cy - 1, 4, 2, M);
-      r(x0, cy - ph / 2, wing, ph, D); r(x0, cy - ph / 2, wing, 1, L); r(x0, cy + ph / 2 - 1, wing, 1, L);
-      r(x0, cy - ph / 2, 1, ph, L); r(x0 + wing - 1, cy - ph / 2, 1, ph, L);
-      for (let x = x0 + 5; x < x0 + wing - 2; x += 5) r(x, cy - ph / 2, 1, ph, M);
+      const x0 = side < 0 ? cx - s / 2 - 5 - wing : cx + s / 2 + 5;
+      const yokeX = side < 0 ? cx - s / 2 - 5 : cx + s / 2;
+      // Deployment yoke & diagonal struts
+      r(yokeX, cy - 1, 5, 2, L);
+      r(yokeX + (side < 0 ? 1 : 2), cy - 3, 2, 6, M);
+      // Outer structural frame
+      r(x0, cy - ph / 2, wing, ph, "#1f487c");
+      r(x0, cy - ph / 2, wing, 1, L);
+      r(x0, cy + ph / 2 - 1, wing, 1, L);
+      r(x0, cy - ph / 2, 1, ph, L);
+      r(x0 + wing - 1, cy - ph / 2, 1, ph, L);
+      // Inner photovoltaic cells & silver busbars
+      r(x0 + 1, cy - ph / 2 + 1, wing - 2, ph - 2, "#2b63a3");
+      r(x0 + 1, cy, wing - 2, 1, M); // horizontal center string bar
+      for (let x = x0 + 5; x < x0 + wing - 2; x += 6) {
+        r(x, cy - ph / 2 + 1, 1, ph - 2, L);
+        if (x + 2 < x0 + wing - 2) {
+          r(x + 2, cy - ph / 2 + 2, 2, 2, "#7fd0f5");
+        }
+      }
     }
   }
-  if (d.instruments.includes("mag")) { for (let i = 0; i < 34; i += 2) r(cx - s / 2 - i * 0.8, cy - s / 2 - i, 1, 1, L); r(cx - s / 2 - 29, cy - s / 2 - 36, 3, 3, "#f0a0b8"); }
-  for (let k = 0; k < d.rtg; k++) { const x = cx + s / 2 + 3 + k * 6; r(x, cy + s / 2, 4, 10, M); r(x - 1, cy + s / 2 + 2, 6, 1, L); r(x - 1, cy + s / 2 + 6, 6, 1, L); }
+
+  // 2. Magnetometer Boom (if mag instrument carried)
+  if (d.instruments.includes("mag")) {
+    for (let i = 0; i < 32; i++) {
+      const bx = cx - s / 2 - i * 0.85;
+      const by = cy - s / 2 - i * 0.95;
+      r(bx, by, 1, 1, i % 3 === 0 ? L : M);
+      if (i % 6 === 0 && i > 0) r(bx - 1, by, 3, 1, D);
+    }
+    r(cx - s / 2 - 29, cy - s / 2 - 33, 4, 4, "#f07fa0");
+    r(cx - s / 2 - 28, cy - s / 2 - 32, 2, 2, L);
+  }
+
+  // 3. Finned MMRTG Nuclear Power Units
+  for (let k = 0; k < d.rtg; k++) {
+    const rx = cx + s / 2 + 3 + k * 7;
+    const ry = cy + s / 2 - 2;
+    r(rx, ry, 4, 11, M);
+    r(rx + 1, ry + 1, 2, 9, "#e2e8f0");
+    for (let fy = 1; fy <= 9; fy += 2) {
+      r(rx - 1, ry + fy, 6, 1, L);
+    }
+    r(rx + 1, ry + 4, 2, 2, "#ff8a5b"); // Pu-238 thermal core indicator
+  }
+
+  // 4. Lander Legs / Rover Rocker-Bogie Chassis / Sample Return Capsule
   const kind = kindNow();
-  if (kind === "lander" && d.edl) for (const side of [-1, 1]) {                         // landing legs
-    for (let i = 0; i < 12; i++) r(cx + side * (s / 2 + i * 0.8), cy + s / 2 - 2 + i, 1, 1, L);
-    r(cx + side * (s / 2 + 10) - 2, cy + s / 2 + 10, 5, 2, M);
+  if (kind === "lander" && d.edl) {
+    for (const side of [-1, 1]) {
+      for (let i = 0; i < 13; i++) {
+        r(cx + side * (s / 2 + i * 0.85), cy + s / 2 - 2 + i, 2, 1, L);
+        if (i === 5) r(cx + side * (s / 2 + 2), cy + s / 2 + 3, 4, 1, M); // shock strut
+      }
+      r(cx + side * (s / 2 + 11) - 3, cy + s / 2 + 11, 7, 2, GOLD_HI); // landing footpad
+    }
   }
-  if (kind === "rover") {                                                               // six wheels on rockers + mast camera
-    r(cx - s / 2 - 6, cy + s / 2 + 2, s + 12, 1, M);
-    [-1, 0, 1].forEach((k) => { const x = cx + k * (s / 2 + 2); r(x - 3, cy + s / 2 + 3, 7, 7, D); r(x - 2, cy + s / 2 + 4, 5, 5, L); r(x, cy + s / 2 + 6, 1, 1, D); });
-    r(cx - s / 2 + 3, cy - s / 2 - 16, 1, 16, M); r(cx - s / 2, cy - s / 2 - 19, 7, 3, L);
+  if (kind === "rover") {
+    // Rocker-bogie suspension tubes & 6 cleats wheels + Mastcam head
+    r(cx - s / 2 - 7, cy + s / 2 + 2, s + 14, 2, L);
+    [-1, 0, 1].forEach((k) => {
+      const wx = cx + k * (s / 2 + 3);
+      r(wx - 4, cy + s / 2 + 4, 8, 7, "#2a4365");
+      r(wx - 3, cy + s / 2 + 5, 6, 5, L);
+      r(wx - 1, cy + s / 2 + 7, 2, 2, GOLD);
+    });
+    // Remote sensing mast & ChemCam head
+    r(cx - s / 2 + 3, cy - s / 2 - 16, 2, 16, L);
+    r(cx - s / 2 - 1, cy - s / 2 - 20, 9, 4, L);
+    r(cx - s / 2 + 1, cy - s / 2 - 19, 3, 2, "#ff6b6b");
+    r(cx - s / 2 + 5, cy - s / 2 - 19, 2, 2, "#7fd0f5");
   }
-  if (kind === "sample_return" && d.edl) {                                              // capsule on the side + sampler arm
-    const x0 = cx - s / 2 - 12, y0 = cy - s / 2 + 2;
-    for (let i = 0; i < 6; i++) r(x0 + 5 - i, y0 + i, 2 + i * 2, 1, "#c9a24a"); r(x0 - 1, y0 + 6, 14, 2, L);
+  if (kind === "sample_return" && d.edl) {
+    const x0 = cx - s / 2 - 14, y0 = cy - s / 2 + 2;
+    for (let i = 0; i < 7; i++) r(x0 + 6 - i, y0 + i, 2 + i * 2, 1, i < 2 ? L : GOLD);
+    r(x0 - 1, y0 + 7, 16, 2, "#a8322a"); // ablative heatshield rim
+    r(x0 + 1, y0 + 9, 12, 1, L);
   }
-  if (d.instruments.includes("tagsam")) { for (let i = 0; i < 16; i++) r(cx + s / 2 - 2 + i * 0.6, cy + s / 2 + i, 1, 1, L); r(cx + s / 2 + 6, cy + s / 2 + 16, 5, 2, M); }
-  // bus box
-  r(cx - s / 2, cy - s / 2, s, s, "#c9a24a"); r(cx - s / 2, cy - s / 2, s, 1, L); r(cx - s / 2, cy + s / 2 - 1, s, 1, L);
-  r(cx - s / 2, cy - s / 2, 1, s, L); r(cx + s / 2 - 1, cy - s / 2, 1, s, L);
-  if (d.solar === "body") r(cx - s / 2 + 1, cy - s / 2 + 1, s - 2, s / 3, D);
-  // antenna
+  if (d.instruments.includes("tagsam")) {
+    for (let i = 0; i < 16; i++) r(cx + s / 2 - 2 + i * 0.65, cy + s / 2 + i, 2, 1, L);
+    r(cx + s / 2 + 6, cy + s / 2 + 16, 7, 3, GOLD_HI);
+  }
+
+  // 5. Detailed Propulsion Engine & Propellant Tanks (drawn below bus)
+  if (d.propulsion && d.propulsion !== "none") {
+    const b = cy + s / 2;
+    if (d.propulsion === "coldgas") {
+      // Corner RCS cold-gas thruster quads
+      r(cx - s / 2 - 2, b - 4, 2, 3, L);
+      r(cx + s / 2, b - 4, 2, 3, L);
+      r(cx - 2, b, 4, 3, M);
+    } else if (d.propulsion === "mono") {
+      // Hydrazine adapter collar + monopropellant thruster bell
+      r(cx - 4, b, 8, 2, GOLD_SH);
+      for (let i = 0; i < 6; i++) r(cx - 2 - i * 0.5, b + 2 + i, 4 + i, 1, i % 2 === 0 ? L : M);
+    } else if (d.propulsion === "biprop") {
+      // Dual spherical propellant tanks + gimbaled main engine nozzle with cooling ribs
+      r(cx - 8, b, 5, 4, M);
+      r(cx + 3, b, 5, 4, M);
+      r(cx - 3, b, 6, 3, GOLD);
+      for (let i = 0; i < 9; i++) {
+        const w = 4 + Math.round(i * 1.1);
+        r(cx - w / 2, b + 3 + i, w, 1, i % 2 === 0 ? L : "#6b9bd2");
+      }
+    }
+  }
+
+  // 6. Spacecraft Bus Structural Core (Differentiated per Bus Class)
+  const bx = cx - s / 2, by = cy - s / 2;
+  if (d.bus === "cubesat") {
+    // 6U CubeSat rail frame with gold Kapton cells & anodized rails
+    r(bx, by, s, s, "#2c5282");
+    r(bx + 2, by + 2, s - 4, s - 4, GOLD);
+    r(bx + 2, by + Math.round(s / 2), s - 4, 1, "#193454");
+    r(bx + Math.round(s / 2), by + 2, 1, s - 4, "#193454");
+    r(bx, by, 2, s, L); r(bx + s - 2, by, 2, s, L);
+    r(bx, by, s, 1, L); r(bx, by + s - 1, s, 1, L);
+  } else if (d.bus === "smallsat") {
+    // SmallSat box bus with upper avionics deck, thermal louvers & star tracker
+    r(bx, by, s, s, GOLD_SH);
+    r(bx + 1, by + 1, s - 2, s - 2, GOLD);
+    r(bx + 3, by + 3, s - 6, 6, "#cbd5e0"); // silver radiator panel
+    for (let lx = bx + 4; lx < bx + s - 4; lx += 3) r(lx, by + 4, 2, 4, "#4a5568"); // louvers
+    r(bx + 3, by + 11, s - 6, s - 14, GOLD_HI);
+    r(bx - 3, by + 5, 3, 4, L); // star tracker optical hood
+    r(bx, by, s, 1, L); r(bx, by + s - 1, s, 1, L);
+    r(bx, by, 1, s, L); r(bx + s - 1, by, 1, s, L);
+  } else if (d.bus === "medium") {
+    // Medium hexagonal/multi-bay bus with diagonal trusses & gold MLI blankets
+    r(bx, by, s, s, GOLD_SH);
+    r(bx + 1, by + 1, s - 2, s - 2, GOLD);
+    r(bx + 2, by + 2, s - 4, 7, "#2d4a6d"); // upper avionics bay
+    r(bx + 4, by + 4, s - 8, 3, M);
+    // Central gold Kapton core with structural X-truss
+    r(bx + 3, by + 10, s - 6, s - 13, GOLD_HI);
+    for (let i = 0; i < s - 14; i++) {
+      r(bx + 4 + i, by + 11 + i, 1, 1, GOLD_SH);
+      r(bx + s - 5 - i, by + 11 + i, 1, 1, GOLD_SH);
+    }
+    r(bx - 3, by + 6, 3, 5, L); // star tracker assembly
+    r(bx, by, s, 1, L); r(bx, by + s - 1, s, 1, L);
+    r(bx, by, 1, s, L); r(bx + s - 1, by, 1, s, L);
+  } else {
+    // Flagship bus: titanium radiation vault + multi-bay gold foil + upper science platform
+    r(bx, by, s, s, "#3b597d");
+    r(bx + 1, by + 1, s - 2, s - 2, GOLD_SH);
+    // Upper titanium radiation-shielded electronics vault
+    r(bx + 2, by + 2, s - 4, 10, "#cbd5e0");
+    r(bx + 4, by + 4, s - 8, 6, "#4a698d");
+    r(bx + 6, by + 6, 4, 2, "#7fd0f5");
+    r(bx + s - 10, by + 6, 4, 2, "#68d391");
+    // Mid & lower gold Kapton bays with louver vents
+    r(bx + 2, by + 13, s - 4, s - 15, GOLD);
+    r(bx + 4, by + 15, s - 8, 8, GOLD_HI);
+    for (let lx = bx + 5; lx < bx + s - 5; lx += 4) r(lx, by + 25, 2, 8, GOLD_SH);
+    r(bx - 4, by + 8, 4, 6, L); // dual star trackers
+    r(bx, by, s, 1, L); r(bx, by + s - 1, s, 1, L);
+    r(bx, by, 1, s, L); r(bx + s - 1, by, 1, s, L);
+  }
+
+  // Body-mounted solar cells overlay if selected
+  if (d.solar === "body") {
+    r(bx + 2, by + 2, s - 4, Math.round(s * 0.38), "#2b6cb0");
+    for (let x = bx + 5; x < bx + s - 3; x += 4) r(x, by + 2, 1, Math.round(s * 0.38), L);
+  }
+
+  // 7. Communications Antenna Assembly (top deck)
   const top = cy - s / 2;
   if (d.comms === "xhga" || d.comms === "kahga") {
-    const R = d.comms === "xhga" ? 10 : 15;
-    r(cx, top - 5, 1, 5, M);
-    for (let x = -R; x <= R; x++) r(cx + x, top - 6 - R * 0.55 + (x * x) / (R * 1.8), 1, 1, L);
-    r(cx, top - 6 - R * 0.6, 1, R * 0.6, M);
-  } else if (d.comms === "xlga") { r(cx + s / 4, top - 8, 1, 8, L); r(cx + s / 4 - 1, top - 9, 3, 2, L); }
-  else r(cx - 2, top - 2, 5, 2, L);
-  if (d.propulsion && d.propulsion !== "none") {
-    const nw = { coldgas: 2, mono: 4, biprop: 7 }[d.propulsion], b = cy + s / 2;
-    for (let i = 0; i < nw + 2; i++) r(cx - nw / 2 - i / 2, b + i, nw + i, 1, M);
+    const R = d.comms === "xhga" ? 11 : 16;
+    r(cx - 1, top - 5, 2, 5, M);
+    // Parabolic reflector dish + rim highlight + tripod feed horn
+    for (let x = -R; x <= R; x++) {
+      const dy = Math.round(top - 6 - R * 0.55 + (x * x) / (R * 1.8));
+      r(cx + x, dy, 1, 2, L);
+      if (d.comms === "kahga" && Math.abs(x) % 4 === 0) r(cx + x, dy + 2, 1, 2, D);
+    }
+    r(cx, top - 6 - Math.round(R * 0.65), 1, Math.round(R * 0.65), L);
+    r(cx - 2, top - 7 - Math.round(R * 0.65), 5, 2, GOLD_HI); // subreflector cap
+  } else if (d.comms === "xlga") {
+    r(cx + Math.round(s / 4), top - 10, 2, 10, L);
+    r(cx + Math.round(s / 4) - 2, top - 12, 6, 3, GOLD_HI);
+  } else if (d.comms === "uhf") {
+    r(cx - 5, top - 7, 1, 7, L);
+    r(cx + 4, top - 7, 1, 7, L);
+    r(cx - 2, top - 2, 5, 2, M);
   }
+
+  // 8. Mounted Science Payload Instruments along the Nadir/Science Deck
   const COL = { imaging: "#7fd0f5", thermal: "#ff9a6b", climate: "#b6dd8a", composition: "#c48ee0", water: "#6fe0ec",
     topography: "#ffd96b", subsurface: "#a9bac4", fields: "#f07fa0", life: "#8ee07a", interior: "#e0a070", sample: "#f4efe2" };
   d.instruments.forEach((k, i) => {
-    const o = S.cat.INSTRUMENTS[k], n = d.instruments.length, x = cx - s / 2 + ((i + 1) * s) / (n + 1);
-    r(x - 1, cy + s / 2 - 5, 3, 3, COL[o.tags[0]] || L);
+    const o = S.cat.INSTRUMENTS[k];
+    if (!o) return;
+    const n = d.instruments.length;
+    const ix = Math.round(cx - s / 2 + ((i + 1) * s) / (n + 1));
+    const iy = cy + Math.round(s / 2) - 6;
+    const col = COL[o.tags[0]] || L;
+    // Draw distinct instrument housing + optical/sensor aperture
+    r(ix - 3, iy - 1, 6, 5, "#1d3a5e");
+    r(ix - 2, iy, 4, 3, col);
+    if (["hirise", "irtel", "coronagraph", "photometer"].includes(k)) {
+      r(ix - 2, iy + 3, 4, 4, L); // telescope barrel protruding down
+      r(ix - 1, iy + 6, 2, 1, "#7fd0f5");
+    } else if (["radar", "sar"].includes(k)) {
+      r(ix - 6, iy + 2, 12, 1, L); // radar dipole antenna bar
+    }
   });
+
   const free = S.cat.BUSES[d.bus].slots - d.instruments.length - d.partners.filter((p) => S.cat.PARTNERS[p].instrument).length;
   $("#bpSlots").textContent = free >= 0 ? `${free} free instrument slot(s)` : `${-free} instrument(s) too many!`;
 }
 
+function wireBpQuickNav() {
+  $$("#bpQuickNav [data-bp-go]").forEach((btn) => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      const tid = btn.dataset.bpGo;
+      if (tabs().some((t) => t.id === tid)) goLab(tid);
+    };
+  });
+}
+
 // ---------------------------------------------------------------------------- desk wiring
 function wireDesk() {
+  $("#bp").onclick = (e) => {
+    if (!S.design || !S.design.bus || isProgram() || kindNow() === "vehicle") return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / Math.max(1, rect.width)) * 200;
+    const y = ((e.clientY - rect.top) / Math.max(1, rect.height)) * 120;
+    if (y < 38) goLab("comms");
+    else if (y > 76) goLab(S.design.instruments && S.design.instruments.length ? "instr" : "prop");
+    else if (x < 78 || x > 122) goLab("power");
+    else goLab("bus");
+  };
   $("#yearsDown").onclick = () => setField("years", Math.max(1, S.design.years - 1));
   $("#yearsUp").onclick = () => setField("years", Math.min(12, S.design.years + 1));
   $("#riskBtn").onclick = async () => {
@@ -1177,6 +1721,8 @@ function wireDesk() {
     } finally { $("#riskBtn").disabled = false; }
   };
   $("#launchBtn").onclick = doLaunch;
+  if ($("#briefingBtn")) $("#briefingBtn").onclick = () => { SFX.page(); openLetter(); };
+  if ($("#mBriefing")) $("#mBriefing").onclick = () => { $("#menu").classList.add("hidden"); openLetter(); };
   $("#helpBtn").onclick = () => startTutorial(false);
   $("#tutNext").onclick = () => tutAdvance();
   $("#tutSkip").onclick = () => endTutorial(true);
@@ -2090,8 +2636,9 @@ function showNews(res) {
   show("news");
   S.result = res;
   const sc = res.score, sim = res.sim, [hl, sub] = headline(res);
-  // career: the agency learns from every flight
+  // career / story: record outcome
   const career = S.mode === "career" && agency() && res.sim.launched ? applyCareerResult(res) : null;
+  if (S.mode === "story" && typeof recordStoryResult === "function") recordStoryResult(res);
   if (res.sim.launched) drawer.add({ name: `Flight ${res.seed} · ${sc.grade}`, scenario: res.design.scenario, design: res.design,
     flight: { score: sc.total, grade: sc.grade, outcome: sim.outcome, seed: res.seed } });
   const labels = { science: "Science", budget: "Budget left", margins: "Margins", reliability: "Reliability", team: "Team goals" };
@@ -2133,7 +2680,7 @@ function showNews(res) {
   const idx = ORDER.indexOf(res.design.scenario);
   const nextOk = false;
   $("#nNext").classList.toggle("hidden", S.mode === "team");
-  $("#nNext").textContent = S.mode === "career" ? "Back to headquarters" : "Mission files";
+  $("#nNext").textContent = S.mode === "career" ? "Back to headquarters" : S.mode === "story" ? "Back to Project Genesis" : "Mission files";
   if (career) {
     const box = document.createElement("div"); box.className = "agency-report";
     box.innerHTML = `<b>AGENCY REPORT</b> Reputation ${career.rep} (${career.repGain >= 0 ? "+" : ""}${career.repGain}) &middot; funds ${fmt(career.funds)} M$
@@ -2179,6 +2726,7 @@ function wireNews() {
   $("#nNext").onclick = () => {
     const idx = ORDER.indexOf(S.result.design.scenario);
     if (S.mode === "career") openHQ();
+    else if (S.mode === "story" && typeof openStory === "function") openStory();
     else openSelect();
   };
   $("#nHall").onclick = openHall;
@@ -2193,6 +2741,10 @@ function wireNews() {
 async function openHall(sc) {
   show("hall");
   sc = typeof sc === "string" ? sc : (S.design ? S.design.scenario : "wildfire");
+  if (typeof renderHallScreen === "function") {
+    await renderHallScreen(sc);
+    return;
+  }
   $("#hallTabs").innerHTML = ORDER.map((k) => `<button class="btn ${k === sc ? "on" : ""}" data-sc="${k}">${esc(S.cat.SCENARIOS[k].name)}</button>`).join("");
   $$("#hallTabs button").forEach((b) => b.onclick = () => openHall(b.dataset.sc));
   const rows = await api(`leaderboard?scenario=${sc}&n=15`);

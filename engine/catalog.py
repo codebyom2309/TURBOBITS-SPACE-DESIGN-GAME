@@ -513,6 +513,126 @@ SCENARIOS = {
             {"tag": "imaging", "label": "Image the surface", "weight": 15, "target": 25, "required": False},
         ],
     },
+    "ocean_biosphere": {
+        "name": "Global Ocean & Climate Mapper",
+        "destination": "earth",
+        "difficulty": "Beginner",
+        "budget": 280,
+        "min_years": 3,
+        "pitch": "Map global ocean plankton blooms, coastal carbon cycles and polar ice sheets from sun-synchronous orbit.",
+        "story": ("Earth's oceans absorb half of our carbon emissions and feed billions of people. Scientists need a "
+                  "polar-orbiting observatory to track ocean colour, surface temperature and sea-ice thickness every week."),
+        "goals": [
+            {"tag": "climate", "label": "Track ocean carbon & climate", "weight": 45, "target": 30, "required": True},
+            {"tag": "composition", "label": "Map chlorophyll & coastal water", "weight": 35, "target": 25, "required": True},
+            {"tag": "imaging", "label": "Daily polar ice & coastal imagery", "weight": 20, "target": 15, "required": False},
+        ],
+    },
+    "gnss_constellation": {
+        "name": "Orbital Navigation & Relay Pathfinder",
+        "destination": "earth",
+        "difficulty": "Intermediate",
+        "budget": 310,
+        "min_years": 5,
+        "pitch": "Deploy a high-altitude geostationary navigation beacon and atmospheric timing pathfinder.",
+        "story": ("Aviation, ships and orbital spacecraft rely on centimetre-accurate timing and continuous weather relay "
+                  "from 35,786 km altitude. Put a long-lived pathfinder into geostationary orbit and keep it on station."),
+        "goals": [
+            {"tag": "climate", "label": "Continuous hemispheric weather link", "weight": 50, "target": 30, "required": True},
+            {"tag": "fields", "label": "Monitor magnetosphere & clock drift", "weight": 30, "target": 15, "required": True},
+            {"tag": "thermal", "label": "Track upper-atmosphere heat", "weight": 20, "target": 15, "required": False},
+        ],
+    },
+    "space_debris": {
+        "name": "Orbital Debris & Magnetosphere Sentinel",
+        "destination": "earth",
+        "difficulty": "Intermediate",
+        "budget": 450,
+        "min_years": 3,
+        "pitch": "Radar-track millimetre-scale orbital debris and radiation belts in crowded Low Earth Orbit.",
+        "story": ("Thousands of spent stages and paint flecks race around Earth at 28,000 km/h. Before we launch more "
+                  "crewed stations, we must map the debris clouds with radar and measure the charged-particle belts."),
+        "goals": [
+            {"tag": "topography", "label": "Radar-track debris shells", "weight": 45, "target": 35, "required": True},
+            {"tag": "fields", "label": "Map Van Allen particle flux", "weight": 35, "target": 20, "required": True},
+            {"tag": "imaging", "label": "Optical streak cataloguing", "weight": 20, "target": 15, "required": False},
+        ],
+    },
+    "lunar_relay": {
+        "name": "Cislunar Halo Comms Relay",
+        "destination": "moon",
+        "difficulty": "Intermediate",
+        "budget": 420,
+        "min_years": 4,
+        "pitch": "Place a long-duration lunar scout and communications relay to bridge the Moon's far side and south pole.",
+        "story": ("Landers in the deep polar craters see Earth barely above the horizon, and the lunar far side never "
+                  "sees Earth at all. A cislunar orbiter with laser altimetry and UV mapping will guide surface crews."),
+        "goals": [
+            {"tag": "topography", "label": "Map polar ridges & horizon line-of-sight", "weight": 45, "target": 25, "required": True},
+            {"tag": "water", "label": "Survey shadowed frost deposits", "weight": 35, "target": 20, "required": True},
+            {"tag": "imaging", "label": "Context imaging of relay zones", "weight": 20, "target": 15, "required": False},
+        ],
+    },
+    "kinetic_impactor": {
+        "name": "Planetary Defence Kinetic Impactor",
+        "destination": "asteroid",
+        "difficulty": "Advanced",
+        "budget": 620,
+        "min_years": 2,
+        "pitch": "Rendezvous with a binary near-Earth asteroid, measure its internal structure and observe a deflection test.",
+        "story": ("DART proved we can nudge an asteroid by hitting it at 6 km/s. Now we must measure the target's mass "
+                  "distribution, crater ejecta plume and orbital period change up close so we are ready for a real threat."),
+        "goals": [
+            {"tag": "topography", "label": "Measure crater & orbital shift", "weight": 45, "target": 25, "required": True},
+            {"tag": "imaging", "label": "High-resolution ejecta & boulder imaging", "weight": 35, "target": 35, "required": True},
+            {"tag": "composition", "label": "Identify excavated interior minerals", "weight": 20, "target": 25, "required": False},
+        ],
+    },
+    "metallic_psyche": {
+        "name": "Main-Belt Metallic World Explorer",
+        "destination": "asteroid",
+        "difficulty": "Advanced",
+        "budget": 680,
+        "min_years": 3,
+        "pitch": "Orbit an iron-nickel asteroid thought to be the exposed metallic core of an ancient protoplanet.",
+        "story": ("We can never drill to Earth's molten iron core, but in the asteroid belt floats a battered metallic "
+                  "world whose rocky mantle was stripped away in early collisions. Measure its magnetic field and metals."),
+        "goals": [
+            {"tag": "fields", "label": "Detect ancient core magnetic field", "weight": 40, "target": 20, "required": True},
+            {"tag": "composition", "label": "Map iron-nickel & silicate ratios", "weight": 40, "target": 30, "required": True},
+            {"tag": "topography", "label": "3D gravity & metal crater topography", "weight": 20, "target": 20, "required": False},
+        ],
+    },
+    "mars_areosat": {
+        "name": "Mars High-Bandwidth Relay & Recon",
+        "destination": "mars",
+        "difficulty": "Advanced",
+        "budget": 780,
+        "min_years": 4,
+        "pitch": "Place a high-resolution reconnaissance and subsurface radar orbiter at Mars to map buried glaciers.",
+        "story": ("Before we send rovers into ancient river deltas and astronauts to the Martian plains, we need global "
+                  "reconnaissance and ice-penetrating radar to locate clean water glaciers just beneath the red dust."),
+        "goals": [
+            {"tag": "subsurface", "label": "Sound buried water-ice glaciers", "weight": 45, "target": 35, "required": True},
+            {"tag": "climate", "label": "Monitor regional dust storms", "weight": 35, "target": 25, "required": True},
+            {"tag": "imaging", "label": "Global reconnaissance context imagery", "weight": 20, "target": 15, "required": False},
+        ],
+    },
+    "titan_orbiter": {
+        "name": "Outer System Ocean World Flagship",
+        "destination": "europa",
+        "difficulty": "Expert",
+        "budget": 2600,
+        "min_years": 4,
+        "pitch": "Fly a deep-space flagship to an outer-system icy moon to sample venting plumes and map the ocean floor.",
+        "story": ("The ultimate robotic expedition: a radiation-shielded flagship that flies directly through cryovolcanic "
+                  "plumes erupting from an outer-system ocean world to sample organic molecules from a hidden sea."),
+        "goals": [
+            {"tag": "composition", "label": "Sample organics in venting plumes", "weight": 40, "target": 50, "required": True},
+            {"tag": "subsurface", "label": "Full-coverage ice-shell radar tomography", "weight": 35, "target": 40, "required": True},
+            {"tag": "fields", "label": "Deep-ocean magnetic induction", "weight": 25, "target": 20, "required": True},
+        ],
+    },
 }
 
 # --------------------------------------------------------------------------------------
@@ -534,19 +654,19 @@ ORBITS = {
         "leo": {"name": "Low Earth Orbit (400 km)", "lv_target": "leo", "dv_insert": 0, "dv_per_year": 60,
                 "eclipse_h": 0.6, "eclipse_frac": 0.38, "coverage": 0.7, "earth_view": 1.0,
                 "cruise_years": 0.0, "max_years_no_prop": 1.5,
-                "science": {"imaging": 1.2, "thermal": 1.1, "climate": 0.9},
+                "science": {"imaging": 1.2, "thermal": 1.1, "climate": 0.9, "composition": 1.0, "topography": 1.2, "fields": 1.1},
                 "learn": ("Close to Earth: sharp images and cheap launch, but thin atmosphere drags "
                           "you down. Without thrusters the orbit decays in about a year or two.")},
         "sso": {"name": "Sun-synchronous (700 km)", "lv_target": "sso", "dv_insert": 0, "dv_per_year": 10,
                 "eclipse_h": 0.6, "eclipse_frac": 0.35, "coverage": 1.0, "earth_view": 1.0,
                 "cruise_years": 0.0, "max_years_no_prop": 25,
-                "science": {"imaging": 1.1, "thermal": 1.2, "climate": 1.0},
+                "science": {"imaging": 1.1, "thermal": 1.2, "climate": 1.0, "composition": 1.1, "topography": 1.1, "fields": 1.0},
                 "learn": ("Polar orbit that passes over each place at the same local time every day. "
                           "Same lighting = easy to compare images. The classic Earth-observation choice.")},
         "geo": {"name": "Geostationary (35,786 km)", "lv_target": "gto", "dv_insert": 1500, "dv_per_year": 50,
                 "eclipse_h": 1.2, "eclipse_frac": 0.01, "coverage": 0.4, "earth_view": 1.0,
                 "cruise_years": 0.0, "max_years_no_prop": 1,
-                "science": {"imaging": 0.5, "thermal": 0.8, "climate": 1.3},
+                "science": {"imaging": 0.5, "thermal": 0.8, "climate": 1.3, "composition": 0.7, "topography": 0.5, "fields": 1.2},
                 "learn": ("Hovers over one spot, so you watch continuously (great for weather) but "
                           "you are 90x farther away than LEO: images are much coarser.")},
     },
@@ -614,19 +734,19 @@ ORBITS = {
         "survey": {"name": "Survey station (7 km, hovering)", "lv_target": "asteroid", "dv_insert": 600, "dv_return": 350,
                    "dv_per_year": 40, "eclipse_h": 0.0, "eclipse_frac": 0.0, "coverage": 0.9, "earth_view": 0.8,
                    "cruise_years": 2.0, "max_years_no_prop": 0.2,
-                   "science": {"composition": 1.0, "topography": 0.9, "water": 1.0, "imaging": 0.9},
+                   "science": {"composition": 1.0, "topography": 0.9, "water": 1.0, "imaging": 0.9, "fields": 1.0},
                    "learn": ("Gravity is too weak to orbit far away, so you fly alongside the asteroid and keep "
                              "nudging back. Never in shadow, but you need thrusters the whole time.")},
         "orbit": {"name": "Terminator orbit (1 km)", "lv_target": "asteroid", "dv_insert": 620, "dv_return": 380,
                   "dv_per_year": 15, "eclipse_h": 0.0, "eclipse_frac": 0.0, "coverage": 1.0, "earth_view": 0.8,
                   "cruise_years": 2.2, "max_years_no_prop": 0.5,
-                  "science": {"composition": 1.3, "topography": 1.4, "water": 1.3, "imaging": 1.3},
+                  "science": {"composition": 1.3, "topography": 1.4, "water": 1.3, "imaging": 1.3, "fields": 1.3},
                   "learn": ("OSIRIS-REx's record: the tiniest orbit ever, riding the line between day and night "
                             "so sunlight pressure doesn't push you away. Sharp data, delicate flying.")},
         "flyby": {"name": "Single fast flyby", "lv_target": "asteroid", "dv_insert": 50,
                   "dv_per_year": 0, "eclipse_h": 0.0, "eclipse_frac": 0.0, "coverage": 0.4, "earth_view": 1.0,
                   "cruise_years": 1.5, "max_years_no_prop": 99, "duty_mult": 0.05,
-                  "science": {"composition": 0.6, "topography": 0.5, "water": 0.6, "imaging": 0.8},
+                  "science": {"composition": 0.6, "topography": 0.5, "water": 0.6, "imaging": 0.8, "fields": 0.5},
                   "learn": ("Cheap and simple: rush past at 5 km/s and take what you can in a few hours. "
                             "Almost no fuel, but very little data.")},
     },

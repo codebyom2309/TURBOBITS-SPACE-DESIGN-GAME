@@ -147,11 +147,13 @@ class Handler(SimpleHTTPRequestHandler):
 
         try:
             if u.path == "/api/health":
+                if not db.is_available():
+                    return self._json({"status": "ok", "tidb": None, "mode": "in-memory"})
                 try:
                     res = db.fetch_one("SELECT VERSION() as v, DATABASE() as db")
-                    return self._json({"status": "ok", "tidb": res})
+                    return self._json({"status": "ok", "tidb": res, "mode": "tidb"})
                 except Exception as ex:
-                    return self._json({"status": "error", "error": str(ex)}, 500)
+                    return self._json({"status": "ok", "tidb": None, "mode": "in-memory", "warning": str(ex)})
 
             if u.path == "/api/catalog":
                 return self._json(catalog())

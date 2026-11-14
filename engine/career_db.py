@@ -10,8 +10,15 @@ from . import db
 logger = logging.getLogger(__name__)
 
 
+_MEM_CAREERS: dict[str, dict[str, Any]] = {}
+
+
 def get_career(user_id: int | None = None, player_name: str | None = None) -> dict[str, Any] | None:
     """Retrieve career state for a user or player."""
+    if not db.is_available():
+        key = f"u:{user_id}" if user_id else (f"p:{player_name}" if player_name and player_name != "anonymous" else None)
+        return _MEM_CAREERS.get(key) if key else None
+
     try:
         row = None
         if user_id:
@@ -43,6 +50,13 @@ def save_career(
     player_name: str = "anonymous",
 ) -> bool:
     """Save or update career state in TiDB."""
+    if not db.is_available():
+        key = f"u:{user_id}" if user_id else (f"p:{player_name}" if player_name and player_name != "anonymous" else None)
+        if not key:
+            return False
+        _MEM_CAREERS[key] = dict(career_data)
+        return True
+
     try:
         agency_name = str(career_data.get("name", "My Agency"))[:100]
         difficulty = str(career_data.get("difficulty", "normal"))[:20]

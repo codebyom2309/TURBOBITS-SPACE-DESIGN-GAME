@@ -15,6 +15,8 @@ logger = logging.getLogger(__name__)
 
 # In-memory session token store (token -> {user_id, username, display_name, expires_at})
 _SESSIONS: dict[str, dict[str, Any]] = {}
+_MEM_USERS: dict[str, dict[str, Any]] = {}
+_MEM_NEXT_ID = 1
 SESSION_TTL_SECONDS = 30 * 24 * 3600  # 30 days
 
 
@@ -38,6 +40,7 @@ def _verify_password(password: str, stored_hash: str) -> bool:
 
 
 def register(username: str, password: str, display_name: str = "") -> dict[str, Any]:
+    global _MEM_NEXT_ID
     username = username.strip().lower()
     if not username or len(username) < 3 or len(username) > 30:
         return {"error": "Username must be between 3 and 30 characters"}
@@ -46,6 +49,15 @@ def register(username: str, password: str, display_name: str = "") -> dict[str, 
 
     pw_hash = _hash_password(password)
     disp = (display_name or username).strip()[:50]
+
+    if not db.is_available():
+        if username in _MEM_USERS:
+            return {"error": "Username already taken"}
+        user_id = _MEM_NEXT_ID
+        _MEM_NEXT_ID += 1
+        _MEM_USERS[username] = {"id": user_id, "username": username, "display_name": disp, "password_hash": pw_hash}
+        token = create_session(user_id, username, disp)
+        return {"ok": True, "token": token, "user": {"id": user_id, "username": username, "display_name": disp}}
 
     try:
         user_id = db.execute_commit(
@@ -65,6 +77,17 @@ def register(username: str, password: str, display_name: str = "") -> dict[str, 
 
 def login(username: str, password: str) -> dict[str, Any]:
     username = username.strip().lower()
+    if not db.is_available():
+        row = _MEM_USERS.get(username)
+        if not row or not _verify_password(password, row["password_hash"]):
+            return {"error": "Invalid username or password"}
+        token = create_session(row["id"], row["username"], row["display_name"])
+        return {
+            "ok": True,
+            "token": token,
+            "user": {"id": row["id"], "username": row["username"], "display_name": row["display_name"]},
+        }
+
     try:
         row = db.fetch_one("SELECT id, username, display_name, password_hash FROM users WHERE username = %s", (username,))
         if not row or not _verify_password(password, row["password_hash"]):
