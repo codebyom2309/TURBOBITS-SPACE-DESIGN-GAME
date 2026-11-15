@@ -397,8 +397,8 @@ function toast(msg, ms = 2600) {
 }
 function show(id) {
   $$(".screen").forEach((s) => s.classList.toggle("active", s.id === id));
-  const isCosmo = ["title", "story", "prologue", "select", "hq", "hall"].includes(id);
-  const isWarmPage = ["select", "hq", "hall"].includes(id);
+  const isCosmo = ["title", "story", "prologue", "select", "hq", "hall", "team"].includes(id);
+  const isWarmPage = ["select", "hq", "hall", "story", "team", "prologue"].includes(id);
   document.documentElement.classList.toggle("title-mode", isCosmo);
   document.documentElement.classList.toggle("warm-page-mode", isWarmPage);
   fit();
@@ -420,7 +420,7 @@ function fit() {
   S.scale = s; st.style.transform = `scale(${s}) translate(-50%,-50%)`; st.style.transformOrigin = "0 0";
 }
 const isMobile = () => document.documentElement.classList.contains("mobile");
-const canEdit = (field) => S.mode !== "team" || S.myRoles.includes(S.cat.FIELD_OWNER[field]);
+const canEdit = (field) => S.mode !== "team" || (S.roomMeta && S.roomMeta.collab_mode === "open_coop") || S.myRoles.includes(S.cat.FIELD_OWNER[field]);
 const scen = () => S.cat.SCENARIOS[S.design.scenario];
 const destKey = () => scen().destination;
 // orbit may be unchosen (null): fall back to the destination's first orbit for display only
@@ -476,6 +476,14 @@ async function boot() {
   }
   if (location.hash === "#selftest") { const sc = document.createElement("script"); sc.src = "/selftest.js"; document.body.appendChild(sc); }
   const [k, v] = location.hash.slice(1).split("=");
+  if (k === "team" && v) {
+    openLobby();
+    const rc = $("#roomCode");
+    if (rc) {
+      rc.value = String(v).trim().toUpperCase().slice(0, 4);
+      if ($("#previewRoomBtn")) $("#previewRoomBtn").click();
+    }
+  }
   if (k === "career") { S.mode = "career"; if (v === "all") store.set("career", Object.fromEntries(ORDER.slice(0, 5).map((o) => [o, { grade: "B", score: 600 }]))); openSelect(); }
   if (k === "tutorial") { go("tutorial"); for (let n = 0; n < Number(v || 0); n++) tutAdvance(); }
   if (v && S.cat.SCENARIOS[v.split(":")[0]]) {
@@ -509,7 +517,7 @@ function go(where) {
   if (where === "career") return openHQ();
   if (where === "free") { S.mode = where; return openSelect(); }
   if (where === "tutorial") { S.mode = "career"; startMission("wildfire", null, { tutorial: true }); S.design.difficulty = "easy"; renderAll(); evaluateSoon(0); return; }
-  if (where === "team") { if (!S.player) return nameFirst(); return openLobby(); }
+  if (where === "team") return openLobby();
   if (where === "hall") return openHall();
 }
 function nameFirst() {
@@ -716,6 +724,7 @@ async function setField(field, value) {
 function renderAll() {
   syncEngineerIntroState();
   renderTop(); renderRequest(); renderTabs(); renderBinder(); drawBlueprint(); renderClient();
+  if (typeof renderTeamDeskPanel === "function") renderTeamDeskPanel();
   if (S.ev) renderEval();
 }
 
@@ -727,13 +736,16 @@ function renderEval() {
   else if (S._prevMet != null && met > S._prevMet) SFX.ding();
   S._prevOk = S.ev.ok; S._prevMet = met;
   renderTop(); renderRequest(); renderReview(); renderClient(); renderBinder(); drawBlueprint(); renderApprovals();
+  if (typeof renderTeamDeskPanel === "function") renderTeamDeskPanel();
 }
 
 function renderTop() {
   const i = ORDER.indexOf(S.design.scenario);
+  const tMeta = S.roomMeta || {};
   $("#tbDay").innerHTML = S.mode === "career" && agency() ? `${icon("calendar")} ${monthName(agency().month).toUpperCase()} &middot; AGENCY ${fmt(agency().funds)} M$` :
-    S.mode === "team" ? `${icon("person")} TEAM` : `${icon("calendar")} FREE DESIGN`;
-  $("#tbRoom").innerHTML = S.mode === "team" ? ` &middot; ROOM <span class="code">${S.room}</span> &middot; ${Object.keys(S.players).length} engineer(s)` : "";
+    S.mode === "story" ? `${icon("star")} PROJECT GENESIS` :
+    S.mode === "team" ? `${icon("person")} ${esc(tMeta.callsign || "TEAM")}` : `${icon("calendar")} FREE DESIGN`;
+  $("#tbRoom").innerHTML = S.mode === "team" ? ` &middot; ROOM <span class="code">${S.room}</span> &middot; ${Object.keys(S.players || {}).length} engineer(s)` : "";
   $("#tbScenario").textContent = `${scen().name.toUpperCase()} · ${S.cat.DIFFICULTY[S.design.difficulty].name.toUpperCase()}${S.design.sandbox ? " · SANDBOX" : ""}`;
   if (S.ev) $("#tbBudget").innerHTML = `${icon("coin")} ${fmt(S.ev.cost.total)} / ${fmt(S.ev.cost.budget)} M$`;
 }
@@ -1155,7 +1167,8 @@ function cardBad(field, k, o) {
 function renderBinder() {
   const tab = tabs().find((t) => t.id === S.tab) || tabs().find((t) => t.id === "orbit") || tabs()[0];
   S.tab = tab.id;
-  const locked = S.mode === "team" && !S.myRoles.includes(tab.role);
+  const isOpenCoop = S.mode === "team" && S.roomMeta && S.roomMeta.collab_mode === "open_coop";
+  const locked = S.mode === "team" && !isOpenCoop && !S.myRoles.includes(tab.role);
   const goalTags = new Set(scen().goals.map((g) => g.tag));
   const role = S.cat.ROLES[tab.role];
   if (tab.id === "manifest") {
@@ -2688,6 +2701,7 @@ function showNews(res) {
       ${career.unlocked.length ? `<br>New contracts available: ${esc(career.unlocked.join(", "))}` : ""}`;
     $("#paper").appendChild(box);
   }
+  if (typeof renderGenesisDebrief === "function") renderGenesisDebrief(res);
 }
 
 // Spinning-newspaper intro, then the grade stamp slams down and the score counts up.
@@ -2755,67 +2769,703 @@ async function openHall(sc) {
   $$("#hallList [data-i]").forEach((b) => b.onclick = () => { S.mode = "free"; startMission(sc, rows[b.dataset.i].design); });
 }
 
-// ---------------------------------------------------------------------------- team room
+// ---------------------------------------------------------------------------- Cooperative Team Room & Shared Engineering Workspace
+const TEAM_EMBLEMS = {
+  horizon: {
+    name: "Horizon Sunburst",
+    draw(r) {
+      r(0, 0, 24, 24, "#172a46");
+      r(2, 16, 20, 6, "#2c5d9e");
+      r(7, 10, 10, 6, "#f2c14e");
+      r(9, 8, 6, 2, "#fff3c4");
+      r(11, 3, 2, 4, "#e86a3c");
+      r(5, 6, 2, 2, "#e86a3c"); r(17, 6, 2, 2, "#e86a3c");
+    }
+  },
+  sentinel: {
+    name: "Earth Sentinel",
+    draw(r) {
+      r(0, 0, 24, 24, "#1a3329");
+      r(6, 6, 12, 12, "#2f6db5");
+      r(8, 8, 5, 6, "#529e52"); r(13, 11, 4, 5, "#529e52");
+      r(2, 11, 4, 2, "#f2c14e"); r(18, 11, 4, 2, "#f2c14e");
+    }
+  },
+  cislunar: {
+    name: "Shackleton Wing",
+    draw(r) {
+      r(0, 0, 24, 24, "#242838");
+      r(6, 5, 12, 12, "#c8d0dc");
+      r(8, 8, 3, 3, "#7a8496"); r(13, 11, 4, 3, "#7a8496");
+      r(4, 18, 16, 3, "#6fe0ec");
+    }
+  },
+  ares: {
+    name: "Ares Spearhead",
+    draw(r) {
+      r(0, 0, 24, 24, "#381c18");
+      r(5, 5, 14, 14, "#c95b3c");
+      r(11, 3, 2, 18, "#f4efe2");
+      r(8, 9, 8, 2, "#f2c14e");
+    }
+  },
+  voyager: {
+    name: "Deep Space Dish",
+    draw(r) {
+      r(0, 0, 24, 24, "#152238");
+      r(5, 12, 14, 4, "#9ec4ef");
+      r(7, 16, 10, 4, "#355a8a");
+      r(11, 5, 2, 7, "#f2c14e");
+      r(9, 4, 6, 2, "#e85338");
+    }
+  },
+  europa: {
+    name: "Europa 1.42 GHz",
+    draw(r) {
+      r(0, 0, 24, 24, "#102436");
+      r(6, 6, 12, 12, "#dce6f2");
+      r(7, 11, 10, 2, "#58b7c9");
+      r(11, 7, 2, 10, "#58b7c9");
+      r(3, 3, 18, 2, "#f2c14e");
+    }
+  }
+};
+
+const ENGINEER_AVATARS = {
+  cmd: { label: "Flight Director", look: { skin: "#8d5a3b", skinD: "#6b4229", hair: "#1f1a17", hairStyle: "short", coat: "#2c3b55", shirt: "#f4efe2", tie: "#a8322a", badge: true } },
+  sys: { label: "Systems Lead", look: { skin: "#d9a57c", skinD: "#b07f5a", hair: "#3b281c", hairStyle: "bun", coat: "#4b5a3a", shirt: "#e9e3d6", glasses: true } },
+  sci: { label: "Principal Scientist", look: { skin: "#e3c19c", skinD: "#b8957a", hair: "#16141a", hairStyle: "long", coat: "#e8e4dc", shirt: "#3d6fa8", glasses: true, badge: true } },
+  ops: { label: "Comms & Ops Specialist", look: { skin: "#c99a74", skinD: "#9e7454", hair: "#2b2018", hairStyle: "curly", coat: "#4a3d31", shirt: "#ece4d4", beard: true } }
+};
+
+const ROLE_DETAILS = {
+  manager: {
+    badge: "STATION 01 · MISSION COMMAND",
+    subsystems: "Launch Window · Launch Vehicle · Partner Agencies · Mission Duration · Multi-Flight Manifest",
+    duties: "Manages total mission budget, launch vehicle capacity margin, schedule risk, and international partner contributions."
+  },
+  systems: {
+    badge: "STATION 02 · SPACECRAFT SYSTEMS",
+    subsystems: "Spacecraft Bus · Solar Arrays · RTG Nuclear Power · Batteries · Propulsion · EDL / Crew Cabin",
+    duties: "Balances dry/wet mass, delta-v propellant equations, solar/eclipse power budgets, and landing or crew safety systems."
+  },
+  science: {
+    badge: "STATION 03 · SCIENCE & TRAJECTORY",
+    subsystems: "Orbital Trajectory / Landing Site · Scientific Payload Instruments",
+    duties: "Selects target orbit or surface site and matches scientific instruments to achieve 100% of required and optional science goals."
+  },
+  comms: {
+    badge: "STATION 04 · COMMS, ADCS & AVIONICS",
+    subsystems: "Attitude Control (ADCS) · High/Low-Gain Antennas · Ground Station Network · Flight Computer",
+    duties: "Ensures pointing precision, daily data downlink throughput (≥80%), recorder storage, and radiation tolerance."
+  }
+};
+
+function getEmblemDataUrl(key) {
+  const def = TEAM_EMBLEMS[key] || TEAM_EMBLEMS.horizon;
+  return sprite(24, 24, def.draw);
+}
+
+function getAvatarDataUrl(key, mood = "neutral") {
+  const def = ENGINEER_AVATARS[key] || ENGINEER_AVATARS.cmd;
+  return portrait(def.look, mood);
+}
+
+function populateTeamMissionSelects() {
+  const stages = window.CAREER_STAGES || [];
+  const optionsHtml = stages.length
+    ? stages.map((st) => `
+        <optgroup label="STAGE ${esc(st.num + " · " + st.name)}">
+          ${st.missions.map((m) => {
+            const sc = S.cat && S.cat.SCENARIOS ? S.cat.SCENARIOS[m.id] : null;
+            return sc ? `<option value="${m.id}">M${m.num} · ${esc(sc.name)} (${esc(S.cat.DESTINATIONS[sc.destination].name)} · ${fmt(sc.budget)} M$)</option>` : "";
+          }).join("")}
+        </optgroup>
+      `).join("")
+    : ORDER.map((k) => `<option value="${k}">${esc(S.cat.SCENARIOS[k].name)}</option>`).join("");
+
+  if ($("#teamMissionSelect") && !$("#teamMissionSelect").innerHTML) {
+    $("#teamMissionSelect").innerHTML = optionsHtml;
+  }
+  if ($("#lobbyMissionSwitch") && !$("#lobbyMissionSwitch").innerHTML) {
+    $("#lobbyMissionSwitch").innerHTML = optionsHtml;
+  }
+}
+
+function resolveTeamPlayerName() {
+  const inp = $("#teamPlayerInput");
+  const typed = inp ? inp.value.trim() : "";
+  if (typed) {
+    S.player = typed;
+    if (!S.noSave) store.set("player", S.player);
+  } else if (!S.player) {
+    S.player = "Engineer";
+    if (!S.noSave) store.set("player", S.player);
+  }
+  if (typeof refreshStatusBar === "function") refreshStatusBar();
+  return S.player;
+}
+
+function resetTeamPreview() {
+  const pCard = $("#teamPreviewCard");
+  if (!pCard) return;
+  pCard.innerHTML = `<div class="cq-preview-empty">Enter a 4-letter room code above to preview the team identity, active mission, and open engineering roles before joining.</div>`;
+}
+
 function wireLobby() {
+  S.teamEmblem = store.get("teamEmblem", "horizon");
+  S.teamAvatar = store.get("teamAvatar", "cmd");
+
+  // Render Emblem Picker
+  const embBox = $("#teamEmblemPicker");
+  if (embBox) {
+    const drawEmblems = () => {
+      embBox.innerHTML = Object.entries(TEAM_EMBLEMS).map(([k, e]) => `
+        <button type="button" class="cq-emblem-opt ${S.teamEmblem === k ? "on" : ""}" data-emb="${k}" title="${esc(e.name)}">
+          <img class="px" src="${getEmblemDataUrl(k)}" alt="${esc(e.name)}">
+          <span>${esc(e.name.split(" ")[0])}</span>
+        </button>
+      `).join("");
+      embBox.querySelectorAll("[data-emb]").forEach((b) => {
+        b.onclick = () => {
+          SFX.click();
+          S.teamEmblem = b.dataset.emb;
+          store.set("teamEmblem", S.teamEmblem);
+          drawEmblems();
+        };
+      });
+    };
+    drawEmblems();
+  }
+
+  // Render Engineer Avatar Picker
+  const avBox = $("#teamAvatarPicker");
+  if (avBox) {
+    const drawAvatars = () => {
+      avBox.innerHTML = Object.entries(ENGINEER_AVATARS).map(([k, a]) => `
+        <button type="button" class="cq-avatar-opt ${S.teamAvatar === k ? "on" : ""}" data-av="${k}" title="${esc(a.label)}">
+          <img class="px" src="${getAvatarDataUrl(k)}" alt="${esc(a.label)}">
+          <span>${esc(a.label)}</span>
+        </button>
+      `).join("");
+      avBox.querySelectorAll("[data-av]").forEach((b) => {
+        b.onclick = () => {
+          SFX.click();
+          S.teamAvatar = b.dataset.av;
+          store.set("teamAvatar", S.teamAvatar);
+          drawAvatars();
+        };
+      });
+    };
+    drawAvatars();
+  }
+
+  populateTeamMissionSelects();
+
+  if ($("#teamBackBtn")) {
+    $("#teamBackBtn").onclick = () => {
+      stopPoll();
+      SFX.page();
+      go("title");
+    };
+  }
+
+  // Create Room
   $("#createRoom").onclick = async () => {
-    try { applyLobby(await api("room/create", { player: S.player, scenario: "wildfire" })); } catch (e) { $("#lobbyErr").textContent = e.message; }
+    $("#lobbyErr").textContent = "";
+    const player = resolveTeamPlayerName();
+    const sc = ($("#teamMissionSelect") && $("#teamMissionSelect").value) || "wildfire";
+    const team_name = ($("#teamNameInput") && $("#teamNameInput").value.trim()) || "Horizon Engineering Unit";
+    const callsign = ($("#teamCallsignInput") && $("#teamCallsignInput").value.trim().toUpperCase()) || "HC-ALPHA";
+    const description = ($("#teamDescInput") && $("#teamDescInput").value.trim()) || "Cooperative spacecraft design & mission simulation unit.";
+    const collab_mode = ($("#teamCollabSelect") && $("#teamCollabSelect").value) || "role_strict";
+    try {
+      const view = await api("room/create", {
+        player,
+        scenario: sc,
+        team_name,
+        callsign,
+        description,
+        emblem: S.teamEmblem || "horizon",
+        collab_mode,
+        avatar: S.teamAvatar || "cmd"
+      });
+      store.set("lastTeamRoom", view.code);
+      applyLobby(view);
+      startPoll();
+    } catch (e) {
+      $("#lobbyErr").textContent = e.message;
+    }
   };
+
+  // Preview / Inspect Room before joining
+  if ($("#previewRoomBtn")) {
+    $("#previewRoomBtn").onclick = async () => {
+      $("#lobbyErr").textContent = "";
+      const code = ($("#roomCode").value || "").trim().toUpperCase();
+      if (!code || code.length < 4) {
+        resetTeamPreview();
+        $("#lobbyErr").textContent = "Enter a valid 4-letter Room Code to inspect.";
+        return;
+      }
+      try {
+        const v = await api(`room/${code}?since=0`);
+        const pCard = $("#teamPreviewCard");
+        if (!pCard) return;
+        const meta = v.meta || {};
+        const scObj = S.cat.SCENARIOS[v.design.scenario] || S.cat.SCENARIOS.wildfire;
+        const destName = S.cat.DESTINATIONS[scObj.destination].name;
+        const takenRoles = new Set(Object.values(v.players || {}).flat());
+        const openRoles = Object.entries(S.cat.ROLES)
+          .filter(([rk]) => !takenRoles.has(rk))
+          .map(([, r]) => r.name);
+        const modeLabel = meta.collab_mode === "open_coop" ? "Cross-Role Assist" : "Strict 4-Role";
+        pCard.innerHTML = `
+          <div class="cq-tp-head">
+            <div class="cq-tp-id">
+              <img class="px" src="${getEmblemDataUrl(meta.emblem || "horizon")}" alt="" width="30" height="30">
+              <div>
+                <b>${esc(meta.team_name || "Team Room")} [${esc(meta.callsign || v.code)}]</b>
+                <small>${esc(modeLabel)} · Host: ${esc(meta.host || "Lead")} · ${Object.keys(v.players || {}).length}/4 Engineers</small>
+              </div>
+            </div>
+            <button type="button" class="btn small cq-btn-amber" id="confirmJoinPreviewBtn">JOIN TEAM &gt;</button>
+          </div>
+          <div class="cq-tp-meta"><b>Mission:</b> ${esc(scObj.name)} (${esc(destName)} · ${fmt(scObj.budget)} M$)</div>
+          <div class="cq-tp-roles">${openRoles.length ? `Open Stations: ${openRoles.join(" · ")}` : "All 4 stations staffed (join to coordinate or assist)"}</div>
+        `;
+        const confirmBtn = $("#confirmJoinPreviewBtn");
+        if (confirmBtn) confirmBtn.onclick = () => $("#joinRoom").click();
+      } catch (e) {
+        resetTeamPreview();
+        $("#lobbyErr").textContent = `Room "${code}" not found. Check the 4-letter code and try again.`;
+      }
+    };
+  }
+
+  // Join Room
   $("#joinRoom").onclick = async () => {
-    const code = $("#roomCode").value.trim().toUpperCase();
-    try { applyLobby(await api(`room/${code}/join`, { player: S.player, roles: [] })); } catch (e) { $("#lobbyErr").textContent = e.message; }
+    $("#lobbyErr").textContent = "";
+    const code = ($("#roomCode").value || "").trim().toUpperCase();
+    if (!code) {
+      $("#lobbyErr").textContent = "Please enter a 4-letter room code.";
+      return;
+    }
+    const player = resolveTeamPlayerName();
+    try {
+      const view = await api(`room/${code}/join`, {
+        player,
+        roles: S.myRoles && S.room === code ? S.myRoles : [],
+        avatar: S.teamAvatar || "cmd"
+      });
+      store.set("lastTeamRoom", view.code);
+      resetTeamPreview();
+      applyLobby(view);
+      startPoll();
+    } catch (e) {
+      $("#lobbyErr").textContent = e.message;
+    }
   };
+
+  // Copy Code & Share Link
+  if ($("#copyCodeBtn")) {
+    $("#copyCodeBtn").onclick = async () => {
+      if (!S.room) return;
+      try {
+        await navigator.clipboard.writeText(S.room);
+        toast(`Room code ${S.room} copied to clipboard.`);
+      } catch {
+        toast(`Room Code: ${S.room}`);
+      }
+    };
+  }
+  if ($("#copyLinkBtn")) {
+    $("#copyLinkBtn").onclick = async () => {
+      if (!S.room) return;
+      const url = `${location.origin}${location.pathname}#team=${S.room}`;
+      try {
+        await navigator.clipboard.writeText(url);
+        toast("Shareable invite link copied to clipboard.");
+      } catch {
+        toast(`Invite Link: ${url}`);
+      }
+    };
+  }
+
+  // Leave Room / Return to Setup
+  if ($("#leaveRoomBtn")) {
+    $("#leaveRoomBtn").onclick = () => {
+      stopPoll();
+      S.room = null;
+      S.myRoles = [];
+      store.set("lastTeamRoom", "");
+      if ($("#teamDeskPanel")) $("#teamDeskPanel").classList.add("hidden");
+      openLobby();
+    };
+  }
+
+  // Toggle Ready Status
+  if ($("#teamReadyBtn")) {
+    $("#teamReadyBtn").onclick = async () => {
+      if (!S.room) return;
+      const myInfo = (S.roster && S.roster[S.player]) || {};
+      try {
+        applyLobby(await api(`room/${S.room}/ready`, { player: S.player, ready: !myInfo.ready }));
+      } catch (e) {
+        $("#lobbyErr").textContent = e.message;
+      }
+    };
+  }
+
+  // Host Mission Switch inside Lobby (updates room meta scenario so host can switch even before claiming Manager)
+  if ($("#lobbyMissionSwitch")) {
+    $("#lobbyMissionSwitch").onchange = async (e) => {
+      if (!S.room) return;
+      try {
+        applyLobby(await api(`room/${S.room}/meta`, { player: S.player, scenario: e.target.value }));
+      } catch (err) {
+        $("#lobbyErr").textContent = err.message;
+      }
+    };
+  }
+
+  // Lobby Chat Send
+  const sendLobbyChat = async () => {
+    const inp = $("#teamLobbyChatInput");
+    if (!inp || !S.room) return;
+    const text = inp.value.trim();
+    if (!text) return;
+    inp.value = "";
+    try {
+      applyLobby(await api(`room/${S.room}/say`, { player: S.player || "Engineer", text }));
+    } catch (e) {
+      toast(esc(e.message));
+    }
+  };
+  if ($("#teamLobbyChatForm")) {
+    $("#teamLobbyChatForm").onsubmit = (e) => {
+      e.preventDefault();
+      sendLobbyChat();
+    };
+  }
+
+  // Desk Chat Send & Return to Lobby
+  const sendDeskChat = async () => {
+    const inp = $("#teamDeskChatInput");
+    if (!inp || !S.room) return;
+    const text = inp.value.trim();
+    if (!text) return;
+    inp.value = "";
+    try {
+      applyRoom(await api(`room/${S.room}/say`, { player: S.player || "Engineer", text }));
+    } catch (e) {
+      toast(esc(e.message));
+    }
+  };
+  if ($("#teamDeskChatForm")) {
+    $("#teamDeskChatForm").onsubmit = (e) => {
+      e.preventDefault();
+      sendDeskChat();
+    };
+  }
+  if ($("#teamDeskLobbyBtn")) {
+    $("#teamDeskLobbyBtn").onclick = () => {
+      SFX.page();
+      openLobby();
+    };
+  }
+
+  // Enter Shared Engineering Workspace
   $("#enterRoom").onclick = () => {
-    if (!S.myRoles.length) return ($("#lobbyErr").textContent = "Claim at least one role first.");
-    S.mode = "team"; S.tab = tabs().find((t) => S.myRoles.includes(t.role)).id; S.introShown = true;
-    openDesk(); startPoll();
+    if (!S.myRoles || !S.myRoles.length) return ($("#lobbyErr").textContent = "Claim at least one engineering station first.");
+    S.mode = "team";
+    const firstTab = tabs().find((t) => S.myRoles.includes(t.role)) || tabs()[0];
+    S.tab = firstTab.id;
+    S.introShown = true;
+    openDesk();
+    startPoll();
   };
 }
+
 function openLobby() {
-  show("team"); $("#lobbyErr").textContent = "";
-  $("#lobbyRoom").classList.toggle("hidden", !S.room);
-  if (S.room) renderLobby();
+  populateTeamMissionSelects();
+  show("team");
+  $("#lobbyErr").textContent = "";
+  const inRoom = Boolean(S.room);
+  if ($("#teamPlayerInput") && S.player && !$("#teamPlayerInput").value) {
+    $("#teamPlayerInput").value = S.player;
+  }
+  if ($("#teamSetupView")) $("#teamSetupView").classList.toggle("hidden", inRoom);
+  $("#lobbyRoom").classList.toggle("hidden", !inRoom);
+
+  const savedCode = store.get("lastTeamRoom", "");
+  const reconBox = $("#teamReconnectBox");
+  if (reconBox) {
+    if (!inRoom && savedCode) {
+      reconBox.classList.remove("hidden");
+      reconBox.innerHTML = `
+        <span>Previous session: Room <b>${esc(savedCode)}</b></span>
+        <button type="button" class="btn small cq-btn-amber" id="reconnectRoomBtn">RECONNECT ${esc(savedCode)} &gt;</button>
+      `;
+      const rBtn = $("#reconnectRoomBtn");
+      if (rBtn) {
+        rBtn.onclick = () => {
+          $("#roomCode").value = savedCode;
+          $("#joinRoom").click();
+        };
+      }
+    } else {
+      reconBox.classList.add("hidden");
+    }
+  }
+
+  if (inRoom) {
+    renderLobby();
+    startPoll();
+  }
 }
+
 function applyLobby(view) {
-  S.room = view.code; S.myRoles = view.players[S.player] || [];
+  const me = S.player || "";
+  S.room = view.code;
+  S.myRoles = (view.players && view.players[me]) || [];
   applyRoomState(view);
-  $("#lobbyRoom").classList.remove("hidden"); $("#lobbyErr").textContent = "";
+  if ($("#teamSetupView")) $("#teamSetupView").classList.add("hidden");
+  $("#lobbyRoom").classList.remove("hidden");
+  $("#lobbyErr").textContent = "";
   renderLobby();
 }
+
 function renderLobby() {
+  if (!S.room || !S.cat) return;
   $("#lobbyCode").textContent = S.room;
+  const meta = S.roomMeta || {};
+  const isHost = !meta.host || meta.host === S.player;
+  const rosterEntries = Object.entries(S.roster || {});
+  const readyCount = rosterEntries.filter(([, info]) => info.ready).length;
+  const assignedRolesCount = Object.keys(S.cat.ROLES).filter((rk) =>
+    Object.values(S.players || {}).some((rList) => rList.includes(rk))
+  ).length;
+
+  if ($("#lobbyEmblemImg")) $("#lobbyEmblemImg").src = getEmblemDataUrl(meta.emblem || "horizon");
+  if ($("#lobbyCallsign")) $("#lobbyCallsign").textContent = meta.callsign || S.room;
+  if ($("#lobbyHostBadge")) $("#lobbyHostBadge").textContent = `HOST: ${meta.host || S.player || "LEAD"}`;
+  if ($("#lobbyStatusBadge")) {
+    const modeTag = meta.collab_mode === "open_coop" ? "CROSS-ROLE ASSIST" : "4-ROLE STRICT";
+    $("#lobbyStatusBadge").textContent = `${modeTag} · ${readyCount}/${Math.max(1, rosterEntries.length)} READY`;
+  }
+  if ($("#lobbyTeamTitle")) $("#lobbyTeamTitle").textContent = (meta.team_name || "HORIZON ENGINEERING TEAM").toUpperCase();
+  if ($("#lobbyTeamDesc")) $("#lobbyTeamDesc").textContent = meta.description || "Up to 4 engineers collaborate on one spacecraft.";
+
+  if ($("#lobbyMissionSwitch") && S.design) {
+    $("#lobbyMissionSwitch").value = S.design.scenario;
+    $("#lobbyMissionSwitch").disabled = !isHost;
+  }
+
+  // Mission Snapshot next to Mission Switcher
+  const mMetaEl = $("#lobbyMissionMeta");
+  if (mMetaEl && S.design) {
+    const sc = S.cat.SCENARIOS[S.design.scenario] || S.cat.SCENARIOS.wildfire;
+    const dest = S.cat.DESTINATIONS[sc.destination];
+    mMetaEl.innerHTML = `${esc(dest.name)} · Budget ${fmt(sc.budget)} M$ · ${sc.min_years}+ yr · Rad ${esc(S.cat.RADIATION_LABEL[dest.radiation])}`;
+  }
+
+  // Role Coverage & Readiness Summary
+  if ($("#lobbyRoleCoverage")) $("#lobbyRoleCoverage").textContent = `${assignedRolesCount} / 4 STATIONS STAFFED`;
+  if ($("#lobbyReadinessSummary")) {
+    if (!S.myRoles || !S.myRoles.length) {
+      $("#lobbyReadinessSummary").textContent = "Step 1: Click one or more Engineering Stations above to claim authority, then enter the shared workspace.";
+    } else {
+      const myNames = S.myRoles.map((r) => S.cat.ROLES[r] ? S.cat.ROLES[r].name : r).join(", ");
+      $("#lobbyReadinessSummary").textContent = `Your Stations: ${myNames} (${assignedRolesCount}/4 staffed · ${readyCount}/${rosterEntries.length} ready). Launch requires all 4 approval stamps on desk.`;
+    }
+  }
+
+  // Ready button state
+  const myInfo = (S.roster && S.roster[S.player]) || {};
+  if ($("#teamReadyBtn")) {
+    $("#teamReadyBtn").textContent = myInfo.ready ? "STATUS: READY ✓" : "MARK READY";
+    $("#teamReadyBtn").classList.toggle("on", !!myInfo.ready);
+  }
+
+  // 4-Role Engineering Command Stations (preserving .role-card[data-r="..."] for selftest)
   const taken = {};
-  Object.entries(S.players).forEach(([p, roles]) => roles.forEach((r) => (taken[r] = p)));
+  Object.entries(S.players || {}).forEach(([p, roles]) => roles.forEach((r) => (taken[r] = p)));
   $("#roleCards").innerHTML = Object.entries(S.cat.ROLES).map(([k, r]) => {
-    const mine = S.myRoles.includes(k), by = taken[k];
-    return `<div class="role-card ${mine ? "mine" : by ? "taken" : ""}" data-r="${k}"><b>${esc(r.name)}</b>
-      ${esc(r.learn)}<br><i>${by ? `Claimed by ${esc(by)}` : "Free"}</i></div>`;
+    const mine = (S.myRoles || []).includes(k);
+    const by = taken[k];
+    const det = ROLE_DETAILS[k] || { badge: "STATION", subsystems: "", duties: r.learn };
+    const approved = S.approvals && S.approvals[k];
+    const ownerInfo = by && S.roster && S.roster[by] ? S.roster[by] : null;
+    return `
+      <div class="role-card cq-station-card ${mine ? "mine" : by ? "taken" : ""}" data-r="${k}">
+        <div class="cq-st-head">
+          <span class="cq-st-badge">${esc(det.badge)}</span>
+          <span class="cq-st-status ${mine ? "mine" : by ? "taken" : "free"}">${mine ? "YOUR STATION" : by ? `STAFFED: ${esc(by)}` : "OPEN STATION"}</span>
+        </div>
+        <div class="cq-st-title-row">
+          <b>${esc(r.name)}</b>
+          ${approved ? `<span class="cq-st-appr on">STAMPED OK</span>` : `<span class="cq-st-appr">UNSTAMPED</span>`}
+        </div>
+        <p class="cq-st-learn">${esc(r.learn)}</p>
+        <div class="cq-st-subs"><b>Owned Subsystems:</b> ${esc(det.subsystems)}</div>
+        <div class="cq-st-foot">
+          <i>${by ? `Assigned: ${esc(by)}${ownerInfo && ownerInfo.ready ? " · READY" : ""}` : "Unclaimed — Click to claim"}</i>
+          <span class="cq-st-cta">${mine ? "RELEASE" : "CLAIM ROLE"}</span>
+        </div>
+      </div>
+    `;
   }).join("");
-  $$("#roleCards .role-card").forEach((c) => c.onclick = async () => {
-    const k = c.dataset.r, roles = S.myRoles.includes(k) ? S.myRoles.filter((x) => x !== k) : [...S.myRoles, k];
-    try { applyLobby(await api(`room/${S.room}/join`, { player: S.player, roles })); } catch (e) { $("#lobbyErr").textContent = e.message; }
+
+  $$("#roleCards .role-card").forEach((c) => {
+    c.onclick = async () => {
+      const k = c.dataset.r;
+      const cur = S.myRoles || [];
+      const roles = cur.includes(k) ? cur.filter((x) => x !== k) : [...cur, k];
+      try {
+        applyLobby(await api(`room/${S.room}/join`, { player: S.player, roles, avatar: S.teamAvatar || "cmd" }));
+      } catch (e) {
+        $("#lobbyErr").textContent = e.message;
+      }
+    };
   });
+
+  // Member Roster with Host Kick Controls
+  const rosterEl = $("#teamRosterList");
+  if (rosterEl) {
+    if ($("#lobbyMemberCount")) $("#lobbyMemberCount").textContent = `${rosterEntries.length} / 4 CONNECTED`;
+    rosterEl.innerHTML = rosterEntries.map(([pName, info]) => {
+      const pRoles = info.roles || [];
+      const isP_Host = meta.host === pName;
+      const roleBadges = pRoles.length
+        ? pRoles.map((rk) => `<span class="cq-roster-rbadge">${esc(S.cat.ROLES[rk] ? S.cat.ROLES[rk].name : rk)}</span>`).join("")
+        : `<span class="cq-roster-rbadge none">No station claimed</span>`;
+
+      const hostControls = isHost && pName !== S.player
+        ? `<button type="button" class="btn tiny cq-kick-btn" data-kick-p="${esc(pName)}" title="Remove engineer from room">Remove</button>`
+        : "";
+
+      return `
+        <div class="cq-roster-row ${pName === S.player ? "me" : ""}">
+          <img class="px cq-roster-av" src="${getAvatarDataUrl(info.avatar || "cmd", info.ready ? "happy" : "neutral")}" alt="${esc(pName)}">
+          <div class="cq-roster-info">
+            <div class="cq-roster-name-line">
+              <b>${esc(pName || "Engineer")}</b>
+              ${isP_Host ? `<span class="cq-host-pill">HOST</span>` : ""}
+              <span class="cq-online-pill ${info.online !== false ? "on" : "idle"}">${info.online !== false ? "ONLINE" : "IDLE"}</span>
+              <span class="cq-ready-pill ${info.ready ? "on" : ""}">${info.ready ? "READY" : "PREPARING"}</span>
+            </div>
+            <div class="cq-roster-roles">${roleBadges}</div>
+          </div>
+          <div class="cq-roster-actions">${hostControls}</div>
+        </div>
+      `;
+    }).join("");
+
+    rosterEl.querySelectorAll("[data-kick-p]").forEach((btn) => {
+      btn.onclick = async () => {
+        const target = btn.dataset.kickP;
+        try {
+          applyLobby(await api(`room/${S.room}/kick`, { player: S.player, target }));
+        } catch (e) {
+          $("#lobbyErr").textContent = e.message;
+        }
+      };
+    });
+  }
+
+  // Lobby Chat & Activity Log
+  const chatBox = $("#teamLobbyChat");
+  if (chatBox) {
+    const msgs = S.roomChat || [];
+    chatBox.innerHTML = msgs.length
+      ? msgs.slice(-30).map((m) => `
+          <div class="cq-chat-msg ${!m.msg ? "sys" : m.who === S.player ? "mine" : ""}">
+            <b>${esc(m.who)}:</b>
+            <span>${esc(m.text)}</span>
+          </div>
+        `).join("")
+      : `<div class="cq-chat-empty">Room established. Claim engineering stations and coordinate design here.</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
 }
+
+function renderTeamDeskPanel() {
+  const panel = $("#teamDeskPanel");
+  if (!panel) return;
+  if (S.mode !== "team" || !S.room) {
+    panel.classList.add("hidden");
+    return;
+  }
+  panel.classList.remove("hidden");
+  const meta = S.roomMeta || {};
+  const approvedCount = Object.values(S.approvals || {}).filter(Boolean).length;
+  if ($("#teamDeskTitle")) {
+    $("#teamDeskTitle").textContent = `${meta.callsign || S.room} · ${Object.keys(S.players || {}).length} ENG · ${approvedCount}/4 STAMPS`;
+  }
+  const roleBar = $("#teamDeskRoleBar");
+  if (roleBar && S.cat) {
+    const owners = {};
+    Object.entries(S.players || {}).forEach(([p, rList]) => rList.forEach((r) => (owners[r] = p)));
+    roleBar.innerHTML = Object.entries(S.cat.ROLES).map(([rk, r]) => {
+      const mine = (S.myRoles || []).includes(rk);
+      const ok = !!(S.approvals && S.approvals[rk]);
+      const short = r.name.split(" ")[0].slice(0, 4).toUpperCase();
+      return `<span class="cq-td-rpill ${mine ? "mine" : ""} ${ok ? "ok" : ""}" title="${esc(r.name)} (${owners[rk] || "Unassigned"})">${short}${ok ? " ✓" : ""}</span>`;
+    }).join("");
+  }
+  const logEl = $("#teamDeskChat");
+  if (logEl) {
+    const msgs = S.roomChat || [];
+    logEl.innerHTML = msgs.slice(-20).map((m) => `
+      <div class="cq-chat-msg ${!m.msg ? "sys" : m.who === S.player ? "mine" : ""}">
+        <b>${esc(m.who)}:</b>
+        <span>${esc(m.text)}</span>
+      </div>
+    `).join("");
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+}
+window.renderTeamDeskPanel = renderTeamDeskPanel;
+
 function applyRoomState(v) {
-  S.version = v.version; S.design = v.design; S.ev = v.evaluation; S.approvals = v.approvals; S.players = v.players;
-  S.myRoles = v.players[S.player] || S.myRoles;
+  S.version = v.version;
+  S.design = v.design;
+  S.ev = v.evaluation;
+  S.approvals = v.approvals;
+  S.players = v.players || {};
+  S.roster = v.roster || {};
+  S.roomMeta = v.meta || {};
+  S.roomChat = v.chat || [];
+  S.myRoles = (v.players && v.players[S.player]) || S.myRoles || [];
 }
+
 function applyRoom(v) {
-  if (v.version < S.version) return; // a slow poll answered after a newer change: ignore it
-  _evalSeq++; clearTimeout(_evalTimer); // drop any pending solo evaluation
+  if (v.version < S.version) return;
+  _evalSeq++;
+  clearTimeout(_evalTimer);
   const prevScenario = S.design && S.design.scenario;
   applyRoomState(v);
   if (prevScenario !== S.design.scenario) renderClient._k = null;
   if ($("#desk").classList.contains("active")) renderAll();
   if ($("#team").classList.contains("active")) renderLobby();
-  if (v.last_run && v.last_run.seed !== S.lastRunSeen) { S.lastRunSeen = v.last_run.seed; playLaunch(v.last_run); }
+  if (v.last_run && v.last_run.seed !== S.lastRunSeen) {
+    S.lastRunSeen = v.last_run.seed;
+    playLaunch(v.last_run);
+  }
 }
+
 function startPoll() {
   stopPoll();
   S.poll = setInterval(async () => {
+    if (!S.room) return;
     try {
-      const v = await api(`room/${S.room}?since=${S.version}`);
+      const v = await api(`room/${S.room}?since=${S.version || 0}&player=${encodeURIComponent(S.player || "")}`);
       if (!v.unchanged) applyRoom(v);
-    } catch (e) { toast(esc(e.message)); stopPoll(); }
+    } catch (e) {
+      toast(esc(e.message));
+      stopPoll();
+    }
   }, 1500);
 }
 function stopPoll() { if (S.poll) clearInterval(S.poll); S.poll = null; }

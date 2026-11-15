@@ -106,26 +106,70 @@ def login(username: str, password: str) -> dict[str, Any]:
 
 def create_session(user_id: int, username: str, display_name: str) -> str:
     token = secrets.token_urlsafe(32)
-    _SESSIONS[token] = {
+    expires_at = int(time.time() + SESSION_TTL_SECONDS)
+    sess = {
         "user_id": user_id,
         "username": username,
         "display_name": display_name,
-        "expires_at": time.time() + SESSION_TTL_SECONDS,
+        "expires_at": expires_at,
     }
+    _SESSIONS[token] = sess
+    if db.is_available():
+        try:
+            db.execute_commit(
+                """INSERT INTO user_sessions (token, user_id, username, display_name, expires_at)
+                   VALUES (%s, %s, %s, %s, %s)""",
+                (token, int(user_id), username[:30], display_name[:50], expires_at),
+            )
+        except Exception as e:
+            logger.debug("Session DB persist skipped: %s", e)
     return token
 
 
 def get_session(token: str | None) -> dict[str, Any] | None:
-    if not token or token not in _SESSIONS:
+    if not token:
         return None
-    session = _SESSIONS[token]
-    if time.time() > session["expires_at"]:
-        _SESSIONS.pop(token, None)
-        return None
-    return session
+    now = time.time()
+    session = _SESSIONS.get(token)
+    if session:
+        if now > session["expires_at"]:
+            _SESSIONS.pop(token, None)
+            logout(token)
+            return None
+        return session
+
+    if db.is_available():
+        try:
+            row = db.fetch_one(
+                "SELECT user_id, username, display_name, expires_at FROM user_sessions WHERE token = %s",
+                (token,),
+            )
+            if not row:
+                return None
+            if now > float(row["expires_at"]):
+                logout(token)
+                return None
+            session = {
+                "user_id": row["user_id"],
+                "username": row["username"],
+                "display_name": row["display_name"],
+                "expires_at": float(row["expires_at"]),
+            }
+            _SESSIONS[token] = session
+            return session
+        except Exception as e:
+            logger.debug("Session DB lookup failed: %s", e)
+    return None
 
 
 def logout(token: str | None) -> None:
-    if token:
-        _SESSIONS.pop(token, None)
+    if not token:
+        return
+    _SESSIONS.pop(token, None)
+    if db.is_available():
+        try:
+            db.execute_commit("DELETE FROM user_sessions WHERE token = %s", (token,))
+        except Exception as e:
+            logger.debug("Session DB delete skipped: %s", e)
+
 

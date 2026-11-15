@@ -1,83 +1,237 @@
-// COSMO QUEST: Main menu environment, pixel-art banners, Story Campaign (Project Genesis),
-// Prologue Film (The Last Signal), top bar modals, and live status bar.
+// COSMO QUEST: Main menu environment, pixel-art banners, Story Campaign (Project Genesis: The Last Signal),
+// 78-second Animated Prologue Film, Stage Cinematic Cutscenes, Narrative Mission Debriefing, top bar modals, and live status bar.
 "use strict";
 
 (() => {
   const reducedMotion = () => window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // -------------------------------------------------------------------------- Story Campaign Data
-  const STORY_CHAPTERS = [
-    {
-      id: "ch1",
-      num: "CHAPTER 01",
-      title: "SILENT ORBIT",
-      scenario: "wildfire",
-      location: "Low Earth Orbit · Relay Calibration",
-      speaker: "Dr. Elena Vance · Deep Space Network",
+  // -------------------------------------------------------------------------- Project Genesis Narrative Metadata (Stages & Key Characters)
+  const GENESIS_STAGE_LORE = {
+    stage1: {
+      lead: "Chief Dana Okafor · Horizon Earth Observation Directorate",
+      look: { skin: "#8d5a3b", skinD: "#6b4229", hair: "#1e1a17", hairStyle: "short", coat: "#3a4b3c", shirt: "#dfd3b8", badge: true },
+      pillar: "EARTHSENTINEL GRID",
+      pillarShort: "Earth Grid",
+      unlockFacility: "Global Thermal & Cyclone Sentinel Constellation",
+      introTitle: "STAGE 01 · PROTECTING EARTH FROM ORBIT",
+      introLines: [
+        "Late 2026. Megafires, intensifying cyclones, and marine heatwaves are straining terrestrial monitoring networks across five continents.",
+        "Before the Horizon Coalition can turn its instruments toward the 1.42 GHz anomaly at Jupiter, we must stabilize our homeworld's observation grid.",
+        "Your assignment: deploy thermal wildfire sentries, geostationary storm trackers, and polar ocean altimeters to close Earth's blind spots."
+      ],
+      completionEvent: "EarthSentinel Grid operational. Continuous planetary telemetry locked. Orbital Operations cleared for deployment.",
+      nextStageHook: "With Earth's monitoring network online, the Coalition authorizes Stage 02: permanent crewed and robotic orbital infrastructure."
+    },
+    stage2: {
+      lead: "Dr. Elena Vance · Deep Space Network & Orbital Relay Lead",
       look: { skin: "#d9a57c", skinD: "#b07f5a", hair: "#2b2018", hairStyle: "bun", coat: "#2c3b55", shirt: "#e9e3d6", glasses: true, badge: true },
-      brief: [
-        "In late 2026, Deep Space Network dishes picked up a faint 1.42 GHz carrier wave repeating every 72 minutes from the direction of Jupiter.",
-        "Before we can isolate the deep-space signal, Earth's orbital relay and thermal-imaging fleet must be recalibrated. Launch a lean Earth observer to validate our telemetry chain."
+      pillar: "ORBITAL RELAY & STATION",
+      pillarShort: "Orbital Hub",
+      unlockFacility: "Low-Earth Logistics & Optical Relay Ring",
+      introTitle: "STAGE 02 · BUILDING ORBITAL INFRASTRUCTURE",
+      introLines: [
+        "Ground dishes alone lose lock on the 1.42 GHz carrier whenever Jupiter dips behind Earth's horizon or solar interference spikes.",
+        "We need a permanent foothold in Low Earth Orbit: logistics resupply, reusable crew transport, debris mitigation, and high-bandwidth optical relays.",
+        "Assemble the orbital backbone that every lunar and interplanetary mission will depend upon."
       ],
-      objective: "Design and fly an Earth-orbit thermal & optical observer with reliable daily downlink."
+      completionEvent: "Orbital Outpost and Relay Constellation commissioned. Uninterrupted 24-hour cislunar tracking established.",
+      nextStageHook: "Orbital staging is ready. The Horizon Council authorizes Stage 03: returning to the Lunar South Pole."
     },
-    {
-      id: "ch2",
-      num: "CHAPTER 02",
-      title: "LUNAR SHADOW",
-      scenario: "lunar_ice",
-      location: "Lunar South Pole · Relay Staging",
-      speaker: "Dr. Mei Tanaka · Lunar Resources Office",
+    stage3: {
+      lead: "Dr. Mei Tanaka · Lunar Resources & Cislunar Operations",
       look: { skin: "#e3c19c", skinD: "#b8957a", hair: "#16141a", hairStyle: "bun", coat: "#e8e4dc", shirt: "#3d6fa8", glasses: true },
-      brief: [
-        "Spectral analysis links the carrier harmonics to frozen water-ice signatures—and we need propellant staging on the Moon before any outer-system push.",
-        "Survey the permanently shadowed polar craters for water ice and establish a high-latitude lunar relay node."
+      pillar: "CISLUNAR & SHACKLETON BASE",
+      pillarShort: "Lunar Base",
+      unlockFacility: "Shackleton Polar Ice Depot & Far-Side Radio Array",
+      introTitle: "STAGE 03 · RETURNING TO THE MOON",
+      introLines: [
+        "Harmonic analysis of The Last Signal reveals dispersion signatures matching deep subsurface water-ice resonance.",
+        "To test our ice-sounding instruments—and to harvest propellant outside Earth's gravity well—we must establish a permanent base at the Lunar South Pole.",
+        "Map the shadowed craters, land in rough polar terrain, rove across Shackleton Rim, and sustain a crewed lunar surface habitat."
       ],
-      objective: "Map polar lunar ice reserves in darkness and prove deep-cislunar communications."
+      completionEvent: "Shackleton Polar Base active. Lunar water-ice extraction and far-side radio shielding verified.",
+      nextStageHook: "Cislunar operations proven. Stage 04 opens the deep-space corridor through the Near-Earth and Main Asteroid Belt."
     },
-    {
-      id: "ch3",
-      num: "CHAPTER 03",
-      title: "ECHO THROUGH THE DUST",
-      scenario: "mars_climate",
-      location: "Mars Orbit · Deep-Space Relay",
-      speaker: "Dr. Luis Herrera · Planetary Climate Lab",
+    stage4: {
+      lead: "Dr. Vikram Rao · Planetary Defence & Deep-Space Navigation",
+      look: { skin: "#9a6848", skinD: "#744c33", hair: "#1f1b18", hairStyle: "short", coat: "#4a3d31", shirt: "#ece4d4", beard: true, badge: true },
+      pillar: "DEEP-SPACE & BELT CORRIDOR",
+      pillarShort: "Belt Corridor",
+      unlockFacility: "Solar-Electric Propulsion & Sample Curation Vault",
+      introTitle: "STAGE 04 · ASTEROIDS & PLANETARY DEFENCE",
+      introLines: [
+        "Beyond the Moon, spacecraft face multi-year solar cruises, microgravity proximity operations, and inverse-square signal attenuation.",
+        "We must survey carbonaceous rubble-pile asteroids, return pristine regolith samples to Earth, and validate kinetic planetary defence.",
+        "Master high-Isp ion propulsion and autonomous optical navigation across millions of kilometres."
+      ],
+      completionEvent: "Deep-space navigation corridor and asteroid resource catalog complete. High-efficiency propulsion qualified for outer planets.",
+      nextStageHook: "With interplanetary cruise mastery achieved, the Horizon Coalition greenlights Stage 05: the Mars Campaign."
+    },
+    stage5: {
+      lead: "Dr. Luis Herrera · Mars Exploration & Relay Directorate",
       look: { skin: "#c99a74", skinD: "#9e7454", hair: "#3b2a1e", hairStyle: "curly", coat: "#4b5a3a", shirt: "#e0d8c6", beard: true },
-      brief: [
-        "Earth's solar conjunctions keep interrupting our listening window. A high-gain relay orbiter at Mars will bridge the gap while profiling Martian storms.",
-        "Prove our solar arrays, batteries, and Ka-band comms can survive weak sunlight and 2.5 AU signal loss."
+      pillar: "MARS RELAY & EXPEDITION",
+      pillarShort: "Mars Network",
+      unlockFacility: "Areostationary Ka-Band Relay & Jezero Surface Camp",
+      introTitle: "STAGE 05 · ESTABLISHING MARS OPERATIONS",
+      introLines: [
+        "Whenever Earth passes behind the Sun relative to Jupiter, our listening window goes dark. A high-gain relay network at Mars bridges that conjunction gap.",
+        "At the same time, Mars is humanity's proving ground for atmospheric entry, powered sky-crane landings, astrobiology rovers, and multi-window crewed expeditions.",
+        "Build the Martian infrastructure that anchors the inner and outer solar system."
       ],
-      objective: "Deliver a long-duration Mars orbiter capable of autonomous storm tracking and deep-space relay."
+      completionEvent: "Mars Relay Network and Crewed Surface Expedition operational. Outer-system conjunction blind spot eliminated.",
+      nextStageHook: "All five inner pillars stand ready. Stage 06 awaits: cross the asteroid belt and investigate The Last Signal at Europa."
     },
-    {
-      id: "ch4",
-      num: "CHAPTER 04",
-      title: "EYES BEYOND THE BELT",
-      scenario: "exoplanet_hunter",
-      location: "Sun-Earth L2 · Infrared Observatory",
-      speaker: "Dr. Aisha Bello · Exoplanet Science Institute",
-      look: { skin: "#7a4e34", skinD: "#5a3826", hair: "#1a1716", hairStyle: "bun", coat: "#3d3550", shirt: "#e9e3d6", glasses: true },
-      brief: [
-        "The carrier isn't random noise—its modulation points toward a sub-surface resonance matching Europa's icy shell, yet carries an interstellar signature.",
-        "Station a precision infrared observatory at L2 to pinpoint the exact source coordinates in the Jovian system."
-      ],
-      objective: "Operate a cold, ultra-steady L2 infrared telescope without thermal or pointing drift."
-    },
-    {
-      id: "ch5",
-      num: "CHAPTER 05",
-      title: "THE LAST SIGNAL",
-      scenario: "europa",
-      location: "Europa Orbit · Project Genesis Finale",
-      speaker: "Dr. Ingrid Solberg · Outer Planets Program",
+    stage6: {
+      lead: "Dr. Ingrid Solberg · Outer Planets & Project Genesis Flagship",
       look: { skin: "#efd2bd", skinD: "#c9a891", hair: "#d8c27a", hairStyle: "long", coat: "#2c3b55", shirt: "#e9e3d6", glasses: true, badge: true },
-      brief: [
-        "Everything we built leads here. At Jupiter, sunlight is 27 times weaker and radiation fries ordinary flight computers in weeks.",
-        "Fly the Project Genesis flagship to Europa, survive Jupiter's radiation belts, sound the ice shell, and decode The Last Signal."
+      pillar: "OUTER SYSTEM & EUROPA ARRAY",
+      pillarShort: "Europa Array",
+      unlockFacility: "Jovian Radiation Vault & Sub-Ice Acoustic Decoder",
+      introTitle: "STAGE 06 · THE OUTER SOLAR SYSTEM & THE LAST SIGNAL",
+      introLines: [
+        "Everything the Horizon Coalition has built—Earth observation, orbital staging, lunar propellant, deep-space ion drives, and Mars relays—converges here.",
+        "Station a precision infrared telescope at L2, brave Venus's crushing clouds, fly an RTG rotorcraft on Titan, and send our radiation-hardened flagship into Jupiter's belt.",
+        "Orbit Europa, sound its 20-kilometre ice crust, and resolve the scientific mystery of the 1.42 GHz carrier."
       ],
-      objective: "Survive Jovian radiation and confirm the origin of the signal beneath Europa's ice."
+      completionEvent: "PROJECT GENESIS COMPLETE: Europa ice-penetrating radar confirms a natural hydrothermal piezo-electromagnetic resonator above a vast saline ocean—humanity's greatest scientific discovery.",
+      nextStageHook: "The Last Signal has been decoded. Humanity now possesses an interplanetary scientific infrastructure spanning from Earth to Jupiter."
     }
-  ];
+  };
+
+  function getStageLore(stId) {
+    const norm = stId && /^s(\d)$/.test(stId) ? `stage${stId.slice(1)}` : stId;
+    return GENESIS_STAGE_LORE[norm] || GENESIS_STAGE_LORE.stage1;
+  }
+
+  // Specific narrative story context per mission so every single one of the 25 missions advances the plot
+  const MISSION_STORY_ARC = {
+    wildfire: {
+      why: "First live test of the Horizon telemetry chain: detect forest ignitions from sun-synchronous orbit before smoke plumes blind ground stations.",
+      discovery: "Orbital thermal calibration reveals upper-atmosphere ionospheric ripples interfering with deep-space reception.",
+      infra: "EarthSentinel Node 01 (Thermal Fire Watch)"
+    },
+    storm_watch: {
+      why: "Anchor a geostationary weather sentinel 35,786 km above the equator to track rapid cyclone intensification and protect coastal launch pads.",
+      discovery: "Continuous microwave sounding isolates clean Ka-band atmospheric windows for deep-space downlink.",
+      infra: "EarthSentinel Node 02 (Geostationary Weather Eye)"
+    },
+    ocean_biosphere: {
+      why: "Complete Stage 01 by mapping global ocean colour, chlorophyll shifts, and polar sea ice across warming basins.",
+      discovery: "Global ocean carbon and sea-ice models lock in planetary baselines for the Horizon Climate Archive.",
+      infra: "EarthSentinel Node 03 (Ocean Biosphere Monitor)"
+    },
+    gnss_constellation: {
+      why: "Establish nanosecond orbital timing and continuous geostationary relay so global stations never lose outer-system lock.",
+      discovery: "Synchronized crosslinks eliminate regional ground-station handoff blind spots.",
+      infra: "Horizon Geostationary Timing & Relay Ring"
+    },
+    space_debris: {
+      why: "Survey crowded orbital corridors with active radar to clear safe launch lanes for crewed Horizon infrastructure.",
+      discovery: "Autonomous radar tracking isolates centimeter-scale debris hazards before heavy-lift flights.",
+      infra: "LEO Debris Surveillance Shield"
+    },
+    iss_resupply: {
+      why: "Keep the Low-Earth orbital laboratory supplied and crewed for 24 months while Project Genesis hardware is tested in microgravity.",
+      discovery: "Zero-G fluid transfer trials validate long-duration propellant storage.",
+      infra: "LEO Logistics & Resupply Corridor"
+    },
+    crew_transport: {
+      why: "Design a reusable, crew-rated spacecraft meeting the strict 1-in-270 safety threshold for regular orbital crew transfers.",
+      discovery: "Reusable thermal protection systems cut crew rotation costs by 42%.",
+      infra: "Horizon Crew Transport Fleet"
+    },
+    orbital_outpost: {
+      why: "Assemble the Horizon Orbital Outpost module by module to serve as our permanent staging port above Earth.",
+      discovery: "Closed-loop life support and high-voltage solar trusses pass 30-month endurance verification.",
+      infra: "Horizon Orbital Outpost (LEO Hub)"
+    },
+    lunar_ice: {
+      why: "Scan permanently shadowed craters at the Lunar South Pole with neutron and radar instruments to locate water-ice reserves.",
+      discovery: "High-purity water ice (6.4% by mass) confirmed on the floor of Shackleton and Faustini craters.",
+      infra: "Lunar Polar Ice Atlas"
+    },
+    landing_scout: {
+      why: "Photomap boulder fields and slope hazards to sub-metre resolution so crewed and robotic landers touch down safely.",
+      discovery: "Three sunlit ridge landing zones identified within 800 metres of shadowed ice traps.",
+      infra: "Shackleton Precision Hazard Map"
+    },
+    lunar_relay: {
+      why: "Place a long-endurance polar communications and laser-topography satellite in lunar orbit to link Shackleton Base to Earth.",
+      discovery: "Continuous south-pole line-of-sight relay removes cislunar blackout windows.",
+      infra: "Cislunar Polar Relay Satellite"
+    },
+    lunar_lander: {
+      why: "Touch down on the Lunar South Pole on throttleable rocket engines and drill directly into cryogenic regolith.",
+      discovery: "Isotopic analysis of lunar ice matches ancient cometary volatiles—and mirrors the harmonic spacing in the 1.42 GHz signal.",
+      infra: "Shackleton Surface Drill Station"
+    },
+    lunar_base: {
+      why: "Construct and supply the crewed Shackleton Surface Habitat across five cislunar launch windows.",
+      discovery: "In-situ water electrolysis produces the first lunar-derived liquid oxygen and hydrogen.",
+      infra: "Shackleton Crewed Lunar Base"
+    },
+    asteroid_prospector: {
+      why: "Rendezvous with a carbonaceous near-Earth asteroid to test low-gravity proximity flight and map hydrated minerals.",
+      discovery: "Rubble-pile interior structure mapped via radio-science gravity tomography.",
+      infra: "Near-Earth Asteroid Survey Node"
+    },
+    kinetic_impactor: {
+      why: "Validate autonomous high-speed terminal guidance and measure momentum transfer on a hazardous near-Earth binary asteroid.",
+      discovery: "Orbital period altered by 33 minutes—confirming humanity's planetary defence capability.",
+      infra: "Kinetic Deflection & Tracking Shield"
+    },
+    asteroid_sample: {
+      why: "Touch an asteroid surface, collect pristine pre-solar grains, and fly a reentry capsule back to Earth.",
+      discovery: "Returned amino-acid precursors confirm prebiotic chemistry across the proto-planetary disk.",
+      infra: "Curated Extraterrestrial Sample Vault"
+    },
+    metallic_psyche: {
+      why: "Push past 2.5 AU on high-Isp ion thrusters to survey a battered iron-nickel core where sunlight drops below 16%.",
+      discovery: "Metallic core magnetometry and deep-space ion navigation qualified for outer-system transit.",
+      infra: "Main-Belt Deep Space Navigation Beacon"
+    },
+    mars_climate: {
+      why: "Establish our first Martian orbital weather and Ka-band relay station to bridge solar conjunction blackouts.",
+      discovery: "Global dust-storm vertical profiles allow predictive compensation for Ka-band atmospheric attenuation.",
+      infra: "Mars Orbital Weather & Relay Node"
+    },
+    mars_areosat: {
+      why: "Map buried Martian water-ice glaciers with ice-penetrating radar and strengthen surface relay bandwidth.",
+      discovery: "Subsurface radar reveals continuous mid-latitude glacial ice reservoirs.",
+      infra: "Areostationary Ice & Relay Grid"
+    },
+    mars_rover: {
+      why: "Deliver a heavy astrobiology rover to Jezero Crater via sky crane and drill ancient lakebed mudstones.",
+      discovery: "Organic carbon rings and iron-phosphate nodules preserved in 3.7-billion-year-old lacustrine strata.",
+      infra: "Jezero Astrobiology Surface Lab"
+    },
+    mars_base: {
+      why: "Execute a multi-window crewed Mars surface program—pre-deploying habitats and supplies before astronauts land.",
+      discovery: "500-sol human surface stay completed with zero life-support contingencies.",
+      infra: "Horizon Mars Base Alpha"
+    },
+    venus_clouds: {
+      why: "Peer through Venus's sulfuric-acid clouds with synthetic aperture radar to understand runaway greenhouse tipping points.",
+      discovery: "Active volcanic heat flux measured across Venusian coronae, refining Earth climate resilience models.",
+      infra: "Inner-Planet Comparative Climate Archive"
+    },
+    exoplanet_hunter: {
+      why: "Station an ultra-stable infrared observatory at Sun-Earth L2 to lock onto the exact Jovian coordinates of The Last Signal.",
+      discovery: "Infrared spectroscopy pinpoints the 1.42 GHz emission to a thermal fracture zone in Europa's southern hemisphere.",
+      infra: "L2 Deep-Space Infrared Observatory"
+    },
+    europa: {
+      why: "Survive Jupiter's lethal radiation belts, map Europa's fractured ice shell, and isolate the 1.42 GHz carrier source.",
+      discovery: "Beneath 18 km of ice, tidal flexing across a hydrothermal vent generates a natural 72-minute 1.42 GHz electromagnetic resonance.",
+      infra: "Europa Sub-Ice Observatory (The Last Signal Decoded)"
+    },
+    titan_orbiter: {
+      why: "PROJECT GENESIS GRAND FINALE: Sample cryovolcanic plumes and map subsurface ocean chemistry across outer-system icy moons.",
+      discovery: "FINAL DISCOVERY: Complex prebiotic organics in icy ocean plumes confirm habitable niches throughout the outer Solar System.",
+      infra: "Outer-System Cryovolcanic Plume Network"
+    }
+  };
 
   // -------------------------------------------------------------------------- Custom Pixel Art Icons
   const CQ_ICONS = {
@@ -102,13 +256,11 @@
       r(6, 6, 3, 1, "#f3ebd8"); r(7, 7, 2, 5, "#f3ebd8"); r(6, 12, 4, 1, "#f3ebd8");
     },
     crew: (r) => {
-      // Three pixel astronauts/engineers
       r(7, 2, 2, 2, "#f3ebd8"); r(6, 4, 4, 1, "#f3ebd8"); r(5, 6, 6, 6, "#d9e6f7");
       r(3, 4, 2, 2, "#9ec4ef"); r(2, 7, 3, 5, "#6b8fb8");
       r(11, 4, 2, 2, "#9ec4ef"); r(11, 7, 3, 5, "#6b8fb8");
     },
     teamhub: (r) => {
-      // Pixel mission complex + launch tower
       r(1, 13, 14, 2, "#354c73");
       r(2, 7, 5, 6, "#e0a342"); r(3, 9, 1, 2, "#fff1c2"); r(5, 9, 1, 2, "#fff1c2");
       r(8, 5, 6, 8, "#d9cfc1"); r(10, 7, 2, 2, "#354c73"); r(10, 10, 2, 3, "#e0a342");
@@ -148,91 +300,158 @@
     });
   }
 
-  // -------------------------------------------------------------------------- Full-Bleed Animated Space + Earth Horizon Background
+  // -------------------------------------------------------------------------- Full-Bleed Animated Space + Earth Horizon Background (Main Menu Only)
   function cosmoBgScene(canvas) {
     if (!canvas) return () => {};
     const g = canvas.getContext("2d");
     const ptr = { x: 0, y: 0, tx: 0, ty: 0 };
+    const VH = 360;
+    let VW = 640;
 
     function resizeCanvas() {
       const rect = canvas.getBoundingClientRect();
       const cw = Math.max(320, rect.width || window.innerWidth);
       const ch = Math.max(200, rect.height || window.innerHeight);
-      const H = 220;
-      const W = Math.max(130, Math.min(520, Math.round(H * (cw / ch))));
-      if (canvas.width !== W || canvas.height !== H) {
-        canvas.width = W;
-        canvas.height = H;
+      const targetW = Math.max(220, Math.min(860, Math.round(VH * (cw / ch))));
+      if (canvas.width !== targetW || canvas.height !== VH) {
+        canvas.width = targetW;
+        canvas.height = VH;
       }
+      VW = targetW;
       g.imageSmoothingEnabled = false;
     }
     resizeCanvas();
 
     const rnd = _rng(2026);
     const starsList = [];
-    for (let i = 0; i < 190; i++) {
+    for (let i = 0; i < 210; i++) {
       starsList.push({
         nx: rnd(),
         ny: rnd() * 0.78,
-        layer: i < 100 ? 0 : i < 160 ? 1 : 2,
-        phase: rnd() * 40,
-        cross: i > 176,
+        layer: i < 110 ? 0 : i < 175 ? 1 : 2,
+        phase: rnd() * Math.PI * 2,
+        speedScale: 0.7 + rnd() * 0.6,
+        cross: i > 192,
+        sz: i < 130 ? 1 : i < 190 ? 1.5 : 2,
         col: i % 9 === 0 ? "#f7d794" : i % 4 === 0 ? "#a9ccf5" : "#eef4ff"
       });
     }
 
-    // Pre-render crisp planets
+    // Crisp detailed small-pixel Moon (60x60) with multi-tone shading, craters & dithered terminator
     const moonCanvas = document.createElement("canvas");
-    moonCanvas.width = 36; moonCanvas.height = 36;
+    moonCanvas.width = 60; moonCanvas.height = 60;
     {
+      const S = 60, R = 26, CX = 30, CY = 30;
       const mg = moonCanvas.getContext("2d");
-      for (let y = 0; y < 36; y++) for (let x = 0; x < 36; x++) {
-        const dx = x - 17.5, dy = y - 17.5, d = Math.hypot(dx, dy);
-        if (d > 15.5) continue;
-        const lit = (-dx * 0.65 - dy * 0.45) / 15.5;
-        let col = lit > 0.35 ? "#c5cdd9" : lit > -0.1 ? "#8a95a8" : lit > -0.45 ? "#545e73" : "#252d40";
-        const crater = ((x - 12) ** 2 + (y - 13) ** 2 < 10) || ((x - 21) ** 2 + (y - 19) ** 2 < 6) || ((x - 15) ** 2 + (y - 24) ** 2 < 5);
-        if (crater && lit > -0.35) col = lit > 0.2 ? "#94a0b3" : "#444d61";
-        mg.fillStyle = col; mg.fillRect(x, y, 1, 1);
+      const craters = [[20, 21, 5], [36, 31, 4], [25, 40, 3.5], [38, 19, 2.5], [16, 32, 2.5]];
+      for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+        const dx = x + 0.5 - CX, dy = y + 0.5 - CY, dist = Math.hypot(dx, dy);
+        if (dist > R) continue;
+        const lit = (-dx * 0.65 - dy * 0.45) / R;
+        const dither = ((x + y) & 1) * 0.08 - 0.04;
+        const lv = lit + dither;
+        let col = lv > 0.44 ? "#dce4f0" : lv > 0.14 ? "#b4bfd1" : lv > -0.14 ? "#8591a6" : lv > -0.44 ? "#525c73" : "#252d40";
+        for (const [cx, cy, cr] of craters) {
+          const cd = Math.hypot(x - cx, y - cy);
+          if (cd < cr) {
+            if (cd > cr - 1.1 && lit > -0.25) col = "#dce4f0";
+            else col = lit > 0.15 ? "#8b97ab" : "#3f485c";
+          }
+        }
+        if (R - dist < 1.2 && lit > 0.1) col = "#eef4ff";
+        mg.fillStyle = col;
+        mg.fillRect(x, y, 1, 1);
       }
     }
 
+    // Crisp detailed small-pixel Jupiter (138x138) with swirled bands, Great Red Spot & dithered terminator
     const jupiterCanvas = document.createElement("canvas");
-    jupiterCanvas.width = 84; jupiterCanvas.height = 84;
+    jupiterCanvas.width = 138; jupiterCanvas.height = 138;
     {
+      const S = 138, R = 65, CX = 69, CY = 69;
       const jg = jupiterCanvas.getContext("2d");
-      for (let y = 0; y < 84; y++) for (let x = 0; x < 84; x++) {
-        const dx = x - 41.5, dy = y - 41.5, d = Math.hypot(dx, dy);
-        if (d > 39.5) continue;
-        const band = Math.sin((y + Math.sin(x * 0.14) * 1.4) * 0.48);
-        let col = band > 0.45 ? "#e8cfb2" : band > 0 ? "#cf986b" : band > -0.55 ? "#b06e46" : "#874d33";
-        const shade = (-dx * 0.72 - dy * 0.35) / 39.5;
-        if (shade < -0.42) col = "#2a2230";
-        else if (shade < -0.12) col = _darken(col, 0.48);
-        else if (d > 37 && shade > 0) col = "#f2dec4";
-        jg.fillStyle = col; jg.fillRect(x, y, 1, 1);
+      for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+        const dx = x + 0.5 - CX, dy = y + 0.5 - CY, dist = Math.hypot(dx, dy);
+        if (dist > R) continue;
+        const swirl = Math.sin(x * 0.09 + y * 0.04) * 2.2 + Math.cos(x * 0.18 - y * 0.08) * 1.0;
+        const band = Math.sin((y + swirl) * 0.29);
+        let col = band > 0.55 ? "#f2dec4" : band > 0.2 ? "#e0b889" : band > -0.15 ? "#cc8f5e" : band > -0.55 ? "#b06e46" : "#874d33";
+        const grs = ((x - 84) / 11) ** 2 + ((y - 84) / 6.5) ** 2;
+        if (grs < 1) col = grs < 0.4 ? "#df6a3d" : "#c7542e";
+        const shade = (-dx * 0.72 - dy * 0.35) / R;
+        const dither = ((x + y) & 1) * 0.07 - 0.035;
+        if (shade + dither < -0.40) col = "#241e2c";
+        else if (shade + dither < -0.10) col = _darken(col, 0.5);
+        else if (dist > R - 2 && shade > 0.08) col = "#f5e6d0";
+        jg.fillStyle = col;
+        jg.fillRect(x, y, 1, 1);
+      }
+    }
+
+    // Pre-baked crisp detailed small-pixel Earth continents & cloud deck tiles (512x120)
+    const TW = 512, TH = 120;
+    const landTile = document.createElement("canvas");
+    landTile.width = TW; landTile.height = TH;
+    const cloudTile = document.createElement("canvas");
+    cloudTile.width = TW; cloudTile.height = TH;
+    {
+      const lg = landTile.getContext("2d");
+      const cg = cloudTile.getContext("2d");
+      for (let y = 0; y < TH; y++) {
+        const v = y / 11;
+        for (let x = 0; x < TW; x++) {
+          const lon = (x / TW) * Math.PI * 2;
+          const lVal =
+            Math.sin(lon * 3.0 + Math.sin(v * 0.65) * 1.8) +
+            Math.sin(lon * 1.0 + v * 0.8) +
+            Math.cos(lon * 7.0 - v * 1.9) * 0.26;
+          let lc;
+          if (lVal > 1.32) lc = "#629452";
+          else if (lVal > 1.02) lc = "#488242";
+          else if (lVal > 0.86) lc = "#39703a";
+          else if (lVal > 0.72) lc = "#367bc2";
+          else if (lVal > 0.25) lc = "#22559c";
+          else lc = "#1a4280";
+          lg.fillStyle = lc;
+          lg.fillRect(x, y, 1, 1);
+
+          const cVal =
+            Math.sin(lon * 4.0 + v * 1.45) +
+            Math.sin(lon * 2.0 - v * 1.75) +
+            Math.cos(lon * 9.0 + v * 3.1) * 0.24;
+          if (cVal > 1.24) {
+            cg.fillStyle = "#edf5fc";
+            cg.fillRect(x, y, 1, 1);
+          } else if (cVal > 1.10) {
+            cg.fillStyle = "#b8cee6";
+            cg.fillRect(x, y, 1, 1);
+          }
+        }
       }
     }
 
     const meteors = [];
-    let t = 0;
+    let tSec = 0;
+    let lastTs = 0;
+    let meteorCooldown = 1.6;
 
-    function drawFrame() {
+    function drawFrame(dtSec = 0) {
       const titleEl = document.getElementById("title");
-      const storyEl = document.getElementById("story");
-      const active = (titleEl && titleEl.classList.contains("active")) || (storyEl && storyEl.classList.contains("active"));
-      if (!active || document.hidden) return;
+      const active = titleEl && titleEl.classList.contains("active");
+      if (!active || document.hidden) return false;
 
       resizeCanvas();
       const W = canvas.width, H = canvas.height;
+      const S = H / 220; // Preserves exact proportions at finer 360p pixel grid
       const anim = !reducedMotion();
       if (anim) {
-        t++;
-        ptr.x += (ptr.tx - ptr.x) * 0.08;
-        ptr.y += (ptr.ty - ptr.y) * 0.08;
+        tSec += dtSec;
+        const follow = 1 - Math.exp(-dtSec * 6.5);
+        ptr.x += (ptr.tx - ptr.x) * follow;
+        ptr.y += (ptr.ty - ptr.y) * follow;
       }
 
-      // 1. Deep Midnight Sky Gradient
+      // Stepped deep-space night sky backdrop
       const sky = g.createLinearGradient(0, 0, 0, H);
       sky.addColorStop(0, "#060d18");
       sky.addColorStop(0.55, "#0c1a30");
@@ -240,210 +459,234 @@
       g.fillStyle = sky;
       g.fillRect(0, 0, W, H);
 
-      // 2. Parallax Starfield
+      // Crisp small-pixel twinkling stars with 60fps smooth drift & gentle alpha fade
       for (const s of starsList) {
-        const speed = s.layer === 0 ? 0.015 : s.layer === 1 ? 0.04 : 0.08;
-        const pxOff = ptr.x * (s.layer + 1) * 1.4;
-        const pyOff = ptr.y * (s.layer + 1) * 1.0;
-        const sx = Math.floor((((s.nx * W - (anim ? t * speed : 0) + pxOff) % W) + W) % W);
-        const sy = Math.floor(s.ny * H + pyOff);
-        const tw = anim ? Math.sin(t * 0.08 + s.phase) : 0.5;
-        if (s.layer === 0 && tw < -0.5) continue;
+        const speed = s.layer === 0 ? 1.0 : s.layer === 1 ? 2.4 : 4.8;
+        const pxOff = ptr.x * (s.layer + 1) * 2.2;
+        const pyOff = ptr.y * (s.layer + 1) * 1.6;
+        const sx = Math.round((((s.nx * W - (anim ? tSec * speed : 0) + pxOff) % W) + W) % W);
+        const sy = Math.round(s.ny * H + pyOff);
+        const tw = anim ? (0.5 + 0.5 * Math.sin(tSec * 1.9 * s.speedScale + s.phase)) : 0.8;
+        g.globalAlpha = s.layer === 0 ? 0.3 + tw * 0.55 : s.layer === 1 ? 0.5 + tw * 0.45 : 0.7 + tw * 0.3;
         g.fillStyle = s.col;
-        if (s.cross && tw > 0.25) {
-          g.fillRect(sx, sy, 1, 1);
-          g.fillStyle = "rgba(238,244,255,0.45)";
-          g.fillRect(sx - 1, sy, 1, 1); g.fillRect(sx + 1, sy, 1, 1);
-          g.fillRect(sx, sy - 1, 1, 1); g.fillRect(sx, sy + 1, 1, 1);
-        } else {
-          g.fillRect(sx, sy, 1, 1);
+        const pxSz = s.sz > 1.3 ? 2 : 1;
+        g.fillRect(sx, sy, pxSz, pxSz);
+        if (s.cross && tw > 0.48) {
+          g.globalAlpha = 0.45 * tw;
+          g.fillRect(sx - 2, sy, 1, 1); g.fillRect(sx + 2, sy, 1, 1);
+          g.fillRect(sx, sy - 2, 1, 1); g.fillRect(sx, sy + 2, 1, 1);
         }
       }
+      g.globalAlpha = 1;
 
-      // Shooting stars
-      if (anim && rnd() < 0.012 && meteors.length < 2) {
-        meteors.push({ x: W * (0.2 + rnd() * 0.6), y: H * (0.06 + rnd() * 0.28), life: 24 });
+      // Crisp small-pixel shooting stars gliding smoothly at 60fps
+      if (anim) {
+        meteorCooldown -= dtSec;
+        if (meteorCooldown <= 0 && meteors.length < 2) {
+          meteors.push({ x: W * (0.18 + rnd() * 0.62), y: H * (0.06 + rnd() * 0.26), life: 1.0 });
+          meteorCooldown = 2.4 + rnd() * 3.4;
+        }
       }
       for (const m of meteors) {
-        for (let k = 0; k < 9; k++) {
-          g.fillStyle = `rgba(243,235,216,${((1 - k / 9) * m.life) / 24})`;
-          g.fillRect(Math.round(m.x - k * 2), Math.round(m.y - k * 0.8), 2, 1);
+        for (let k = 0; k < 12; k++) {
+          g.fillStyle = `rgba(243,235,216,${(1 - k / 12) * m.life})`;
+          g.fillRect(Math.round(m.x - k * 2.5), Math.round(m.y - k * 1.0), k < 3 ? 2 : 1, 1);
         }
-        m.x += 3.2; m.y += 1.3; m.life--;
+        if (anim) {
+          m.x += 105 * dtSec;
+          m.y += 42 * dtSec;
+          m.life -= dtSec * 0.95;
+        }
       }
       while (meteors.length && meteors[0].life <= 0) meteors.shift();
 
-      // 3. Upper-Left Cratered Moon
-      const narrow = W < 180;
-      const moonX = Math.round((narrow ? 2 : W * 0.06) + ptr.x * 2.5);
-      const moonY = Math.round(H * (narrow ? 0.12 : 0.11) + (anim ? Math.sin(t * 0.025) * 1.5 : 0) + ptr.y * 2);
+      const narrow = W < 300;
+      const moonX = (narrow ? 4 : W * 0.06) + ptr.x * 4;
+      const moonY = H * (narrow ? 0.12 : 0.11) + (anim ? Math.sin(tSec * 0.75) * 2.5 : 0) + ptr.y * 3;
       g.drawImage(moonCanvas, moonX, moonY);
 
-      // 4. Upper-Right Banded Gas Giant + Small Moon
-      const jupX = Math.round(W - (narrow ? 44 : 60) + ptr.x * 3.5);
-      const jupY = Math.round(H * (narrow ? 0.02 : 0.04) + (anim ? Math.cos(t * 0.02) * 1.5 : 0) + ptr.y * 2.5);
+      const jupX = W - (narrow ? 72 : 98) + ptr.x * 5.5;
+      const jupY = H * (narrow ? 0.02 : 0.04) + (anim ? Math.cos(tSec * 0.62) * 2.5 : 0) + ptr.y * 4;
       g.drawImage(jupiterCanvas, jupX, jupY);
-      // Small orbiting moon beside Jupiter
-      const smAng = anim ? t * 0.02 : 0.4;
-      const smX = Math.round(jupX - 8 + Math.cos(smAng) * 3);
-      const smY = Math.round(jupY + 46 + Math.sin(smAng) * 2);
-      g.fillStyle = "#9aa7b8"; g.fillRect(smX, smY, 5, 5);
-      g.fillStyle = "#cfd8e3"; g.fillRect(smX, smY, 3, 3);
-      g.fillStyle = "#4d586b"; g.fillRect(smX + 3, smY + 2, 2, 3);
 
-      // Soft dusk scrim on very narrow mobile viewports so hero typography keeps crisp contrast
+      // Orbiting pixel moonlet near Jupiter
+      const smAng = anim ? tSec * 0.55 : 0.4;
+      const smX = Math.round(jupX - 13 + Math.cos(smAng) * 5);
+      const smY = Math.round(jupY + 76 + Math.sin(smAng) * 3);
+      g.fillStyle = "#9aa7b8"; g.fillRect(smX, smY, 7, 7);
+      g.fillStyle = "#cfd8e3"; g.fillRect(smX, smY, 5, 5);
+      g.fillStyle = "#4d586b"; g.fillRect(smX + 4, smY + 3, 3, 4);
+
       if (narrow) {
-        const scrim = g.createLinearGradient(0, 42, 0, 95);
+        const scrim = g.createLinearGradient(0, 68, 0, 155);
         scrim.addColorStop(0, "rgba(6, 13, 24, 0)");
         scrim.addColorStop(0.5, "rgba(6, 13, 24, 0.55)");
         scrim.addColorStop(1, "rgba(6, 13, 24, 0)");
         g.fillStyle = scrim;
-        g.fillRect(0, 42, W, 53);
+        g.fillRect(0, 68, W, 87);
       }
 
-      // 5. Mid-Left Orbiting Satellite & Dotted Orbital Arc (visibly cruising left margin)
-      g.fillStyle = "rgba(130, 178, 235, 0.42)";
-      for (let x = 2; x < Math.max(48, W * 0.22); x += 4) {
-        const ay = Math.round(H * 0.37 - Math.sin(x * 0.04) * 5);
-        g.fillRect(x, ay, 2, 1);
+      // Dotted orbital arc + smoothly drifting pixel probe
+      g.fillStyle = "rgba(130, 178, 235, 0.44)";
+      for (let x = 4; x < Math.max(80, W * 0.22); x += 6) {
+        const ay = Math.round(H * 0.37 - Math.sin(x * 0.024) * 8);
+        g.fillRect(x, ay, 3, 1);
       }
-      const satPhase = anim ? (Math.sin(t * 0.015) * 0.5 + 0.5) : 0.48;
-      const satX = Math.round(Math.max(16, W * 0.035) + satPhase * Math.max(24, W * 0.11));
-      const satY = Math.round(H * 0.36 - Math.sin(satX * 0.04) * 5);
-      // Angled pixel solar wings + gold/cream bus
+      const satPhase = anim ? (Math.sin(tSec * 0.42) * 0.5 + 0.5) : 0.48;
+      const satX = Math.max(26, W * 0.035) + satPhase * Math.max(40, W * 0.11);
+      const satY = H * 0.36 - Math.sin(satX * 0.024) * 8;
+      g.save();
+      g.translate(satX, satY);
+      g.scale(S, S);
       g.fillStyle = "#24508f";
-      g.fillRect(satX - 11, satY - 3, 7, 4); g.fillRect(satX - 9, satY - 4, 6, 3);
-      g.fillRect(satX + 5, satY, 7, 4); g.fillRect(satX + 6, satY - 1, 6, 3);
+      g.fillRect(-11, -3, 7, 4); g.fillRect(-9, -4, 6, 3);
+      g.fillRect(5, 0, 7, 4); g.fillRect(6, -1, 6, 3);
       g.fillStyle = "#6cb0f5";
-      g.fillRect(satX - 10, satY - 3, 5, 2); g.fillRect(satX + 6, satY, 5, 2);
-      g.fillStyle = "#192d4f"; g.fillRect(satX - 4, satY - 1, 8, 2);
-      g.fillStyle = "#d8a348"; g.fillRect(satX - 3, satY - 3, 7, 6);
-      g.fillStyle = "#f3ebd8"; g.fillRect(satX - 1, satY - 2, 3, 3);
-      g.fillStyle = "#9ec4ef"; g.fillRect(satX, satY - 6, 1, 3);
-      if (!anim || t % 28 < 12) {
-        g.fillStyle = "#e84a3c"; g.fillRect(satX + 2, satY - 4, 1, 1);
-      }
+      g.fillRect(-10, -3, 5, 2); g.fillRect(6, 0, 5, 2);
+      g.fillStyle = "#192d4f"; g.fillRect(-4, -1, 8, 2);
+      g.fillStyle = "#d8a348"; g.fillRect(-3, -3, 7, 6);
+      g.fillStyle = "#f3ebd8"; g.fillRect(-1, -2, 3, 3);
+      g.fillStyle = "#9ec4ef"; g.fillRect(0, -6, 1, 3);
+      const beaconA = anim ? (0.35 + 0.65 * (0.5 + 0.5 * Math.sin(tSec * 4.2))) : 1;
+      g.fillStyle = `rgba(232, 74, 60, ${beaconA})`;
+      g.fillRect(2, -4, 1, 1);
+      g.restore();
 
-      // 6. Curved Earth Horizon across the bottom third
-      const R = Math.round(Math.max(270, W * 0.88));
+      // Crisp small-pixel Curved Earth Horizon (3-step atmosphere bands + 60fps scrolling pixel continents/clouds)
+      const R = Math.round(Math.max(440, W * 0.88));
       const ecx = Math.round(W * 0.5);
       const ecy = H + R - Math.round(H * 0.25);
-      const cloudDrift = anim ? t * 0.18 : 12;
+      const topY = Math.max(0, ecy - R);
 
-      const topY = Math.max(0, ecy - R - 5);
-      for (let y = topY; y < H; y++) {
-        const dy = y + 0.5 - ecy;
-        const maxDx = Math.sqrt(Math.max(0, (R + 4) * (R + 4) - dy * dy));
-        const xStart = Math.max(0, Math.floor(ecx - maxDx));
-        const xEnd = Math.min(W, Math.ceil(ecx + maxDx));
-        for (let x = xStart; x < xEnd; x++) {
-          const d = Math.hypot(x + 0.5 - ecx, dy);
-          if (d > R + 4) continue;
-          let col;
-          if (d > R) {
-            col = d > R + 2.8 ? "#1b386b" : d > R + 1.5 ? "#4284d6" : "#9bd0ff";
-          } else {
-            const u = (x + cloudDrift * 0.45) / 24;
-            const v = (y - topY) / 7;
-            const land = Math.sin(u * 1.2 + Math.sin(v * 0.65) * 1.8) + Math.sin(u * 0.35 + v * 0.8) > 0.92;
-            const cloud = Math.sin((x + cloudDrift) / 15 + v * 1.5) + Math.sin((x + cloudDrift) / 27 - v * 1.8) > 1.18;
-            col = cloud ? "#eaf3fc" : land ? "#488242" : "#22559c";
-            if (R - d < 3 && (x + y) % 2 === 0) col = "#86bef7";
-            const edgeFade = Math.abs(x - ecx) / (W * 0.55);
-            if (edgeFade > 0.72) col = _darken(col, 0.55);
-          }
-          g.fillStyle = col;
-          g.fillRect(x, y, 1, 1);
-        }
+      [
+        [R + 5, "#1b386b"],
+        [R + 3, "#4284d6"],
+        [R + 1, "#9bd0ff"],
+      ].forEach(([ar, acol]) => {
+        g.fillStyle = acol;
+        g.beginPath();
+        g.arc(ecx, ecy, ar, Math.PI * 1.15, Math.PI * 1.85);
+        g.lineTo(ecx, H);
+        g.closePath();
+        g.fill();
+      });
+
+      g.save();
+      g.beginPath();
+      g.arc(ecx, ecy, R, 0, Math.PI * 2);
+      g.clip();
+
+      const landShift = anim ? (tSec * 4.2) % TW : 14;
+      const cloudShift = anim ? (tSec * 9.0) % TW : 28;
+      const stripH = H - topY + 4;
+      for (let tx = -landShift; tx < W; tx += TW) {
+        g.drawImage(landTile, tx, topY, TW, stripH);
+      }
+      for (let tx = -cloudShift; tx < W; tx += TW) {
+        g.drawImage(cloudTile, tx, topY, TW, stripH);
       }
 
-      // Sunrise glint crest on Earth's limb
+      // Crisp inner sky haze + left/right dusk shading
+      g.strokeStyle = "rgba(134, 190, 247, 0.55)";
+      g.lineWidth = 3;
+      g.beginPath();
+      g.arc(ecx, ecy, R - 1.5, Math.PI * 1.15, Math.PI * 1.85);
+      g.stroke();
+
+      const duskGrad = g.createLinearGradient(0, 0, W, 0);
+      duskGrad.addColorStop(0, "rgba(8, 16, 34, 0.58)");
+      duskGrad.addColorStop(0.20, "rgba(8, 16, 34, 0)");
+      duskGrad.addColorStop(0.80, "rgba(8, 16, 34, 0)");
+      duskGrad.addColorStop(1, "rgba(8, 16, 34, 0.58)");
+      g.fillStyle = duskGrad;
+      g.fillRect(0, topY, W, stripH);
+      g.restore();
+
+      // Sunlit horizon pixel glint
       const sunX = Math.round(W * 0.52), sunY = topY + 4;
-      g.fillStyle = "rgba(255, 232, 168, 0.45)"; g.fillRect(sunX - 12, sunY, 24, 3);
-      g.fillStyle = "rgba(255, 244, 200, 0.88)"; g.fillRect(sunX - 6, sunY, 12, 2);
-      g.fillStyle = "#fffdf0"; g.fillRect(sunX - 3, sunY - 1, 6, 2);
+      g.fillStyle = "rgba(255, 232, 168, 0.45)"; g.fillRect(sunX - 18, sunY, 36, 4);
+      g.fillStyle = "rgba(255, 244, 200, 0.88)"; g.fillRect(sunX - 9, sunY, 18, 3);
+      g.fillStyle = "#fffdf0"; g.fillRect(sunX - 4, sunY - 1, 8, 3);
 
-      // 7. Foreground Space Research Facilities along horizon base
-      const baseTop = H - 28;
-      // Ground deck & railing
-      g.fillStyle = "#0a1220"; g.fillRect(0, H - 14, W, 14);
-      g.fillStyle = "#192a45"; g.fillRect(0, H - 15, W, 2);
+      // Foreground Deck, Gantry Tower, Smoothly Scanning Dish & Observatory (crisp small pixels)
+      g.save();
+      g.scale(S, S);
+      const LW = W / S, LH = 220;
+      const baseTop = LH - 28;
+      g.fillStyle = "#0a1220"; g.fillRect(0, LH - 14, LW, 14);
+      g.fillStyle = "#192a45"; g.fillRect(0, LH - 15, LW, 2);
       g.fillStyle = "#314e78";
-      for (let x = 0; x < W; x += 10) g.fillRect(x, H - 18, 1, 3);
-      g.fillRect(0, H - 18, W, 1);
+      for (let x = 0; x < LW; x += 10) g.fillRect(x, LH - 18, 1, 3);
+      g.fillRect(0, LH - 18, LW, 1);
 
-      // Left Launch Gantry Tower (with illuminated orange banner & top beacons)
-      const tx = Math.round(W * 0.025);
+      // Left launch gantry tower
+      const tx = Math.round(LW * 0.025);
       g.fillStyle = "#0e1729"; g.fillRect(tx, baseTop - 40, 18, 54);
       g.fillStyle = "#2b426b"; g.fillRect(tx - 2, baseTop - 41, 22, 3);
       g.fillStyle = "#1d2e4c";
-      for (let yy = baseTop - 36; yy < H - 16; yy += 6) {
+      for (let yy = baseTop - 36; yy < LH - 16; yy += 6) {
         g.fillRect(tx + 2, yy, 14, 1);
         g.fillRect(tx + 2, yy, 2, 5);
         g.fillRect(tx + 14, yy, 2, 5);
       }
-      // Illuminated vertical orange mission banner inside tower
       g.fillStyle = "#d96b38"; g.fillRect(tx + 10, baseTop - 25, 4, 11);
       g.fillStyle = "#ffd980"; g.fillRect(tx + 11, baseTop - 22, 2, 4);
-      // Gantry arm & base walkway
       g.fillStyle = "#2b426b"; g.fillRect(tx + 18, baseTop - 28, 12, 2);
-      g.fillStyle = "#15233b"; g.fillRect(tx + 18, H - 22, 34, 8);
-      g.fillStyle = "#f7c96a"; g.fillRect(tx + 24, H - 18, 5, 2); g.fillRect(tx + 38, H - 18, 6, 2);
-      if (!anim || t % 36 < 18) {
-        g.fillStyle = "#f09c38"; g.fillRect(tx + 4, baseTop - 44, 3, 3);
-        g.fillStyle = "#e84a3c"; g.fillRect(tx + 11, baseTop - 44, 3, 3);
-      }
+      g.fillStyle = "#15233b"; g.fillRect(tx + 18, LH - 22, 34, 8);
+      g.fillStyle = "#f7c96a"; g.fillRect(tx + 24, LH - 18, 5, 2); g.fillRect(tx + 38, LH - 18, 6, 2);
+      const towerPulse = anim ? (0.35 + 0.65 * (0.5 + 0.5 * Math.sin(tSec * 3.0))) : 1;
+      g.fillStyle = `rgba(240, 156, 56, ${towerPulse})`; g.fillRect(tx + 4, baseTop - 44, 3, 3);
+      g.fillStyle = `rgba(232, 74, 60, ${towerPulse})`; g.fillRect(tx + 11, baseTop - 44, 3, 3);
 
-      // Center-Right Tilted Deep Space Dish
-      const dx = Math.round(W * 0.66);
-      const dishShift = anim ? Math.round(Math.sin(t * 0.025)) : 0;
-      g.fillStyle = "#132038"; g.fillRect(dx - 16, H - 24, 34, 10);
-      g.fillStyle = "#f7c96a"; g.fillRect(dx - 10, H - 19, 5, 3); g.fillRect(dx + 2, H - 19, 6, 3);
-      g.fillStyle = "#1b2d4a"; g.fillRect(dx - 3, H - 29, 6, 6);
-      // Stepped angled parabolic reflector facing upper-left
+      // Smoothly tracking deep-space dish with crisp stepped pixel dish curve
+      const dx = Math.round(LW * 0.66);
+      const dishTilt = anim ? Math.sin(tSec * 0.72) * 0.14 : 0;
+      g.fillStyle = "#132038"; g.fillRect(dx - 16, LH - 24, 34, 10);
+      g.fillStyle = "#f7c96a"; g.fillRect(dx - 10, LH - 19, 5, 3); g.fillRect(dx + 2, LH - 19, 6, 3);
+      g.fillStyle = "#1b2d4a"; g.fillRect(dx - 3, LH - 29, 6, 6);
+      g.save();
+      g.translate(dx, LH - 29);
+      g.rotate(dishTilt);
       for (let i = -9; i <= 9; i++) {
-        const bx = dx + i + dishShift;
-        const by = Math.round(H - 35 - i * 0.45 + (i * i) * 0.05);
+        const bx = i;
+        const by = Math.round(-6 - i * 0.45 + (i * i) * 0.05);
         g.fillStyle = "#2d4c7a"; g.fillRect(bx, by + 1, 2, 2);
         g.fillStyle = "#8cb7eb"; g.fillRect(bx, by, 1, 1);
       }
-      // Feed horn tripod
       g.fillStyle = "#c9d9ed";
-      g.fillRect(dx - 3 + dishShift, H - 40, 1, 5);
-      g.fillRect(dx + 1 + dishShift, H - 40, 1, 4);
-      g.fillStyle = "#f3ebd8"; g.fillRect(dx - 3 + dishShift, H - 41, 3, 2);
+      g.fillRect(-3, -11, 1, 5);
+      g.fillRect(1, -11, 1, 4);
+      g.fillStyle = "#f3ebd8"; g.fillRect(-3, -12, 3, 2);
+      g.restore();
 
-      // Right Command & Research Complex + Roof Domes + 2x2 TURBOBITS Sign
-      const cx0 = Math.round(W * 0.74);
-      g.fillStyle = "#101c30"; g.fillRect(cx0, H - 36, Math.max(60, W - cx0 - 4), 22);
-      g.fillStyle = "#1d2f4d"; g.fillRect(cx0 + 18, H - 49, Math.max(36, W - cx0 - 20), 13);
-      g.fillStyle = "#2d4870"; g.fillRect(cx0, H - 37, Math.max(60, W - cx0 - 4), 1);
-      g.fillStyle = "#2d4870"; g.fillRect(cx0 + 18, H - 50, Math.max(36, W - cx0 - 20), 1);
-      // Roof observatory domes
-      g.fillStyle = "#9ec4ef"; g.fillRect(cx0 + 25, H - 52, 5, 3); g.fillRect(cx0 + 33, H - 52, 5, 3);
-      g.fillStyle = "#f3ebd8"; g.fillRect(cx0 + 26, H - 53, 3, 1); g.fillRect(cx0 + 34, H - 53, 3, 1);
-      // Warm amber hangar bay (with ribs) & control windows
-      g.fillStyle = "#d98a36"; g.fillRect(cx0 + 5, H - 26, 16, 11);
+      // Right operations complex & TurboBits badge
+      const cx0 = Math.round(LW * 0.74);
+      g.fillStyle = "#101c30"; g.fillRect(cx0, LH - 36, Math.max(60, LW - cx0 - 4), 22);
+      g.fillStyle = "#1d2f4d"; g.fillRect(cx0 + 18, LH - 49, Math.max(36, LW - cx0 - 20), 13);
+      g.fillStyle = "#2d4870"; g.fillRect(cx0, LH - 37, Math.max(60, LW - cx0 - 4), 1);
+      g.fillStyle = "#2d4870"; g.fillRect(cx0 + 18, LH - 50, Math.max(36, LW - cx0 - 20), 1);
+      g.fillStyle = "#9ec4ef"; g.fillRect(cx0 + 25, LH - 52, 5, 3); g.fillRect(cx0 + 33, LH - 52, 5, 3);
+      g.fillStyle = "#f3ebd8"; g.fillRect(cx0 + 26, LH - 53, 3, 1); g.fillRect(cx0 + 34, LH - 53, 3, 1);
+      g.fillStyle = "#d98a36"; g.fillRect(cx0 + 5, LH - 26, 16, 11);
       g.fillStyle = "#ffd980";
-      for (let ry = H - 24; ry < H - 16; ry += 2) g.fillRect(cx0 + 7, ry, 12, 1);
+      for (let ry = LH - 24; ry < LH - 16; ry += 2) g.fillRect(cx0 + 7, ry, 12, 1);
       g.fillStyle = "#f7c96a";
-      g.fillRect(cx0 + 23, H - 45, 4, 3); g.fillRect(cx0 + 30, H - 45, 4, 3); g.fillRect(cx0 + 37, H - 45, 4, 3);
-      // Facility 2x2 Turbobits Pixel Emblem
-      const lx = cx0 + 28, ly = H - 32;
-      if (lx + 10 < W) {
+      g.fillRect(cx0 + 23, LH - 45, 4, 3); g.fillRect(cx0 + 30, LH - 45, 4, 3); g.fillRect(cx0 + 37, LH - 45, 4, 3);
+      const lx = cx0 + 28, ly = LH - 32;
+      if (lx + 10 < LW) {
         g.fillStyle = "#f3ebd8"; g.fillRect(lx, ly, 4, 4);
         g.fillStyle = "#d94f3d"; g.fillRect(lx + 5, ly, 4, 4);
         g.fillStyle = "#e0a342"; g.fillRect(lx, ly + 5, 4, 4);
         g.fillStyle = "#c94032"; g.fillRect(lx + 5, ly + 5, 4, 4);
         g.fillStyle = "#9cb5d4"; g.fillRect(lx - 3, ly + 11, 15, 1);
       }
-      // Roof comms spires + blinking beacon
-      const rxSpire = Math.min(W - 8, cx0 + 48);
-      g.fillStyle = "#6c96c7"; g.fillRect(rxSpire, H - 62, 1, 14);
-      g.fillStyle = "#c94032"; g.fillRect(rxSpire, H - 58, 1, 3);
-      if (!anim || t % 30 < 14) {
-        g.fillStyle = "#e84a3c"; g.fillRect(rxSpire, H - 64, 2, 2);
-      }
+      const rxSpire = Math.min(LW - 8, cx0 + 48);
+      g.fillStyle = "#6c96c7"; g.fillRect(rxSpire, LH - 62, 1, 14);
+      g.fillStyle = "#c94032"; g.fillRect(rxSpire, LH - 58, 1, 3);
+      const spireA = anim ? (0.35 + 0.65 * (0.5 + 0.5 * Math.sin(tSec * 3.6 + 1))) : 1;
+      g.fillStyle = `rgba(232, 74, 60, ${spireA})`; g.fillRect(rxSpire, LH - 64, 2, 2);
+      g.restore();
+      return true;
     }
 
     const onMove = (e) => {
@@ -457,11 +700,23 @@
 
     clearInterval(titleScene._iv);
     clearInterval(cosmoBgScene._iv);
-    drawFrame();
-    if (!reducedMotion()) {
-      cosmoBgScene._iv = setInterval(drawFrame, 65);
+    if (cosmoBgScene._rafId) cancelAnimationFrame(cosmoBgScene._rafId);
+    drawFrame(0);
+
+    function loop(ts) {
+      if (!lastTs) lastTs = ts;
+      const dtSec = Math.min(0.1, Math.max(0, (ts - lastTs) / 1000));
+      lastTs = ts;
+      if (drawFrame(dtSec) && !reducedMotion()) {
+        cosmoBgScene._rafId = requestAnimationFrame(loop);
+      } else {
+        cosmoBgScene._rafId = 0;
+      }
     }
-    return drawFrame;
+    if (!reducedMotion()) {
+      cosmoBgScene._rafId = requestAnimationFrame(loop);
+    }
+    return () => drawFrame(0);
   }
   window.cosmoBgScene = cosmoBgScene;
 
@@ -471,18 +726,17 @@
     const g = canvas.getContext("2d");
     const W = 180, H = 64;
     canvas.width = W; canvas.height = H;
-    let t = 0;
+    let tSec = 0;
+    let lastTs = 0;
 
-    function frame() {
+    function frame(dtSec = 0) {
       const titleEl = document.getElementById("title");
-      if (!titleEl || !titleEl.classList.contains("active") || document.hidden) return;
-      t++;
-      // Sunset sky gradient bands (warm twilight horizon)
+      if (!titleEl || !titleEl.classList.contains("active") || document.hidden) return false;
+      tSec += dtSec;
       const skyCols = ["#3d4675", "#515485", "#6e618d", "#966d85", "#c27f75", "#e09b6b", "#f2bd78"];
       const bandH = Math.ceil(H / skyCols.length);
       skyCols.forEach((c, i) => { g.fillStyle = c; g.fillRect(0, i * bandH, W, bandH); });
 
-      // Billowy pixel-art sunset clouds on left and right horizons (like reference)
       const drawBillow = (bx, by, bw, bh) => {
         g.fillStyle = "#91637c"; g.fillRect(bx, by + 4, bw, bh);
         g.fillStyle = "#c78272"; g.fillRect(bx + 2, by + 2, bw - 4, bh - 2);
@@ -493,11 +747,9 @@
       drawBillow(112, 36, 42, 15);
       drawBillow(140, 26, 44, 24);
 
-      // Distant hills & launchpad deck
       g.fillStyle = "#1c1f36"; g.fillRect(0, 50, W, 14);
       g.fillStyle = "#2d3252"; g.fillRect(0, 48, W, 3);
 
-      // Left Launch Gantry Structure (dual-column lattice + service arms)
       g.fillStyle = "#161a2e"; g.fillRect(38, 12, 3, 38); g.fillRect(48, 8, 10, 42);
       g.fillStyle = "#354166";
       for (let y = 10; y < 48; y += 5) {
@@ -506,19 +758,16 @@
       }
       g.fillStyle = "#4d5d8c"; g.fillRect(58, 18, 14, 2); g.fillRect(58, 30, 12, 2);
 
-      // Rocket lifting on ignition plumes
       const rx = 78, ry = 13;
-      const flk = reducedMotion() ? 1 : (t % 4 < 2 ? 1 : 0);
-      // Exhaust flame & billowing golden pad smoke
-      g.fillStyle = "#e87835"; g.fillRect(rx - 3, ry + 29, 14, 10 + flk * 2);
-      g.fillStyle = "#ffd96b"; g.fillRect(rx - 1, ry + 29, 10, 8 + flk);
+      const flk = reducedMotion() ? 0.5 : (0.5 + 0.5 * Math.sin(tSec * 24));
+      g.fillStyle = "#e87835"; g.fillRect(rx - 3, ry + 29, 14, 10 + flk * 2.5);
+      g.fillStyle = "#ffd96b"; g.fillRect(rx - 1, ry + 29, 10, 8 + flk * 1.5);
       g.fillStyle = "#fff8dc"; g.fillRect(rx + 2, ry + 29, 4, 6);
-      g.fillStyle = "rgba(247, 212, 145, 0.8)";
-      g.fillRect(rx - 14 - flk, 47, 36 + flk * 2, 5);
+      g.fillStyle = `rgba(247, 212, 145, ${0.72 + flk * 0.16})`;
+      g.fillRect(rx - 14 - flk * 1.5, 47, 36 + flk * 3, 5);
       g.fillStyle = "rgba(218, 138, 94, 0.7)";
       g.fillRect(rx - 20, 50, 48, 4);
 
-      // Rocket hull (tapered nose, black interstage band, side boosters/fins)
       g.fillStyle = "#222940"; g.fillRect(rx + 3, ry - 5, 2, 5);
       g.fillStyle = "#f4efe2"; g.fillRect(rx + 1, ry, 6, 4);
       g.fillStyle = "#f4efe2"; g.fillRect(rx, ry + 4, 8, 23);
@@ -526,11 +775,23 @@
       g.fillStyle = "#1b2438"; g.fillRect(rx, ry + 9, 8, 2); g.fillRect(rx, ry + 18, 8, 2);
       g.fillStyle = "#c94032"; g.fillRect(rx - 2, ry + 21, 2, 6); g.fillRect(rx + 8, ry + 21, 2, 6);
       g.fillStyle = "#4b556b"; g.fillRect(rx, ry + 27, 8, 2);
+      return true;
     }
 
     clearInterval(drawStoryBanner._iv);
-    frame();
-    if (!reducedMotion()) drawStoryBanner._iv = setInterval(frame, 140);
+    if (drawStoryBanner._rafId) cancelAnimationFrame(drawStoryBanner._rafId);
+    frame(0);
+    function loop(ts) {
+      if (!lastTs) lastTs = ts;
+      const dtSec = Math.min(0.1, Math.max(0, (ts - lastTs) / 1000));
+      lastTs = ts;
+      if (frame(dtSec) && !reducedMotion()) {
+        drawStoryBanner._rafId = requestAnimationFrame(loop);
+      } else {
+        drawStoryBanner._rafId = 0;
+      }
+    }
+    if (!reducedMotion()) drawStoryBanner._rafId = requestAnimationFrame(loop);
   }
 
   // -------------------------------------------------------------------------- Mission Design Lab Banner (Spacecraft Blueprint)
@@ -539,26 +800,24 @@
     const g = canvas.getContext("2d");
     const W = 180, H = 64;
     canvas.width = W; canvas.height = H;
-    let t = 0;
+    let tSec = 0;
+    let lastTs = 0;
 
-    function frame() {
+    function frame(dtSec = 0) {
       const titleEl = document.getElementById("title");
-      if (!titleEl || !titleEl.classList.contains("active") || document.hidden) return;
-      t++;
+      if (!titleEl || !titleEl.classList.contains("active") || document.hidden) return false;
+      tSec += dtSec;
       g.fillStyle = "#0d1f3b"; g.fillRect(0, 0, W, H);
-      // Blueprint grid
       g.fillStyle = "#17345e";
       for (let x = 0; x < W; x += 10) g.fillRect(x, 0, 1, H);
       for (let y = 0; y < H; y += 10) g.fillRect(0, y, W, 1);
 
-      // Dashed horizontal alignment axis & tick marks
       const cx = 90, cy = 32;
       g.fillStyle = "rgba(158, 196, 239, 0.55)";
       for (let x = 14; x < W - 14; x += 5) g.fillRect(x, cy, 3, 1);
       g.fillRect(cx - 56, cy - 2, 1, 5);
       g.fillRect(cx + 56, cy - 2, 1, 5);
 
-      // Left & Right Solar Arrays (crisp white border + 4 solar cells + specular glint)
       [cx - 50, cx + 16].forEach((sx) => {
         g.fillStyle = "#e6f0fc"; g.fillRect(sx - 1, cy - 9, 36, 18);
         g.fillStyle = "#184680"; g.fillRect(sx, cy - 8, 34, 16);
@@ -570,37 +829,69 @@
         g.fillStyle = "#8bc2fa";
         g.fillRect(sx + 1, cy - 7, 4, 1); g.fillRect(sx + 17, cy - 7, 4, 1);
       });
-      // Struts
       g.fillStyle = "#e6f0fc";
       g.fillRect(cx - 14, cy - 1, 6, 3); g.fillRect(cx + 8, cy - 1, 6, 3);
-      // Central bus
       g.fillStyle = "#e6f0fc"; g.fillRect(cx - 9, cy - 12, 18, 24);
       g.fillStyle = "#5c7a9e"; g.fillRect(cx - 7, cy - 10, 14, 20);
       g.fillStyle = "#183354"; g.fillRect(cx - 5, cy - 7, 10, 14);
       g.fillStyle = "#f3ebd8"; g.fillRect(cx - 3, cy - 4, 6, 8);
-      // Top optical module & bottom thruster nozzle
       g.fillStyle = "#e6f0fc"; g.fillRect(cx - 5, cy - 16, 10, 4);
       g.fillStyle = "#3c74b8"; g.fillRect(cx - 3, cy - 15, 6, 2);
       g.fillStyle = "#9bb4d4"; g.fillRect(cx - 4, cy + 12, 8, 3);
       g.fillStyle = "#e6f0fc"; g.fillRect(cx - 2, cy + 15, 4, 2);
 
-      // Subtle scan pulse
       if (!reducedMotion()) {
-        const scanX = (t * 2) % W;
-        g.fillStyle = "rgba(138, 184, 235, 0.14)";
-        g.fillRect(scanX, 0, 4, H);
+        const scanX = (tSec * 36) % W;
+        const sg = g.createLinearGradient(scanX - 6, 0, scanX + 6, 0);
+        sg.addColorStop(0, "rgba(138, 184, 235, 0)");
+        sg.addColorStop(0.5, "rgba(138, 184, 235, 0.22)");
+        sg.addColorStop(1, "rgba(138, 184, 235, 0)");
+        g.fillStyle = sg;
+        g.fillRect(scanX - 6, 0, 12, H);
       }
+      return true;
     }
 
     clearInterval(drawLabBanner._iv);
-    frame();
-    if (!reducedMotion()) drawLabBanner._iv = setInterval(frame, 80);
+    if (drawLabBanner._rafId) cancelAnimationFrame(drawLabBanner._rafId);
+    frame(0);
+    function loop(ts) {
+      if (!lastTs) lastTs = ts;
+      const dtSec = Math.min(0.1, Math.max(0, (ts - lastTs) / 1000));
+      lastTs = ts;
+      if (frame(dtSec) && !reducedMotion()) {
+        drawLabBanner._rafId = requestAnimationFrame(loop);
+      } else {
+        drawLabBanner._rafId = 0;
+      }
+    }
+    if (!reducedMotion()) drawLabBanner._rafId = requestAnimationFrame(loop);
   }
 
-  // -------------------------------------------------------------------------- Live Game State Helpers (Zero fake data!)
+  // -------------------------------------------------------------------------- Live Game State Helpers
   function getStoryDone() {
-    return store.get("storyDone", {});
+    const sd = store.get("storyDone", {});
+    const ag = typeof agency === "function" ? agency() : null;
+    const careerDone = (ag && ag.done) || {};
+    const freeProg = typeof progress === "function" ? progress() : {};
+    // Merge storyDone with career/free completions so any mission flown counts seamlessly
+    const merged = { ...sd };
+    // Map legacy ch1..ch5 if present
+    const legacyMap = { ch1: "wildfire", ch2: "lunar_ice", ch3: "mars_climate", ch4: "exoplanet_hunter", ch5: "europa" };
+    Object.entries(legacyMap).forEach(([chId, sc]) => {
+      if (sd[chId] && (!merged[sc] || sd[chId].score > merged[sc].score)) {
+        merged[sc] = sd[chId];
+      }
+    });
+    Object.entries(careerDone).forEach(([sc, rec]) => {
+      if (!merged[sc] || rec.score > merged[sc].score) merged[sc] = rec;
+    });
+    Object.entries(freeProg).forEach(([sc, rec]) => {
+      if (!merged[sc] || rec.score > merged[sc].score) merged[sc] = rec;
+    });
+    return merged;
   }
+  window.getStoryDone = getStoryDone;
 
   function calcResearchPoints() {
     const a = typeof agency === "function" ? agency() : null;
@@ -609,7 +900,7 @@
     const techPts = a ? Math.max(0, (a.tech || []).length - 1) * 15 : 0;
     const medalPts = a ? (a.medals || []).length * 30 : 0;
     const freePts = Object.keys(prog || {}).length * 10;
-    const storyPts = Object.keys(sd || {}).length * 25;
+    const storyPts = Object.keys(sd || {}).filter((k) => !k.startsWith("ch")).length * 25;
     return techPts + medalPts + freePts + storyPts;
   }
 
@@ -642,7 +933,6 @@
     if ($("#sbFunds")) $("#sbFunds").textContent = funds;
     if ($("#sbYear")) $("#sbYear").textContent = year;
 
-    // Tutorial progress dots on Tutorial card
     const tutDone = store.get("tutorialDone", false);
     const progCount = Object.keys(typeof progress === "function" ? progress() : {}).length;
     const activeNodes = tutDone ? 5 : Math.min(4, progCount > 0 ? 2 : 1);
@@ -666,6 +956,10 @@
 
     const a = typeof agency === "function" ? agency() : null;
     const sd = getStoryDone();
+    const totalDone = (window.CAREER_STAGES || []).reduce(
+      (acc, st) => acc + st.missions.filter((m) => sd[m.id] && PASS.includes(sd[m.id].grade)).length,
+      0
+    );
     const stats = $("#profileStats");
     if (stats) {
       const rank = a ? (a.rep >= 60 ? "Flight Director" : a.rep >= 30 ? "Senior Systems Lead" : "Mission Engineer") : "Cadet Engineer";
@@ -673,7 +967,7 @@
         <div class="cq-stat-row"><span>Rank</span><b>${esc(rank)}</b></div>
         <div class="cq-stat-row"><span>Research Points</span><b>${calcResearchPoints()} RP</b></div>
         <div class="cq-stat-row"><span>Agency Funds</span><b>${a ? `${fmt(a.funds)} M$` : "150 M$ (Initial)"}</b></div>
-        <div class="cq-stat-row"><span>Story Chapters</span><b>${Object.keys(sd).length} / ${STORY_CHAPTERS.length}</b></div>
+        <div class="cq-stat-row"><span>Project Genesis</span><b>${totalDone} / 25 Missions</b></div>
       `;
     }
     const hint = $("#profilePrompt");
@@ -702,61 +996,391 @@
     if (m) m.classList.remove("hidden");
   }
 
-  // -------------------------------------------------------------------------- Story Campaign: Project Genesis
-  function openStory() {
+  // -------------------------------------------------------------------------- Project Genesis: 6-Stage, 25-Mission Connected Story Campaign
+  let _activeGenesisStage = "stage1";
+  let _cutsceneTimer = null;
+
+  function normStageId(id) {
+    if (!id) return id;
+    return /^s(\d)$/.test(id) ? `stage${id.slice(1)}` : id;
+  }
+
+  function isGenesisStageUnlocked(idx, stages, doneMap) {
+    if (idx <= 0) return true;
+    const prev = stages[idx - 1];
+    const reqs = prev.missions.filter((m) => !m.optional);
+    return reqs.every((m) => doneMap[m.id] && PASS.includes(doneMap[m.id].grade));
+  }
+
+  function isGenesisStageComplete(st, doneMap) {
+    const reqs = st.missions.filter((m) => !m.optional);
+    return reqs.every((m) => doneMap[m.id] && PASS.includes(doneMap[m.id].grade));
+  }
+
+  function openStageCutscene(stageId) {
+    const targetId = normStageId(stageId);
+    const stages = window.CAREER_STAGES || [];
+    const st = stages.find((s) => s.id === targetId) || stages[0];
+    if (!st) return;
+    const lore = getStageLore(st.id);
+    const modal = $("#stageCutsceneModal");
+    if (!modal) return;
+
+    if ($("#scModalKicker")) $("#scModalKicker").textContent = `HORIZON COALITION · STAGE ${st.num} TRANSMISSION`;
+    if ($("#scModalTitle")) $("#scModalTitle").textContent = lore.introTitle;
+    if ($("#scModalBody")) {
+      $("#scModalBody").innerHTML = `
+        <div class="cq-sc-lead">
+          <img class="px cq-sc-avatar" src="${portrait(lore.look, "neutral")}" alt="${esc(lore.lead)}">
+          <div>
+            <b>${esc(lore.lead)}</b>
+            <span>${esc(st.region)} · Target: ${esc(lore.unlockFacility)}</span>
+          </div>
+        </div>
+        <div class="cq-sc-paragraphs">
+          ${lore.introLines.map((ln) => `<p>${esc(ln)}</p>`).join("")}
+        </div>
+      `;
+    }
+    modal.classList.remove("hidden");
+
+    const cv = $("#scModalCanvas");
+    if (!cv) return;
+    const g = cv.getContext("2d");
+    const W = 320, H = 140;
+    cv.width = W; cv.height = H;
+    g.imageSmoothingEnabled = false;
+    let tick = 0;
+
+    const drawCutsceneFrame = () => {
+      if (modal.classList.contains("hidden")) {
+        clearInterval(_cutsceneTimer);
+        return;
+      }
+      tick++;
+      g.fillStyle = "#060e1c";
+      g.fillRect(0, 0, W, H);
+      const stNum = parseInt(st.num, 10) || 1;
+      const rnd = _rng(300 + stNum);
+      for (let i = 0; i < 60; i++) {
+        g.fillStyle = i % 6 === 0 ? "#e0a342" : "#dce9f8";
+        g.fillRect(Math.floor(rnd() * W), Math.floor(rnd() * (H - 28)), 1, 1);
+      }
+
+      if (st.id === "stage1") {
+        earthLimb(g, W, H, H + 115, 165, tick * 0.25);
+        const sx = 80 + Math.round(Math.sin(tick * 0.04) * 65);
+        g.fillStyle = "rgba(92, 184, 214, 0.24)";
+        g.fillRect(sx - 12, 46, 24, 65);
+        g.fillStyle = "#e85d3c";
+        g.fillRect(110, 102, 5, 3); g.fillRect(156, 98, 6, 3); g.fillRect(198, 106, 5, 3);
+        g.fillStyle = "#2d63a8"; g.fillRect(sx - 16, 40, 11, 5); g.fillRect(sx + 6, 40, 11, 5);
+        g.fillStyle = "#e0a342"; g.fillRect(sx - 4, 38, 9, 9);
+      } else if (st.id === "stage2") {
+        earthLimb(g, W, H, H + 125, 165, tick * 0.15);
+        g.fillStyle = "#d9e3f0"; g.fillRect(116, 54, 88, 6); g.fillRect(152, 42, 16, 30);
+        g.fillStyle = "#24528a";
+        [120, 134, 174, 188].forEach((x) => { g.fillRect(x, 30, 10, 22); g.fillRect(x, 62, 10, 22); });
+        const dockX = Math.min(104, 48 + (tick % 80));
+        g.fillStyle = "#f4efe2"; g.fillRect(dockX, 54, 10, 6);
+        g.fillStyle = "#e0a342"; g.fillRect(dockX - 3, 56, 3, 2);
+      } else if (st.id === "stage3") {
+        g.fillStyle = "#2a5d9e"; g.fillRect(256, 18, 18, 18);
+        g.fillStyle = "#488242"; g.fillRect(260, 22, 7, 6);
+        g.fillStyle = "#6c7380"; g.fillRect(0, 92, W, 48);
+        g.fillStyle = "#192233"; g.fillRect(68, 98, 110, 42);
+        g.fillStyle = "#7fd0f5"; g.fillRect(92, 114, 64, 4);
+        g.fillStyle = "#e0a342"; g.fillRect(198, 76, 18, 14);
+        g.fillStyle = "#dce9f8"; g.fillRect(230, 80, 28, 12);
+      } else if (st.id === "stage4") {
+        g.fillStyle = "#6e655c"; g.fillRect(204, 42, 56, 44);
+        g.fillStyle = "#8c8275"; g.fillRect(210, 46, 40, 28);
+        const px = 76 + Math.round(Math.sin(tick * 0.03) * 18);
+        g.fillStyle = "#2d63a8"; g.fillRect(px - 22, 58, 18, 6); g.fillRect(px + 12, 58, 18, 6);
+        g.fillStyle = "#e0a342"; g.fillRect(px - 3, 55, 14, 12);
+        g.fillStyle = "#6fe0ec"; g.fillRect(px - 12, 60, 9, 2);
+      } else if (st.id === "stage5") {
+        const mSky = g.createLinearGradient(0, 0, 0, H);
+        mSky.addColorStop(0, "#1d1016"); mSky.addColorStop(0.65, "#6b2f24"); mSky.addColorStop(1, "#b85d3b");
+        g.fillStyle = mSky; g.fillRect(0, 0, W, H);
+        g.fillStyle = "#944328"; g.fillRect(0, 96, W, 44);
+        const rx = 90 + (tick % 110);
+        g.fillStyle = "#f4efe2"; g.fillRect(rx, 82, 22, 10);
+        g.fillStyle = "#222"; g.fillRect(rx + 2, 92, 5, 5); g.fillRect(rx + 15, 92, 5, 5);
+        g.fillStyle = "#e0a342"; g.fillRect(216, 80, 36, 16);
+      } else {
+        g.fillStyle = "#c98556"; g.fillRect(224, 14, 82, 82);
+        g.fillStyle = "#e8cfb2"; g.fillRect(224, 28, 82, 10); g.fillRect(224, 54, 82, 10);
+        g.fillStyle = "#dce6f2"; g.fillRect(156, 56, 24, 24);
+        g.fillStyle = "#7aa2cc"; g.fillRect(159, 66, 18, 2);
+        const rPulse = (tick * 2) % 44;
+        g.strokeStyle = `rgba(111, 224, 236, ${1 - rPulse / 44})`;
+        g.strokeRect(168 - rPulse, 68 - rPulse, rPulse * 2, rPulse * 2);
+        g.fillStyle = "#2d63a8"; g.fillRect(62, 62, 18, 5); g.fillRect(92, 62, 18, 5);
+        g.fillStyle = "#e0a342"; g.fillRect(80, 58, 12, 12);
+      }
+
+      g.fillStyle = "rgba(8, 16, 30, 0.86)";
+      g.fillRect(0, H - 20, W, 20);
+      g.fillStyle = "#e0a342";
+      g.font = "8px Silkscreen, monospace";
+      g.fillText(`PILLAR: ${lore.pillar}   SIGNAL: 1.42 GHZ / 72M`, 8, H - 7);
+    };
+
+    clearInterval(_cutsceneTimer);
+    drawCutsceneFrame();
+    if (!reducedMotion()) {
+      _cutsceneTimer = setInterval(drawCutsceneFrame, 80);
+    }
+  }
+  window.openStageCutscene = openStageCutscene;
+
+  function openStory(forceStageId = null) {
+    if (
+      !store.get("genesisPrologueSeen", false) &&
+      location.hash !== "#selftest" &&
+      !(typeof S !== "undefined" && S.noSave)
+    ) {
+      store.set("genesisPrologueSeen", true);
+      openPrologue();
+      return;
+    }
+
     show("story");
+    const stages = window.CAREER_STAGES || [];
+    if (!stages.length) return;
     const done = getStoryDone();
+
+    if (forceStageId) {
+      _activeGenesisStage = forceStageId === "all" ? "all" : normStageId(forceStageId);
+    } else if (!_activeGenesisStage || (_activeGenesisStage !== "all" && !stages.some((s) => s.id === _activeGenesisStage))) {
+      let pick = stages[0].id;
+      stages.forEach((st, idx) => {
+        if (isGenesisStageUnlocked(idx, stages, done)) pick = st.id;
+      });
+      _activeGenesisStage = pick;
+    }
+
+    // 1. Render Horizon Coalition World Infrastructure Bar (6 Pillars)
+    const worldBar = $("#genesisWorldBar");
+    const completedMissions = stages.reduce(
+      (acc, st) => acc + st.missions.filter((m) => done[m.id] && PASS.includes(done[m.id].grade)).length,
+      0
+    );
+    const signalClarifiedPct = Math.min(100, Math.round((completedMissions / 25) * 100));
+    if ($("#genesisProgressText")) $("#genesisProgressText").textContent = `${completedMissions} / 25 MISSIONS`;
+    if ($("#genesisSignalHud")) {
+      $("#genesisSignalHud").innerHTML = `<span>1.42 GHz SIGNAL</span><b>${signalClarifiedPct}% DECODED</b>`;
+    }
+    if (worldBar) {
+      worldBar.innerHTML = `
+        <div class="cq-gw-top">
+          <div class="cq-gw-title">
+            <span class="cq-kicker">INTERPLANETARY SURVIVAL INFRASTRUCTURE · LIVE WORLD STATE</span>
+            <h4>HORIZON COALITION SOLAR SYSTEM NETWORK (${completedMissions} / 25 MISSIONS OPERATIONAL)</h4>
+          </div>
+          <div class="cq-gw-signal">
+            <span>1.42 GHz EUROPA SIGNAL RESOLUTION</span>
+            <div class="cq-gw-sigbar"><i style="width:${signalClarifiedPct}%"></i></div>
+            <b>${signalClarifiedPct}% DECODED</b>
+          </div>
+        </div>
+        <div class="cq-gw-pillars">
+          ${stages.map((st, idx) => {
+            const lore = getStageLore(st.id);
+            const reqDone = st.missions.filter((m) => !m.optional && done[m.id] && PASS.includes(done[m.id].grade)).length;
+            const reqTotal = st.missions.filter((m) => !m.optional).length;
+            const allDone = st.missions.filter((m) => done[m.id] && PASS.includes(done[m.id].grade)).length;
+            const unlocked = isGenesisStageUnlocked(idx, stages, done);
+            const complete = reqDone >= reqTotal;
+            const statusTxt = complete ? "ONLINE" : unlocked ? `BUILDING (${allDone}/${st.missions.length})` : "LOCKED";
+            return `
+              <div class="cq-gw-pillar ${complete ? "online" : unlocked ? "active" : "locked"}" data-pick-gstage="${st.id}">
+                <div class="cq-gwp-head">
+                  <span class="cq-gwp-num">S${st.num}</span>
+                  <span class="cq-gwp-state">${statusTxt}</span>
+                </div>
+                <b>${esc(lore.pillarShort)}</b>
+                <small>${esc(lore.unlockFacility)}</small>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+      worldBar.querySelectorAll("[data-pick-gstage]").forEach((el) => {
+        el.onclick = () => {
+          SFX.click();
+          openStory(el.dataset.pickGstage);
+        };
+      });
+    }
+
+    // 2. Render 6-Stage Journey Track
+    const stageTrack = $("#genesisStageTrack");
+    if (stageTrack) {
+      stageTrack.innerHTML = `
+        <div class="cq-gtrack-bar">
+          ${stages.map((st, idx) => {
+            const unlocked = isGenesisStageUnlocked(idx, stages, done);
+            const complete = isGenesisStageComplete(st, done);
+            const doneCount = st.missions.filter((m) => done[m.id] && PASS.includes(done[m.id].grade)).length;
+            const isSel = _activeGenesisStage === st.id;
+            return `
+              <button type="button" class="cq-gstage-tab ${isSel ? "on" : ""} ${complete ? "done" : ""} ${unlocked ? "" : "locked"}" data-gstage-tab="${st.id}">
+                <span class="cq-gst-top">
+                  <b>STAGE ${st.num}</b>
+                  <i>${complete ? "COMPLETE" : unlocked ? `${doneCount}/${st.missions.length}` : "LOCKED"}</i>
+                </span>
+                <span class="cq-gst-name">${esc(st.name)}</span>
+              </button>
+            `;
+          }).join("")}
+          <button type="button" class="cq-gstage-tab ${_activeGenesisStage === "all" ? "on" : ""}" data-gstage-tab="all">
+            <span class="cq-gst-top"><b>ALL 6 STAGES</b><i>25 FILES</i></span>
+            <span class="cq-gst-name">Full Campaign Map</span>
+          </button>
+        </div>
+      `;
+      stageTrack.querySelectorAll("[data-gstage-tab]").forEach((btn) => {
+        btn.onclick = () => {
+          SFX.click();
+          openStory(btn.dataset.gstageTab);
+        };
+      });
+    }
+
+    // 3. Render Selected Stage(s) Narrative Dossier & Connected Missions
     const list = $("#storyChapters");
     if (!list) return;
 
-    let unlockedIdx = 0;
-    STORY_CHAPTERS.forEach((ch, idx) => {
-      if (done[ch.id] && PASS.includes(done[ch.id].grade)) {
-        unlockedIdx = Math.max(unlockedIdx, idx + 1);
-      }
-    });
+    const visibleStages = _activeGenesisStage === "all"
+      ? stages
+      : stages.filter((st) => st.id === _activeGenesisStage);
 
-    list.innerHTML = STORY_CHAPTERS.map((ch, idx) => {
-      const rec = done[ch.id];
-      const isDone = rec && PASS.includes(rec.grade);
-      const locked = idx > unlockedIdx;
-      const scObj = S.cat && S.cat.SCENARIOS ? S.cat.SCENARIOS[ch.scenario] : null;
+    list.innerHTML = visibleStages.map((st) => {
+      const idx = stages.indexOf(st);
+      const unlocked = isGenesisStageUnlocked(idx, stages, done);
+      const complete = isGenesisStageComplete(st, done);
+      const lore = getStageLore(st.id);
+      const doneCount = st.missions.filter((m) => done[m.id] && PASS.includes(done[m.id].grade)).length;
+      const bannerSrc = typeof stageLandscape === "function" ? stageLandscape(st.num) : "";
+
+      const missionCards = st.missions.map((m) => {
+        const scObj = S.cat && S.cat.SCENARIOS ? S.cat.SCENARIOS[m.id] : null;
+        if (!scObj) return "";
+        const rec = done[m.id];
+        const passed = rec && PASS.includes(rec.grade);
+        const arc = MISSION_STORY_ARC[m.id] || {
+          why: m.whyNecessary || scObj.pitch,
+          discovery: scObj.story,
+          infra: scObj.name
+        };
+        const client = typeof CLIENTS !== "undefined" && CLIENTS[m.id] ? CLIENTS[m.id] : { name: lore.lead, org: "Horizon Coalition", look: lore.look };
+        const artSrc = typeof missionLandscape === "function" ? missionLandscape(m.id) : "";
+
+        return `
+          <article class="cq-chapter cq-genesis-card ${!unlocked ? "locked" : ""} ${passed ? "done" : ""}" data-ch="${m.id}">
+            <div class="cq-gcard-artwrap">
+              ${artSrc ? `<img class="px cq-gcard-art" src="${artSrc}" alt="${esc(scObj.name)}">` : ""}
+              <div class="cq-gcard-badges">
+                <span class="cq-ch-num">MISSION ${m.num}</span>
+                <span class="cq-gcard-req ${!m.optional ? "req" : "opt"}">${!m.optional ? "CORE CAMPAIGN" : "BONUS"}</span>
+                ${rec ? `<span class="cq-ch-grade" style="background:${GRADE_COL[rec.grade] || "#3a6b33"}">${rec.grade} · ${rec.score} PTS</span>` : ""}
+              </div>
+            </div>
+            <div class="cq-ch-body">
+              <div class="cq-ch-head">
+                <span class="cq-ch-loc">${esc(S.cat.DESTINATIONS[scObj.destination].name)} · ${esc(KIND_LABEL[scObj.kind || "orbiter"])}</span>
+                <span class="cq-ch-meta">Budget ${fmt(scObj.budget)} M$ · +${m.reward || 110} M$ / +${m.rep || 4} REP</span>
+              </div>
+              <h3>${esc((scObj.name || m.id).toUpperCase())}</h3>
+              <div class="cq-gcard-client">
+                <img class="px cq-gcard-Director" src="${portrait(client.look, passed ? "happy" : "neutral")}" alt="${esc(client.name)}">
+                <div>
+                  <b>${esc(client.name)} · ${esc(client.org)}</b>
+                  <p>"${esc(arc.why)}"</p>
+                </div>
+              </div>
+              <div class="cq-ch-obj">
+                <div><b>Primary Objectives:</b> ${scObj.goals.map((g) => `${esc(g.label)}${g.required ? "*" : ""}`).join(" · ")}</div>
+                <div><b>Infrastructure / Discovery:</b> ${passed ? `<span class="cq-disc-unlocked">UNLOCKED — ${esc(arc.discovery)}</span>` : `<span>Unlocks: ${esc(arc.infra)}</span>`}</div>
+              </div>
+            </div>
+            <div class="cq-ch-act">
+              ${!unlocked
+                ? `<span class="cq-ch-lock">${icon("lock", 14)} Complete all Core Missions in Stage ${stages[idx - 1].num} to unlock</span>`
+                : `
+                  <button type="button" class="btn cq-gcard-brief-btn" data-brief-sc="${m.id}">MISSION BRIEFING</button>
+                  <button type="button" class="cq-btn-amber" data-launch-ch="${m.id}">${passed ? "REPLAY MISSION" : "DESIGN & LAUNCH"} &gt;</button>
+                `}
+            </div>
+          </article>
+        `;
+      }).join("");
+
       return `
-        <article class="cq-chapter ${locked ? "locked" : ""} ${isDone ? "done" : ""}" data-ch="${ch.id}">
-          <div class="cq-ch-portrait">
-            <img class="px" src="${portrait(ch.look, isDone ? "happy" : "neutral")}" alt="${esc(ch.speaker)}">
-          </div>
-          <div class="cq-ch-body">
-            <div class="cq-ch-head">
-              <span class="cq-ch-num">${ch.num}</span>
-              <span class="cq-ch-loc">${esc(ch.location)}</span>
-              ${rec ? `<span class="cq-ch-grade" style="color:${GRADE_COL[rec.grade] || "#f3ebd8"}">${rec.grade} · ${rec.score} PTS</span>` : ""}
+        <section class="cq-genesis-stage-block ${complete ? "stage-complete" : ""} ${!unlocked ? "stage-locked" : ""}">
+          <div class="cq-gstage-hero">
+            ${bannerSrc ? `<img class="px cq-gstage-banner" src="${bannerSrc}" alt="${esc(st.name)}">` : ""}
+            <div class="cq-gstage-hero-body">
+              <div class="cq-gstage-kicker-row">
+                <span class="cq-kicker">STAGE ${st.num} · ${esc(st.region)}</span>
+                <span class="cq-gstage-bonus">STAGE COMPLETION BONUS: +${st.rewardFunds || 90} M$ · +${st.rewardRep || 6} REP</span>
+              </div>
+              <h3>${esc(st.name)} (${doneCount} / ${st.missions.length} COMPLETED)</h3>
+              <p class="cq-gstage-summary">${esc(lore.introLines[0])} ${esc(lore.introLines[1])}</p>
+              <div class="cq-gstage-leadbar">
+                <img class="px cq-gstage-lead-img" src="${portrait(lore.look, complete ? "happy" : "neutral")}" alt="${esc(lore.lead)}">
+                <div class="cq-gstage-lead-txt">
+                  <b>${esc(lore.lead)}</b>
+                  <span>"${esc(complete ? lore.completionEvent : lore.introLines[2])}"</span>
+                </div>
+                <button type="button" class="btn small cq-watch-cutscene-btn" data-cutscene-stage="${st.id}">WATCH STAGE BRIEFING</button>
+              </div>
+              ${complete ? `<div class="cq-stage-complete-banner">${icon("check", 14)} <b>STAGE COMPLETE:</b> ${esc(lore.completionEvent)} <em>${esc(lore.nextStageHook)}</em></div>` : ""}
             </div>
-            <h3>${esc(ch.title)}</h3>
-            <p class="cq-ch-speaker">${esc(ch.speaker)}</p>
-            <p class="cq-ch-desc">${esc(ch.brief[0])}</p>
-            <div class="cq-ch-obj">
-              <span>Objective: ${esc(ch.objective)}</span>
-              ${scObj ? `<span class="cq-ch-meta">${esc(S.cat.DESTINATIONS[scObj.destination].name)} · Budget ${fmt(scObj.budget)} M$</span>` : ""}
-            </div>
           </div>
-          <div class="cq-ch-act">
-            ${locked
-              ? `<span class="cq-ch-lock">Complete previous chapter to unlock</span>`
-              : `<button class="cq-btn-amber" data-launch-ch="${ch.id}">${isDone ? "REPLAY MISSION" : "LAUNCH CHAPTER"} &gt;</button>`}
+          <div class="cq-genesis-missions-list">
+            ${missionCards}
           </div>
-        </article>`;
+        </section>
+      `;
     }).join("");
 
+    // Wire stage cutscene buttons
+    list.querySelectorAll("[data-cutscene-stage]").forEach((btn) => {
+      btn.onclick = () => {
+        SFX.page();
+        openStageCutscene(btn.dataset.cutsceneStage);
+      };
+    });
+
+    // Wire standalone briefing buttons
+    list.querySelectorAll("[data-brief-sc]").forEach((btn) => {
+      btn.onclick = () => {
+        const sc = btn.dataset.briefSc;
+        SFX.page();
+        if (typeof openStandaloneBriefing === "function") {
+          openStandaloneBriefing(sc, () => {
+            S.mode = "story";
+            S.storyChapter = sc;
+            S.noLetter = true;
+            startMission(sc);
+          });
+        }
+      };
+    });
+
+    // Wire mission launch buttons
     list.querySelectorAll("[data-launch-ch]").forEach((btn) => {
       btn.onclick = () => {
-        const ch = STORY_CHAPTERS.find((c) => c.id === btn.dataset.launchCh);
-        if (!ch) return;
+        const sc = btn.dataset.launchCh;
+        if (!S.cat || !S.cat.SCENARIOS || !S.cat.SCENARIOS[sc]) return;
         SFX.page();
         S.mode = "story";
-        S.storyChapter = ch.id;
+        S.storyChapter = sc;
         S.noLetter = false;
-        startMission(ch.scenario);
+        startMission(sc);
       };
     });
   }
@@ -764,194 +1388,140 @@
 
   // Record story completion when a story mission finishes
   window.recordStoryResult = (res) => {
-    if (S.mode !== "story" || !S.storyChapter || !res || !res.sim || !res.sim.launched) return;
-    const done = getStoryDone();
-    const prev = done[S.storyChapter];
+    if (!res || !res.sim || !res.sim.launched || !res.design) return;
+    const sc = res.design.scenario;
+    const raw = store.get("storyDone", {});
+    const prev = raw[sc];
     if (!prev || res.score.total > prev.score) {
-      done[S.storyChapter] = { grade: res.score.grade, score: res.score.total, outcome: res.sim.outcome };
-      store.set("storyDone", done);
+      raw[sc] = { grade: res.score.grade, score: res.score.total, outcome: res.sim.outcome };
+      store.set("storyDone", raw);
     }
     refreshStatusBar();
   };
 
-  // -------------------------------------------------------------------------- Prologue Film: The Last Signal
-  const PROLOGUE_SCENES = [
-    {
-      title: "01 · DEEP SPACE NETWORK · 2026",
-      caption: "Late autumn, 2026. Listening dishes across Earth swept a quiet outer-system band—until an unscheduled carrier pulse broke through the static.",
-      draw(g, W, H, p, t) {
-        earthLimb(g, W, H, H + 115, 160, t * 0.2);
-        // Ground station pedestal + angled parabolic DSN dish
-        g.fillStyle = "#0e1729"; g.fillRect(46, H - 38, 22, 38);
-        g.fillStyle = "#1d2f4d"; g.fillRect(52, H - 44, 10, 6);
-        for (let i = -14; i <= 14; i++) {
-          const bx = 58 + i;
-          const by = Math.round(H - 54 + i * 0.55 + (i * i) * 0.045);
-          g.fillStyle = "#355a8a"; g.fillRect(bx, by + 1, 2, 3);
-          g.fillStyle = "#9ec4ef"; g.fillRect(bx, by, 1, 2);
-        }
-        g.fillStyle = "#f3ebd8"; g.fillRect(63, H - 64, 3, 2);
-        // Distant Jupiter source + incoming carrier pulse arcs
-        g.fillStyle = "#d8a348"; g.fillRect(256, 28, 8, 8);
-        g.fillStyle = "#f2dec4"; g.fillRect(257, 30, 6, 2);
-        for (let w = 0; w < 3; w++) {
-          const frac = ((t * 0.04 + w * 0.33) % 1);
-          const px = Math.round(252 - frac * 182);
-          const py = Math.round(32 + frac * (H - 96));
-          g.fillStyle = `rgba(224, 163, 66, ${1 - frac * 0.6})`;
-          g.fillRect(px - 2, py - 2, 4, 1);
-          g.fillRect(px - 3, py - 1, 2, 3);
-        }
-      }
-    },
-    {
-      title: "02 · ANOMALOUS TELEMETRY",
-      caption: "Every 72 minutes, the signal repeated—too structured to be solar noise, triangulated precisely to Jupiter's icy moon, Europa.",
-      draw(g, W, H, p, t) {
-        // Oscilloscope carrier waveform
-        g.fillStyle = "#0c1b30"; g.fillRect(20, 26, W - 40, 74);
-        g.fillStyle = "#1c3860";
-        for (let x = 20; x < W - 20; x += 20) g.fillRect(x, 26, 1, 74);
-        for (let x = 22; x < W - 24; x += 2) {
-          const amp = Math.sin(x * 0.12 + t * 0.25) * (Math.abs(x - W / 2) < 42 ? 22 : 4);
-          g.fillStyle = Math.abs(x - W / 2) < 42 ? "#e0a342" : "#58b7c9";
-          g.fillRect(x, Math.round(63 + amp), 2, 2);
-        }
-        g.fillStyle = "#f3ebd8"; g.fillRect(W / 2 - 1, 28, 2, 70);
-      }
-    },
-    {
-      title: "03 · PROJECT GENESIS FORMED",
-      caption: "Turbobits Studio and NASA Mission Review Board launched Project Genesis: an engineering program to step outward from Earth, to the Moon, to Mars, and beyond.",
-      draw(g, W, H, p, t) {
-        // 4 planets stepping across orbital arc
-        const bodies = [
-          { x: 54, y: 92, r: 10, c: "#3c74b8" },
-          { x: 118, y: 74, r: 7, c: "#9aa7b8" },
-          { x: 192, y: 58, r: 9, c: "#c96240" },
-          { x: 266, y: 40, r: 12, c: "#d9c2a3" }
-        ];
-        g.fillStyle = "rgba(138,184,235,0.4)";
-        for (let x = 54; x < 266; x += 5) {
-          const f = (x - 54) / 212;
-          g.fillRect(x, Math.round(92 - f * 52 - Math.sin(f * Math.PI) * 10), 2, 1);
-        }
-        bodies.forEach((b) => {
-          g.fillStyle = b.c; g.fillRect(b.x - b.r, b.y - b.r, b.r * 2, b.r * 2);
-          g.fillStyle = "rgba(255,255,255,0.22)"; g.fillRect(b.x - b.r, b.y - b.r, b.r, b.r);
-        });
-        const progX = Math.round(54 + p * 212);
-        const progY = Math.round(92 - p * 52 - Math.sin(p * Math.PI) * 10);
-        g.fillStyle = "#f3ebd8"; g.fillRect(progX - 2, progY - 2, 5, 4);
-        g.fillStyle = "#e0a342"; g.fillRect(progX - 5, progY - 1, 3, 2);
-      }
-    },
-    {
-      title: "04 · THE RADIATION WALL",
-      caption: "Sunlight at Jupiter is 27 times weaker. Radiation belts destroy unshielded electronics. Only disciplined spacecraft engineering will reach Europa intact.",
-      draw(g, W, H, p, t) {
-        // Jupiter & Europa + Spacecraft approaching
-        g.fillStyle = "#c98556"; g.fillRect(210, 18, 86, 86);
-        g.fillStyle = "#e8cfb2"; g.fillRect(210, 34, 86, 12); g.fillRect(210, 62, 86, 10);
-        g.fillStyle = "#874d33"; g.fillRect(210, 48, 86, 8);
-        // Europa icy moon
-        g.fillStyle = "#dce6f2"; g.fillRect(156, 62, 18, 18);
-        g.fillStyle = "#8ba8cc"; g.fillRect(158, 69, 14, 2); g.fillRect(162, 64, 2, 12);
-        // Spacecraft
-        const sx = Math.round(40 + p * 90), sy = 68;
-        g.fillStyle = "#3d6fa8"; g.fillRect(sx - 14, sy - 2, 10, 5); g.fillRect(sx + 6, sy - 2, 10, 5);
-        g.fillStyle = "#e0a342"; g.fillRect(sx - 4, sy - 4, 9, 8);
-      }
-    },
-    {
-      title: "05 · THE LAUNCH PAD AWAITS",
-      caption: "Every gram, every watt, every bit of bandwidth counts. Step to the desk, Engineer—and answer The Last Signal.",
-      draw(g, W, H, p, t) {
-        drawPad(g, W, H - 24, 1 - Math.min(1, p * 2), t % 16 < 8, "falcon9", p < 0.35);
-        const lift = Math.max(0, (p - 0.35) / 0.65);
-        drawLV(g, "falcon9", 160, Math.round(H - 28 - 44 - lift * 95), { fire: p > 0.2, flicker: (t % 3) / 2 });
-      }
-    }
-  ];
+  // -------------------------------------------------------------------------- Comprehensive Narrative Mission Debriefing (#genesisDebriefPanel)
+  function renderGenesisDebrief(res) {
+    const panel = $("#genesisDebriefPanel");
+    if (!panel || !res || !res.evaluation || !res.sim || !res.score) return;
 
-  let _prolTimer = null;
-  let _prolPaused = false;
-  let _prolIdx = 0;
-  let _prolProg = 0;
+    const scKey = res.design.scenario;
+    const scObj = res.evaluation.scenario || {};
+    const sim = res.sim;
+    const score = res.score;
+    const ev = res.evaluation;
+    const mMeta = (window.MISSION_META && window.MISSION_META[scKey]) || { num: "01", stageNum: "01", stageId: "stage1", stageName: "Earth Operations", reward: 110, rep: 4 };
+    const stageTitle = mMeta.stageName || mMeta.stageTitle || "Horizon Operations";
+    const arc = MISSION_STORY_ARC[scKey] || { why: scObj.pitch || "", discovery: scObj.story || "", infra: scObj.name || scKey };
+    const lore = getStageLore(mMeta.stageId || "stage1");
 
-  function renderPrologueFrame() {
-    const cv = $("#prologueCanvas");
-    if (!cv) return;
-    const g = cv.getContext("2d");
-    const W = 320, H = 180;
-    const sc = PROLOGUE_SCENES[_prolIdx];
-    const t = Math.round(_prolProg * 60);
+    const passed = PASS.includes(score.grade) && sim.outcome === "success";
+    const outcomeBadge = sim.outcome === "success"
+      ? `MISSION SUCCESS · GRADE ${score.grade} (${score.total} PTS)`
+      : sim.outcome === "partial"
+      ? `PARTIAL MISSION · GRADE ${score.grade} (${score.total} PTS)`
+      : `MISSION FAILURE (${String(sim.outcome || "FAILED").toUpperCase()}) · GRADE ${score.grade}`;
 
-    // Star backdrop
-    const sky = g.createLinearGradient(0, 0, 0, H);
-    sky.addColorStop(0, "#050b16"); sky.addColorStop(1, "#122440");
-    g.fillStyle = sky; g.fillRect(0, 0, W, H);
-    const rnd = _rng(90 + _prolIdx);
-    for (let i = 0; i < 65; i++) {
-      g.fillStyle = i % 5 === 0 ? "#e0a342" : "#d9e6f7";
-      g.fillRect(Math.floor(rnd() * W), Math.floor(rnd() * (H - 30)), 1, 1);
-    }
+    const goalsHtml = (ev.science && ev.science.goals ? ev.science.goals : []).map((g) => {
+      const achieved = g.met && sim.science_fraction >= 0.5;
+      return `
+        <div class="cq-deb-goal ${achieved ? "met" : "missed"}">
+          <span class="cq-deb-gstatus">${achieved ? "ACHIEVED" : "MISSED"}</span>
+          <div class="cq-deb-gbody">
+            <b>${esc(g.label)}${g.required ? " (Required)" : " (Optional)"}</b>
+            <small>Planned coverage: ${pct(g.fraction)} · Flight science return: ${pct(sim.science_fraction)}</small>
+          </div>
+        </div>
+      `;
+    }).join("");
 
-    sc.draw(g, W, H, _prolProg, t);
+    const flightEvents = sim.events.filter((e) => e.kind !== "end").slice(0, 6);
+    const eventsHtml = flightEvents.length
+      ? flightEvents.map((e) => `<li class="imp-${esc(e.impact || "neutral")}"><b>Month ${e.month}:</b> ${esc(e.text)}</li>`).join("")
+      : `<li>Nominal flight profile across all ${sim.months_survived} operational months.</li>`;
 
-    if ($("#prolTitle")) $("#prolTitle").textContent = sc.title;
-    if ($("#prolCaption")) $("#prolCaption").textContent = sc.caption;
-    if ($("#prolTimeline")) {
-      $("#prolTimeline").innerHTML = PROLOGUE_SCENES.map((s, i) =>
-        `<button class="cq-prol-seg ${i === _prolIdx ? "on" : i < _prolIdx ? "done" : ""}" data-ps="${i}" aria-label="Scene ${i + 1}"></button>`
-      ).join("");
-      $("#prolTimeline").querySelectorAll("[data-ps]").forEach((b) => {
-        b.onclick = () => { _prolIdx = +b.dataset.ps; _prolProg = 0; renderPrologueFrame(); };
-      });
+    const reserveLeft = sim.timeline && sim.timeline.length ? sim.timeline[sim.timeline.length - 1].reserve : (sim.reserve_start || 0);
+    const rpEarned = passed ? (score.grade === "S" ? 40 : score.grade === "A" ? 30 : 20) : 5;
+
+    const allMissions = (window.CAREER_STAGES || []).flatMap((st) => st.missions);
+    const curIdx = allMissions.findIndex((m) => m.id === scKey);
+    const nextM = curIdx >= 0 && curIdx + 1 < allMissions.length ? allMissions[curIdx + 1] : null;
+    const nextSc = nextM && S.cat && S.cat.SCENARIOS ? S.cat.SCENARIOS[nextM.id] : null;
+
+    panel.innerHTML = `
+      <div class="cq-debrief-card">
+        <div class="cq-debrief-head">
+          <div>
+            <span class="cq-kicker">HORIZON COALITION · OFFICIAL POST-FLIGHT ENGINEERING &amp; NARRATIVE DEBRIEF</span>
+            <h3>MISSION ${mMeta.num}: ${esc((scObj.name || scKey).toUpperCase())} — ${esc(stageTitle.toUpperCase())}</h3>
+          </div>
+          <span class="cq-debrief-outcome ${passed ? "ok" : "bad"}">${esc(outcomeBadge)}</span>
+        </div>
+
+        <div class="cq-debrief-grid">
+          <div class="cq-deb-sec">
+            <h5>1. OBJECTIVES ACHIEVED VS. MISSED</h5>
+            <div class="cq-deb-goals-list">${goalsHtml}</div>
+          </div>
+
+          <div class="cq-deb-sec">
+            <h5>2. ENGINEERING &amp; SUBSYSTEM PERFORMANCE</h5>
+            <div class="cq-deb-kv">
+              <div><span>SURVIVAL DURATION</span><b>${sim.months_survived} / ${sim.months_planned} Months</b></div>
+              <div><span>SCIENCE DELIVERED</span><b>${pct(sim.science_fraction)} (${score.parts.science}/${score.max.science} pts)</b></div>
+              <div><span>MASS &amp; POWER MARGINS</span><b>${ev.mass && ev.mass.margin != null ? pct(ev.mass.margin) : "N/A"} mass · ${ev.power ? pct(ev.power.margin) : "N/A"} power</b></div>
+              <div><span>BUDGET &amp; RESERVE</span><b>${fmt(ev.cost.total)} / ${fmt(ev.cost.budget)} M$ (${fmt(reserveLeft)} M$ left)</b></div>
+            </div>
+          </div>
+
+          <div class="cq-deb-sec">
+            <h5>3. IMPORTANT FLIGHT TELEMETRY EVENTS</h5>
+            <ul class="cq-deb-events">${eventsHtml}</ul>
+          </div>
+
+          <div class="cq-deb-sec">
+            <h5>4. SCIENTIFIC DISCOVERIES &amp; INFRASTRUCTURE UNLOCKED</h5>
+            <p class="cq-deb-Body"><b>Scientific Finding:</b> ${passed ? esc(arc.discovery) : "Telemetry incomplete—re-fly mission with higher reliability or science margin to confirm primary findings."}</p>
+            <p class="cq-deb-Body"><b>Infrastructure Node:</b> ${passed ? `<span class="cq-disc-unlocked">${esc(arc.infra)} COMMISSIONED</span>` : `${esc(arc.infra)} (Pending successful mission)`}</p>
+            <p class="cq-deb-Body"><b>Rewards &amp; Funding:</b> ${passed ? `+${mMeta.reward || 110} M$ Coalition Grant · +${mMeta.rep || 4} Agency Reputation · +${rpEarned} RP` : `+${rpEarned} RP (Diagnostic telemetry credit)`}</p>
+          </div>
+        </div>
+
+        <div class="cq-debrief-next">
+          <div>
+            <span class="cq-kicker">CAMPAIGN CONSEQUENCES &amp; NEXT STORY DEVELOPMENT</span>
+            <p>${passed
+              ? (nextSc
+                  ? `With ${esc(scObj.name)} operational, ${esc(lore.lead.split("·")[0].trim())} has cleared your team for Mission ${nextM.num}: ${esc(nextSc.name)} (${esc(S.cat.DESTINATIONS[nextSc.destination].name)}).`
+                  : `PROJECT GENESIS COMPLETE! You have decoded The Last Signal and completed the entire 25-mission Solar System infrastructure campaign.`)
+              : `Horizon Coalition Review Board requests design revisions on ${esc(scObj.name)} before advancing the ${esc(lore.pillarShort)} pillar.`}</p>
+          </div>
+          ${passed && nextSc ? `<button type="button" class="cq-btn-amber" id="debriefNextMissionBtn">PROCEED TO ${esc(nextSc.name.toUpperCase())} &gt;</button>` : ""}
+        </div>
+      </div>
+    `;
+
+    const nextBtn = $("#debriefNextMissionBtn");
+    if (nextBtn && nextM) {
+      nextBtn.onclick = () => {
+        SFX.page();
+        if (S.mode !== "career") S.mode = "story";
+        S.storyChapter = nextM.id;
+        S.noLetter = false;
+        startMission(nextM.id);
+      };
     }
   }
+  window.renderGenesisDebrief = renderGenesisDebrief;
 
-  function stopPrologue() {
-    clearInterval(_prolTimer);
-    _prolTimer = null;
-  }
+  // -------------------------------------------------------------------------- 78-Second Animated Prologue Film (delegated to /web/prologue.js)
+  // openPrologue and stopPrologue are provided globally by window.PrologueFilm in prologue.js.
 
-  function openPrologue() {
-    show("prologue");
-    stopPrologue();
-    _prolIdx = 0;
-    _prolProg = 0;
-    _prolPaused = reducedMotion();
-    if ($("#prolPlayBtn")) $("#prolPlayBtn").textContent = _prolPaused ? "PLAY" : "PAUSE";
-    renderPrologueFrame();
-
-    _prolTimer = setInterval(() => {
-      if (!_prolPaused && $("#prologue") && $("#prologue").classList.contains("active")) {
-        _prolProg += 0.015;
-        if (_prolProg >= 1) {
-          _prolProg = 0;
-          if (_prolIdx < PROLOGUE_SCENES.length - 1) {
-            _prolIdx++;
-            if (typeof SFX !== "undefined") SFX.beep(false);
-          } else {
-            _prolPaused = true;
-            if ($("#prolPlayBtn")) $("#prolPlayBtn").textContent = "REPLAY";
-          }
-        }
-        renderPrologueFrame();
-      }
-    }, 60);
-  }
-  window.openPrologue = openPrologue;
-  window.stopPrologue = stopPrologue;
-
-  // -------------------------------------------------------------------------- Wire Main Menu Interactions
+  // -------------------------------------------------------------------------- Wire Main Menu, Prologue & Campaign Interactions
   function initCosmoMenu() {
     hydrateIcons();
     drawStoryBanner($("#storyBanner"));
     drawLabBanner($("#labBanner"));
 
-    // Top bar icon actions
     const wire = (id, fn) => { const el = $(id); if (el) el.onclick = fn; };
     wire("#navLabBtn", () => { SFX.page(); go("free"); });
     wire("#navHallBtn", () => { SFX.page(); go("hall"); });
@@ -960,7 +1530,6 @@
     wire("#navAboutBtn", () => { SFX.page(); openAboutModal(); });
     wire("#sbProfileBtn", () => { SFX.page(); openProfileModal(); });
 
-    // Profile modal
     wire("#profileSaveBtn", () => {
       const inp = $("#playerName");
       const val = inp ? inp.value.trim() : "";
@@ -979,7 +1548,6 @@
       $("#profileModal").classList.add("hidden");
     });
 
-    // Settings modal
     wire("#setSoundBtn", () => {
       const next = !store.get("sound", true);
       store.set("sound", next);
@@ -997,6 +1565,7 @@
     wire("#setResetConfirmYes", () => {
       store.set("agency", null);
       store.set("storyDone", {});
+      store.set("genesisPrologueSeen", false);
       $("#setResetConfirm").classList.add("hidden");
       refreshStatusBar();
       toast("Agency career & story progress cleared.");
@@ -1005,30 +1574,64 @@
       $("#setResetConfirm").classList.add("hidden");
     });
     wire("#settingsCloseBtn", () => $("#settingsModal").classList.add("hidden"));
-
-    // About modal
     wire("#aboutCloseBtn", () => $("#aboutModal").classList.add("hidden"));
 
     // Story Campaign screen buttons
     wire("#storyBackBtn", () => { SFX.page(); go("title"); });
     wire("#storyPrologueBtn", () => { SFX.page(); openPrologue(); });
+    wire("#storyHqBtn", () => { SFX.page(); go("career"); });
 
-    // Prologue controls
-    wire("#prolPlayBtn", () => {
-      if (_prolIdx === PROLOGUE_SCENES.length - 1 && _prolPaused) {
-        _prolIdx = 0; _prolProg = 0; _prolPaused = false;
-      } else {
-        _prolPaused = !_prolPaused;
-      }
-      $("#prolPlayBtn").textContent = _prolPaused ? "PLAY" : "PAUSE";
+    // Stage Cutscene Modal close buttons
+    const closeStageCutscene = () => {
+      clearInterval(_cutsceneTimer);
+      if ($("#stageCutsceneModal")) $("#stageCutsceneModal").classList.add("hidden");
+    };
+    wire("#scModalClose", closeStageCutscene);
+    wire("#scModalContinue", closeStageCutscene);
+
+    // Prologue controls (delegated to window.PrologueFilm)
+    wire("#prolPlayBtn", () => window.PrologueFilm && window.PrologueFilm.togglePlay());
+    wire("#prolReplayBtn", () => window.PrologueFilm && window.PrologueFilm.replayCurrentScene());
+    wire("#prolFinalReplayBtn", () => window.PrologueFilm && window.PrologueFilm.replayFilm());
+    wire("#prolSubBtn", () => window.PrologueFilm && window.PrologueFilm.toggleSubtitles());
+    wire("#prolPrevBtn", () => window.PrologueFilm && window.PrologueFilm.prevScene());
+    wire("#prolNextBtn", () => window.PrologueFilm && window.PrologueFilm.nextScene());
+    wire("#prolSkipBtn", () => {
+      store.set("genesisPrologueSeen", true);
+      if (window.PrologueFilm) window.PrologueFilm.stop();
+      SFX.page();
+      openStory("stage1");
     });
-    wire("#prolPrevBtn", () => { _prolIdx = Math.max(0, _prolIdx - 1); _prolProg = 0; renderPrologueFrame(); });
-    wire("#prolNextBtn", () => { _prolIdx = Math.min(PROLOGUE_SCENES.length - 1, _prolIdx + 1); _prolProg = 0; renderPrologueFrame(); });
-    wire("#prolToStoryBtn", () => { stopPrologue(); SFX.page(); openStory(); });
-    wire("#prolBackBtn", () => { stopPrologue(); SFX.page(); go("title"); });
+    wire("#prolEnterMcBtn", () => {
+      store.set("genesisPrologueSeen", true);
+      if (window.PrologueFilm) window.PrologueFilm.stop();
+      SFX.page();
+      openStory("stage1");
+    });
+    wire("#prolToStoryBtn", () => {
+      store.set("genesisPrologueSeen", true);
+      if (window.PrologueFilm) window.PrologueFilm.stop();
+      SFX.page();
+      openStory();
+    });
+    wire("#prolBackBtn", () => {
+      if (window.PrologueFilm) window.PrologueFilm.stop();
+      SFX.page();
+      go("title");
+    });
 
-    // Close modals when clicking backdrop
-    ["#profileModal", "#settingsModal", "#aboutModal"].forEach((sel) => {
+    document.addEventListener("keydown", (e) => {
+      const pEl = $("#prologue");
+      if (!pEl || !pEl.classList.contains("active") || !window.PrologueFilm) return;
+      if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
+      if (e.code === "Space") { e.preventDefault(); window.PrologueFilm.togglePlay(); }
+      else if (e.code === "ArrowLeft") { e.preventDefault(); window.PrologueFilm.prevScene(); }
+      else if (e.code === "ArrowRight") { e.preventDefault(); window.PrologueFilm.nextScene(); }
+      else if (e.key === "r" || e.key === "R") { window.PrologueFilm.replayCurrentScene(); }
+      else if (e.key === "c" || e.key === "C") { window.PrologueFilm.toggleSubtitles(); }
+    });
+
+    ["#profileModal", "#settingsModal", "#aboutModal", "#stageCutsceneModal"].forEach((sel) => {
       const m = $(sel);
       if (m) m.addEventListener("click", (e) => { if (e.target === m) m.classList.add("hidden"); });
     });

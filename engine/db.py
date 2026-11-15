@@ -10,6 +10,8 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
+from urllib.parse import unquote, urlparse
+
 try:
     import pymysql
     import pymysql.cursors
@@ -27,13 +29,38 @@ if ENV_PATH.exists():
             k, v = line.split("=", 1)
             os.environ.setdefault(k.strip(), v.strip())
 
-IS_CONFIGURED = bool(os.environ.get("TIDB_HOST") or os.environ.get("DATABASE_URL"))
-HOST = os.environ.get("TIDB_HOST", "127.0.0.1")
-PORT = int(os.environ.get("TIDB_PORT", 4000))
-USER = os.environ.get("TIDB_USER", "root")
-PASSWORD = os.environ.get("TIDB_PASSWORD", "")
-DATABASE = os.environ.get("TIDB_DATABASE", "mission_architect")
-USE_SSL = os.environ.get("TIDB_SSL", "true").lower() in ("true", "1", "yes")
+
+def _parse_db_config() -> tuple[bool, str, int, str, str, str, bool]:
+    db_url = os.environ.get("DATABASE_URL", "").strip()
+    tidb_host = os.environ.get("TIDB_HOST", "").strip()
+    configured = bool(tidb_host or db_url)
+
+    host = tidb_host or "127.0.0.1"
+    port = int(os.environ.get("TIDB_PORT") or 4000)
+    user = os.environ.get("TIDB_USER", "root")
+    password = os.environ.get("TIDB_PASSWORD", "")
+    database = os.environ.get("TIDB_DATABASE", "mission_architect")
+    use_ssl = os.environ.get("TIDB_SSL", "true").lower() in ("true", "1", "yes")
+
+    if db_url and not tidb_host:
+        u = urlparse(db_url)
+        if u.hostname:
+            host = u.hostname
+        if u.port:
+            port = int(u.port)
+        if u.username:
+            user = unquote(u.username)
+        if u.password is not None:
+            password = unquote(u.password)
+        if u.path and u.path.strip("/"):
+            database = u.path.strip("/")
+        if "ssl=false" in (u.query or "").lower():
+            use_ssl = False
+
+    return configured, host, port, user, password, database, use_ssl
+
+
+IS_CONFIGURED, HOST, PORT, USER, PASSWORD, DATABASE, USE_SSL = _parse_db_config()
 
 _pool: queue.Queue[pymysql.Connection] = queue.Queue(maxsize=20)
 _pool_lock = threading.Lock()
@@ -220,11 +247,33 @@ SCHEMA_STATEMENTS = [
         INDEX idx_player_career (player_name),
         CONSTRAINT fk_car_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )""",
+    """CREATE TABLE IF NOT EXISTS genesis_progress (
+        id BIGINT AUTO_RANDOM PRIMARY KEY,
+        player_name VARCHAR(50) NOT NULL UNIQUE,
+        progress_json JSON NOT NULL,
+        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_genesis_player (player_name)
+    )""",
+    """CREATE TABLE IF NOT EXISTS user_sessions (
+        token VARCHAR(128) PRIMARY KEY,
+        user_id BIGINT NOT NULL,
+        username VARCHAR(30) NOT NULL,
+        display_name VARCHAR(50) NOT NULL DEFAULT '',
+        expires_at BIGINT NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_session_user (user_id),
+        INDEX idx_session_exp (expires_at),
+        CONSTRAINT fk_sess_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )""",
+]
+
+MIGRATION_STATEMENTS = [
+    "ALTER TABLE rooms ADD COLUMN meta_json JSON NULL",
 ]
 
 
 def init_db():
-    """Idempotently initialize all database tables."""
+    """Idempotently initialize all database tables and backward-compatible migrations."""
     global _initialized
     if not is_available():
         return
@@ -235,5 +284,11 @@ def init_db():
             with conn.cursor() as cur:
                 for stmt in SCHEMA_STATEMENTS:
                     cur.execute(stmt)
+                for m_stmt in MIGRATION_STATEMENTS:
+                    try:
+                        cur.execute(m_stmt)
+                    except Exception:
+                        pass
             conn.commit()
         _initialized = True
+

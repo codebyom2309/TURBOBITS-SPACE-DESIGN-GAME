@@ -703,8 +703,8 @@ html.title-mode .screen.active {
 .cq-about-grid strong { font-size: 11px; color: var(--cq-amber); }
 .cq-about-grid span { font-family: "VT323", monospace; font-size: 19px; color: var(--cq-muted); line-height: 1.1; }
 
-/* ------------------------------------------------ Story Campaign & Prologue Film Screens */
-#story, #prologue {
+/* ------------------------------------------------ Story Campaign Screen */
+#story {
   background: radial-gradient(circle at 50% 0%, #142847 0%, #07101f 75%);
   color: var(--cq-cream);
   font-family: "Silkscreen", monospace;
@@ -779,52 +779,7 @@ html.title-mode .screen.active {
 .cq-ch-meta { color: var(--cq-amber-hi); }
 .cq-ch-lock { font-family: "VT323", monospace; font-size: 18px; color: var(--cq-muted); }
 
-/* Prologue Film Cinema */
-.cq-cinema > .cq-frame-in {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-#prologueCanvas {
-  width: 100%;
-  max-height: 54vh;
-  aspect-ratio: 16 / 9;
-  border: 2px solid var(--cq-border);
-  background: #050b16;
-  display: block;
-}
-.cq-cinema-caption {
-  font-family: "VT323", monospace;
-  font-size: 23px;
-  line-height: 1.2;
-  color: var(--cq-cream);
-  min-height: 56px;
-  padding: 8px 12px;
-  background: rgba(7, 16, 31, 0.85);
-  border: 1px solid rgba(77, 119, 173, 0.45);
-}
-.cq-cinema-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.cq-prol-timeline {
-  flex: 1;
-  min-width: 160px;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
-}
-.cq-prol-seg {
-  height: 10px;
-  border: 1px solid var(--cq-border);
-  background: #0d1b30;
-  cursor: pointer;
-}
-.cq-prol-seg.done { background: var(--cq-border); }
-.cq-prol-seg.on { background: var(--cq-amber); border-color: var(--cq-amber-hi); }
+/* Legacy cinema rules moved to Warm Engineering Prologue section below */
 
 /* ------------------------------------------------ Responsive Breakpoints for COSMO QUEST */
 @media (max-height: 760px) and (min-width: 820px) {
@@ -3232,5 +3187,1852 @@ html.mobile #hall {
     text-align: center;
   }
 }
+
+/* ============================================================================
+   PROJECT GENESIS: THE LAST SIGNAL — STORY CAMPAIGN, PROLOGUE FILM,
+   NARRATIVE MISSION DEBRIEFING & COOPERATIVE TEAM ROOM
+   ============================================================================ */
+
+/* Include #story, #team, and #prologue player shell in the Warm Engineering Design System */
+#story,
+#team,
+#prologue,
+html.mobile #story,
+html.mobile #team,
+html.mobile #prologue {
+  background-color: var(--eng-bg);
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0 23px, var(--eng-bg-grid) 23px 24px),
+    repeating-linear-gradient(90deg, transparent 0 23px, var(--eng-bg-grid) 23px 24px),
+    radial-gradient(ellipse at 50% 0%, rgba(255, 248, 231, 0.55) 0%, rgba(196, 178, 146, 0.35) 100%);
+  color: var(--eng-ink);
+}
+
+.cq-genesis-screen,
+.cq-story-screen,
+.cq-team-screen {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 18px 20px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+#story .cq-frame,
+#team .cq-frame,
+#prologue .cq-frame {
+  background: var(--eng-ivory);
+  border: 2px solid var(--eng-border);
+  box-shadow: 4px 4px 0 rgba(42, 37, 32, 0.28);
+  padding: 0;
+  clip-path: none;
+  color: var(--eng-ink);
+}
+
+#story .cq-frame > .cq-frame-in,
+#team .cq-frame > .cq-frame-in,
+#prologue .cq-frame > .cq-frame-in {
+  background: var(--eng-ivory);
+  color: var(--eng-ink);
+  clip-path: none;
+  background-image: repeating-linear-gradient(0deg, transparent 0 3px, rgba(80, 60, 30, 0.035) 3px 4px);
+}
+
+#story .cq-subhead > .cq-frame-in,
+#team .cq-subhead > .cq-frame-in,
+#prologue .cq-subhead > .cq-frame-in {
+  background: var(--eng-sand);
+  border-bottom: 2px solid var(--eng-border);
+}
+
+#story .cq-kicker,
+#team .cq-kicker,
+#prologue .cq-kicker,
+#news .cq-debrief-panel .cq-kicker {
+  color: var(--eng-red);
+  font-weight: 700;
+}
+
+#story .cq-subhead h2,
+#team .cq-subhead h2,
+#prologue .cq-subhead h2 {
+  color: var(--eng-ink);
+}
+
+#story .cq-btn-hud,
+#team .cq-btn-hud,
+#prologue .cq-btn-hud {
+  background: var(--eng-surface);
+  color: var(--eng-ink);
+  border: 2px solid var(--eng-border);
+  box-shadow: 2px 2px 0 var(--eng-border);
+  cursor: pointer;
+}
+#story .cq-btn-hud:hover,
+#team .cq-btn-hud:hover,
+#prologue .cq-btn-hud:hover {
+  background: #fff9eb;
+  border-color: var(--eng-blue);
+  color: var(--eng-blue-d);
+}
+
+#story .cq-btn-amber,
+#team .cq-btn-amber,
+#prologue .cq-btn-amber,
+#genesisDebriefPanel .cq-btn-amber {
+  background: var(--eng-amber);
+  color: #fffaf0;
+  border: 2px solid var(--eng-border);
+  box-shadow: 2px 2px 0 var(--eng-border);
+  cursor: pointer;
+}
+#story .cq-btn-amber:hover,
+#team .cq-btn-amber:hover,
+#prologue .cq-btn-amber:hover,
+#genesisDebriefPanel .cq-btn-amber:hover {
+  background: #b5781c;
+  color: #ffffff;
+}
+
+/* ------------------------------------------------ A. 78-Second Prologue Film (#prologue) */
+.cq-prologue-wrap {
+  width: 100%;
+  max-width: min(1140px, calc((100vh - 238px) * 16 / 9 + 28px));
+  padding: 10px 18px 14px;
+  gap: 8px;
+}
+.cq-prol-head > .cq-frame-in {
+  padding: 8px 14px;
+  gap: 10px;
+  align-items: center;
+}
+.cq-prol-heading {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.cq-prol-heading .cq-kicker {
+  display: block;
+  font-size: 9px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cq-prol-heading h2 {
+  font-size: clamp(11px, 1.05vw, 15px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cq-prol-topbtns {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 0 0 auto;
+}
+#prologue .cq-prol-topbtns button {
+  padding: 5px 9px;
+  font-size: 9px;
+  white-space: nowrap;
+}
+@media (min-width: 960px) {
+  .cq-prol-head > .cq-frame-in,
+  .cq-prol-topbtns {
+    flex-wrap: nowrap;
+  }
+}
+#prologue .cq-cinema > .cq-frame-in {
+  padding: 8px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cq-cinema-stage {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+}
+.cq-cinema-bezel {
+  background: #060b14;
+  border: 3px solid var(--eng-border);
+  box-shadow: inset 0 0 0 2px #1c2430, 0 3px 0 rgba(42, 37, 32, 0.22);
+  padding: 3px;
+}
+#prologueCanvas {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  background: #040812;
+  display: block;
+  image-rendering: auto;
+}
+.cq-cinema-caption {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: clamp(15px, 1.35vw, 17px);
+  font-weight: 500;
+  line-height: 1.42;
+  letter-spacing: 0.01em;
+  color: #f6f1e4;
+  min-height: 50px;
+  padding: 8px 18px;
+  background: #1d1a16;
+  border: 2px solid var(--eng-border);
+  border-left: 5px solid var(--eng-amber);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.cq-cinema-caption.subs-off {
+  color: #b7ad9a;
+  font-size: 14px;
+  min-height: 36px;
+  padding: 6px 14px;
+}
+.cq-cap-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.05em;
+  background: var(--eng-amber);
+  margin-left: 3px;
+  vertical-align: -2px;
+  animation: cq-caret 0.72s steps(2, start) infinite;
+}
+@keyframes cq-caret {
+  to { opacity: 0; }
+}
+.cq-cinema-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cq-prol-transbtns {
+  display: flex;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+.cq-prol-timeline {
+  flex: 1 1 220px;
+  min-width: 160px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+.cq-prol-seg {
+  position: relative;
+  height: 22px;
+  padding: 0;
+  border: 2px solid var(--eng-border);
+  background: var(--eng-sand);
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cq-prol-seg:hover {
+  border-color: var(--eng-blue);
+}
+.cq-prol-seg-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  background: var(--eng-amber);
+}
+.cq-prol-seg.done .cq-prol-seg-fill {
+  width: 100%;
+  background: #6c8062;
+}
+.cq-prol-seg-lbl {
+  position: relative;
+  z-index: 1;
+  font-family: "Silkscreen", monospace;
+  font-size: 9px;
+  color: var(--eng-ink);
+}
+.cq-prol-seg.on .cq-prol-seg-lbl,
+.cq-prol-seg.done .cq-prol-seg-lbl {
+  color: #1c1814;
+  font-weight: 700;
+}
+
+.cq-prol-final {
+  position: absolute;
+  inset: 4px;
+  background: radial-gradient(ellipse at 50% 45%, rgba(8, 17, 34, 0.94) 0%, rgba(3, 7, 15, 0.98) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16px;
+  z-index: 6;
+  overflow-y: auto;
+}
+.cq-prol-final-box {
+  max-width: 590px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  border: 2px solid var(--cq-amber);
+  background: rgba(11, 22, 42, 0.96);
+  padding: 20px 24px;
+  box-shadow: 0 0 36px rgba(224, 163, 66, 0.3);
+}
+.cq-prol-final-org {
+  font-family: "Silkscreen", monospace;
+  font-size: 9px;
+  color: #6fe0ec;
+  border-top: 1px solid rgba(132, 180, 235, 0.35);
+  border-bottom: 1px solid rgba(132, 180, 235, 0.35);
+  padding: 4px 10px;
+  letter-spacing: 1px;
+}
+.cq-prol-final-game {
+  font-family: "Silkscreen", monospace;
+  font-size: clamp(18px, 2.8vw, 26px);
+  color: var(--cq-cream);
+  margin: 2px 0 0;
+  letter-spacing: 2px;
+}
+.cq-prol-final-proj {
+  font-family: "Silkscreen", monospace;
+  font-size: clamp(14px, 2vw, 18px);
+  color: var(--cq-amber-hi);
+  margin: 0;
+  letter-spacing: 2px;
+}
+.cq-prol-final-sub {
+  font-family: "Silkscreen", monospace;
+  font-size: 10px;
+  color: var(--cq-border-hi);
+  letter-spacing: 2px;
+}
+.cq-prol-final-lead {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  color: var(--cq-cream);
+  margin: 4px 0 10px;
+  line-height: 1.45;
+}
+.cq-prol-final-btns {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+.cq-prol-enter-btn {
+  font-size: 12px !important;
+  padding: 10px 18px !important;
+}
+
+@media (max-width: 720px) {
+  .cq-prologue-wrap {
+    padding: 10px 12px 24px;
+    gap: 10px;
+  }
+  .cq-prol-head > .cq-frame-in {
+    padding: 10px 12px;
+  }
+  .cq-prol-topbtns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    width: 100%;
+  }
+  #prologue .cq-prol-topbtns button {
+    font-size: 8.5px;
+    padding: 6px 4px;
+    min-height: 40px;
+  }
+  #prologue .cq-cinema > .cq-frame-in {
+    padding: 10px;
+    gap: 8px;
+  }
+  .cq-cinema-stage {
+    max-width: 100%;
+  }
+  .cq-cinema-stage:has(#prolFinalOverlay:not(.hidden)) .cq-cinema-bezel {
+    display: none;
+  }
+  .cq-prol-final {
+    position: relative;
+    inset: auto;
+    padding: 8px;
+    border: 2px solid var(--eng-border);
+  }
+  .cq-cinema-caption {
+    font-size: 19px;
+    min-height: 48px;
+    padding: 8px 10px;
+  }
+  .cq-cinema-controls {
+    gap: 8px;
+  }
+  .cq-prol-transbtns {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  #prologue .cq-btn-hud,
+  #prologue .cq-btn-amber {
+    min-height: 40px;
+    font-size: 10px;
+  }
+  #prolSkipBtn {
+    width: 100%;
+  }
+  .cq-prol-final-box {
+    padding: 14px 12px;
+    gap: 6px;
+  }
+  .cq-prol-final-btns {
+    width: 100%;
+    flex-direction: column;
+  }
+  .cq-prol-final-lead {
+    font-size: 17px;
+  }
+}
+
+/* ------------------------------------------------ B. Project Genesis Connected Campaign (#story) */
+.cq-genesis-signal-hud {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  background: var(--eng-surface);
+  border: 2px solid var(--eng-border);
+  padding: 5px 10px;
+}
+.cq-genesis-signal-hud span {
+  font-family: "Silkscreen", monospace;
+  font-size: 8px;
+  color: var(--eng-blue-d);
+}
+.cq-genesis-signal-hud b {
+  font-family: "Silkscreen", monospace;
+  font-size: 12px;
+  color: var(--eng-green);
+}
+
+#story #genesisWorldBar.cq-genesis-world {
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cq-gw-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-bottom: 2px solid var(--eng-border);
+  padding-bottom: 8px;
+}
+.cq-gw-title h4 {
+  font-family: "Silkscreen", monospace;
+  font-size: 14px;
+  margin: 2px 0 0;
+  color: var(--eng-ink);
+}
+.cq-gw-signal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--eng-sand);
+  border: 2px solid var(--eng-border);
+  padding: 6px 12px;
+}
+.cq-gw-signal span {
+  font-family: "Silkscreen", monospace;
+  font-size: 9px;
+  color: var(--eng-blue-d);
+}
+.cq-gw-sigbar {
+  width: 120px;
+  height: 10px;
+  background: var(--eng-surface);
+  border: 1px solid var(--eng-border);
+}
+.cq-gw-sigbar i {
+  display: block;
+  height: 100%;
+  background: var(--eng-green);
+}
+.cq-gw-signal b {
+  font-family: "Silkscreen", monospace;
+  font-size: 10px;
+  color: var(--eng-ink);
+}
+.cq-gw-pillars {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+.cq-gw-pillar {
+  min-width: 0;
+  background: var(--eng-surface);
+  border: 2px solid var(--eng-border);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  cursor: pointer;
+  transition: transform 120ms ease, background-color 120ms ease;
+}
+.cq-gw-pillar:hover {
+  transform: translateY(-2px);
+  background: #fffdf7;
+}
+.cq-gw-pillar.online {
+  background: rgba(63, 110, 42, 0.12);
+  border-color: var(--eng-green);
+}
+.cq-gw-pillar.active {
+  background: #fff8e6;
+  border-color: var(--eng-amber);
+}
+.cq-gw-pillar.locked {
+  opacity: 0.72;
+  background: var(--eng-sand-dark);
+}
+.cq-gwp-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+  font-family: "Silkscreen", monospace;
+  font-size: 8px;
+}
+.cq-gwp-num {
+  color: var(--eng-red);
+}
+.cq-gwp-state {
+  color: var(--eng-blue-d);
+}
+.cq-gw-pillar b {
+  font-family: "Silkscreen", monospace;
+  font-size: 11px;
+  color: var(--eng-ink);
+}
+.cq-gw-pillar small {
+  font-family: "VT323", monospace;
+  font-size: 15px;
+  color: var(--eng-muted);
+  line-height: 1.05;
+}
+
+/* 6-Stage Narrative Track Tabs */
+.cq-gtrack-bar {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+.cq-gstage-tab {
+  min-width: 0;
+  overflow: hidden;
+  background: var(--eng-sand);
+  border: 2px solid var(--eng-border);
+  box-shadow: 2px 2px 0 rgba(42, 37, 32, 0.22);
+  padding: 8px 10px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  color: var(--eng-ink);
+}
+.cq-gstage-tab:hover {
+  background: var(--eng-surface);
+}
+.cq-gstage-tab.on {
+  background: var(--eng-border);
+  color: var(--eng-ivory);
+}
+.cq-gstage-tab.done:not(.on) {
+  border-color: var(--eng-green);
+  background: #eef5e8;
+}
+.cq-gst-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: "Silkscreen", monospace;
+  font-size: 9px;
+}
+.cq-gst-top i {
+  font-style: normal;
+  color: var(--eng-red);
+}
+.cq-gstage-tab.on .cq-gst-top i {
+  color: #ffd166;
+}
+.cq-gst-name {
+  font-family: "Silkscreen", monospace;
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Stage Narrative Hero & Mission Cards */
+.cq-genesis-main {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.cq-genesis-stage-block {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+.cq-gstage-hero {
+  background: var(--eng-ivory);
+  border: 2px solid var(--eng-border);
+  box-shadow: 4px 4px 0 rgba(42, 37, 32, 0.26);
+  padding: 14px 18px;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 16px;
+  align-items: center;
+}
+.cq-gstage-banner {
+  width: 240px;
+  height: 92px;
+  object-fit: cover;
+  border: 2px solid var(--eng-border);
+  display: block;
+}
+.cq-gstage-hero-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cq-gstage-kicker-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.cq-gstage-bonus {
+  font-family: "Silkscreen", monospace;
+  font-size: 9px;
+  background: var(--eng-sand);
+  border: 1px solid var(--eng-border);
+  padding: 2px 7px;
+  color: var(--eng-green);
+}
+.cq-gstage-hero-body h3 {
+  font-family: "Silkscreen", monospace;
+  font-size: 16px;
+  margin: 0;
+  color: var(--eng-ink);
+}
+.cq-gstage-summary {
+  margin: 0;
+  font-family: "VT323", monospace;
+  font-size: 19px;
+  line-height: 1.14;
+  color: var(--eng-ink);
+}
+.cq-gstage-leadbar {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  background: var(--eng-surface);
+  border: 1px solid var(--eng-border);
+  padding: 6px 10px;
+  margin-top: 2px;
+}
+.cq-gstage-lead-img {
+  width: 44px;
+  height: 52px;
+  border: 1px solid var(--eng-border);
+  background: #2f2b26;
+}
+.cq-gstage-lead-txt {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.cq-gstage-lead-txt b {
+  font-family: "Silkscreen", monospace;
+  font-size: 10px;
+  color: var(--eng-blue-d);
+}
+.cq-gstage-lead-txt span {
+  font-family: "VT323", monospace;
+  font-size: 18px;
+  color: var(--eng-ink);
+  font-style: italic;
+}
+.cq-stage-complete-banner {
+  background: rgba(63, 110, 42, 0.14);
+  border: 1px solid var(--eng-green);
+  padding: 6px 10px;
+  font-family: "VT323", monospace;
+  font-size: 18px;
+  color: var(--eng-ink);
+}
+
+/* Connected Campaign Mission Cards */
+.cq-genesis-missions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cq-chapter.cq-genesis-card {
+  display: grid;
+  grid-template-columns: 220px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  background: var(--eng-ivory);
+  border: 2px solid var(--eng-border);
+  box-shadow: 4px 4px 0 rgba(42, 37, 32, 0.25);
+  padding: 12px 16px;
+  color: var(--eng-ink);
+}
+.cq-chapter.cq-genesis-card.done {
+  border-color: var(--eng-green);
+  background: linear-gradient(90deg, #f2f8ed 0%, var(--eng-ivory) 40%);
+}
+.cq-chapter.cq-genesis-card.locked {
+  opacity: 0.72;
+  background: var(--eng-sand-dark);
+}
+.cq-gcard-artwrap {
+  position: relative;
+  width: 220px;
+  height: 96px;
+  border: 2px solid var(--eng-border);
+  background: #0b1628;
+  overflow: hidden;
+}
+.cq-gcard-art {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.cq-gcard-badges {
+  position: absolute;
+  inset: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: space-between;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.cq-genesis-card .cq-ch-num {
+  background: rgba(244, 239, 226, 0.95);
+  color: var(--eng-ink);
+  border: 1px solid var(--eng-border);
+  font-family: "Silkscreen", monospace;
+  font-size: 9px;
+  padding: 2px 6px;
+}
+.cq-gcard-req {
+  font-family: "Silkscreen", monospace;
+  font-size: 8px;
+  padding: 2px 5px;
+  border: 1px solid var(--eng-border);
+}
+.cq-gcard-req.req {
+  background: var(--eng-red);
+  color: #fff;
+}
+.cq-gcard-req.opt {
+  background: var(--eng-blue);
+  color: #fff;
+}
+.cq-genesis-card .cq-ch-grade {
+  color: #fff;
+  font-family: "Silkscreen", monospace;
+  font-size: 10px;
+  padding: 2px 6px;
+  border: 1px solid var(--eng-border);
+}
+.cq-genesis-card .cq-ch-loc {
+  color: var(--eng-blue-d);
+  font-weight: 700;
+}
+.cq-genesis-card .cq-ch-meta {
+  color: var(--eng-green);
+  font-family: "Silkscreen", monospace;
+  font-size: 10px;
+}
+.cq-genesis-card .cq-ch-body h3 {
+  color: var(--eng-ink);
+  font-family: "Silkscreen", monospace;
+  font-size: 15px;
+  margin: 0 0 6px;
+}
+.cq-gcard-client {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 10px;
+  align-items: center;
+  background: var(--eng-surface);
+  border: 1px solid var(--eng-border);
+  padding: 6px 10px;
+  margin-bottom: 6px;
+}
+.cq-gcard-Director {
+  width: 40px;
+  height: 48px;
+  border: 1px solid var(--eng-border);
+  background: #2f2b26;
+}
+.cq-gcard-client b {
+  font-family: "Silkscreen", monospace;
+  font-size: 9px;
+  color: var(--eng-muted);
+  display: block;
+}
+.cq-gcard-client p {
+  margin: 2px 0 0;
+  font-family: "VT323", monospace;
+  font-size: 18px;
+  color: var(--eng-ink);
+  line-height: 1.1;
+}
+.cq-genesis-card .cq-ch-obj {
+  border-top: 1px dashed rgba(42, 37, 32, 0.35);
+  color: var(--eng-muted);
+  flex-direction: column;
+  gap: 3px;
+}
+.cq-disc-unlocked {
+  color: var(--eng-green);
+  font-weight: 700;
+}
+.cq-genesis-card .cq-ch-act {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 175px;
+}
+.cq-gcard-brief-btn {
+  width: 100%;
+  font-size: 10px !important;
+}
+
+/* Stage Cutscene Modal (#stageCutsceneModal) — Preserve Deep Space Cinematic Viewport */
+#story #stageCutsceneModal {
+  background: rgba(4, 10, 20, 0.84);
+}
+#story #stageCutsceneModal .cq-cutscene-panel {
+  width: min(760px, 94vw);
+  background: #0d1c34;
+  border: 2px solid var(--cq-amber);
+  box-shadow: 0 0 36px rgba(10, 24, 48, 0.9);
+  color: var(--cq-cream);
+}
+#story #stageCutsceneModal .cq-cutscene-panel > .cq-frame-in {
+  background: linear-gradient(180deg, #0b1930 0%, #071122 100%);
+  color: var(--cq-cream);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+#story #stageCutsceneModal .cq-kicker {
+  color: var(--cq-amber);
+}
+#story #stageCutsceneModal h3 {
+  color: var(--cq-cream);
+}
+#story #stageCutsceneModal .cq-modal-x {
+  background: #132542;
+  color: var(--cq-cream);
+  border: 1px solid var(--cq-border-hi);
+}
+.cq-cutscene-canvas {
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  border: 2px solid var(--cq-border);
+  background: #060e1c;
+  display: block;
+}
+.cq-cutscene-body {
+  background: rgba(7, 16, 31, 0.82);
+  border: 1px solid rgba(132, 180, 235, 0.35);
+  padding: 10px 14px;
+}
+.cq-sc-lead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(132, 180, 235, 0.3);
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+}
+.cq-sc-avatar {
+  width: 44px;
+  height: 52px;
+  border: 1px solid var(--cq-border-hi);
+  background: #142238;
+}
+.cq-sc-lead b {
+  display: block;
+  font-family: "Silkscreen", monospace;
+  font-size: 11px;
+  color: var(--cq-amber-hi);
+}
+.cq-sc-lead span {
+  font-family: "VT323", monospace;
+  font-size: 18px;
+  color: var(--cq-border-hi);
+}
+.cq-sc-paragraphs p {
+  margin: 4px 0;
+  font-family: "VT323", monospace;
+  font-size: 20px;
+  color: var(--cq-cream);
+  line-height: 1.15;
+}
+
+/* ------------------------------------------------ C. Comprehensive Narrative Mission Debriefing (#news) */
+#news.active,
+html.mobile #news.active {
+  overflow-y: auto;
+  display: block;
+  padding: 0;
+}
+#news .cq-news-scroll {
+  position: relative;
+  z-index: 2;
+  max-width: 1020px;
+  margin: 0 auto;
+  padding: 18px 20px 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+#news .cq-news-scroll .newspaper,
+html.mobile #news .cq-news-scroll .newspaper {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: 100%;
+  max-width: 980px;
+  height: auto;
+  min-height: 520px;
+  overflow: visible;
+}
+#news .cq-news-scroll .agency-report {
+  position: static;
+  margin-top: 12px;
+}
+#news .cq-news-scroll .news-actions,
+html.mobile #news .cq-news-scroll .news-actions {
+  position: relative;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  justify-content: center;
+  flex-wrap: wrap;
+  background: transparent;
+  padding: 0;
+  width: 100%;
+}
+.cq-debrief-panel {
+  width: 100%;
+  max-width: 980px;
+}
+.cq-debrief-card {
+  background: var(--eng-ivory);
+  border: 3px solid var(--eng-border);
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.55);
+  padding: 16px 22px;
+  color: var(--eng-ink);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cq-debrief-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  border-bottom: 2px solid var(--eng-border);
+  padding-bottom: 8px;
+}
+.cq-debrief-head h3 {
+  font-family: "Silkscreen", monospace;
+  font-size: 15px;
+  margin: 2px 0 0;
+  color: var(--eng-ink);
+}
+.cq-debrief-outcome {
+  font-family: "Silkscreen", monospace;
+  font-size: 10px;
+  padding: 5px 10px;
+  border: 2px solid var(--eng-border);
+}
+.cq-debrief-outcome.ok {
+  background: var(--eng-green);
+  color: #fff;
+}
+.cq-debrief-outcome.bad {
+  background: var(--eng-red);
+  color: #fff;
+}
+.cq-debrief-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.cq-deb-sec {
+  background: var(--eng-surface);
+  border: 1px solid var(--eng-border);
+  padding: 10px 12px;
+}
+.cq-deb-sec h5 {
+  font-family: "Silkscreen", monospace;
+  font-size: 10px;
+  color: var(--eng-red);
+  margin: 0 0 6px;
+  border-bottom: 1px solid rgba(42, 37, 32, 0.3);
+  padding-bottom: 3px;
+}
+.cq-deb-goals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cq-deb-goal {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 17px;
+}
+.cq-deb-gstatus {
+  font-family: "Silkscreen", monospace;
+  font-size: 8px;
+  padding: 2px 5px;
+  flex: none;
+}
+.cq-deb-goal.met .cq-deb-gstatus {
+  background: var(--eng-green);
+  color: #fff;
+}
+.cq-deb-goal.missed .cq-deb-gstatus {
+  background: var(--eng-red);
+  color: #fff;
+}
+.cq-deb-gbody {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.08;
+}
+.cq-deb-gbody small {
+  color: var(--eng-muted);
+  font-size: 15px;
+}
+.cq-deb-kv {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.cq-deb-kv div {
+  display: flex;
+  flex-direction: column;
+}
+.cq-deb-kv span {
+  font-family: "Silkscreen", monospace;
+  font-size: 8px;
+  color: var(--eng-muted);
+}
+.cq-deb-kv b {
+  font-size: 18px;
+  color: var(--eng-ink);
+}
+.cq-deb-events {
+  margin: 0;
+  padding-left: 16px;
+  font-size: 17px;
+  line-height: 1.15;
+}
+.cq-deb-events li.imp-bad,
+.cq-deb-events li.imp-fatal {
+  color: var(--eng-red);
+}
+.cq-deb-events li.imp-good {
+  color: var(--eng-green);
+}
+.cq-deb-Body {
+  margin: 0 0 5px;
+  font-size: 17px;
+  line-height: 1.14;
+}
+.cq-debrief-next {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: var(--eng-sand);
+  border: 2px solid var(--eng-border);
+  padding: 10px 14px;
+}
+.cq-debrief-next p {
+  margin: 2px 0 0;
+  font-size: 19px;
+}
+
+/* ------------------------------------------------ D. Cooperative Team Room (#team & #teamDeskPanel) */
+.cq-team-err {
+  min-height: 20px;
+  margin: 0;
+  font-family: "Silkscreen", monospace;
+  font-size: 10px;
+  color: var(--eng-red);
+}
+.cq-team-err:empty {
+  display: none;
+}
+
+.cq-team-setup-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+.cq-team-panel > .cq-frame-in {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cq-team-panel-head h3 {
+  font-family: "Silkscreen", monospace;
+  font-size: 15px;
+  margin: 2px 0 4px;
+  color: var(--eng-ink);
+}
+.cq-team-panel-head p {
+  margin: 0;
+  font-size: 18px;
+  color: var(--eng-muted);
+  line-height: 1.12;
+}
+.cq-team-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cq-team-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.cq-team-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cq-team-field > span {
+  font-family: "Silkscreen", monospace;
+  font-size: 9px;
+  color: var(--eng-muted);
+}
+.cq-team-field input {
+  background: var(--eng-surface);
+  color: var(--eng-ink);
+  border: 2px solid var(--eng-border);
+  padding: 6px 10px;
+  font-family: "VT323", monospace;
+  font-size: 19px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Team Insignia & Avatar Pickers */
+.cq-emblem-picker {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.cq-avatar-picker {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+.cq-emblem-opt,
+.cq-avatar-opt {
+  background: var(--eng-surface);
+  border: 2px solid var(--eng-border);
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  color: var(--eng-ink);
+}
+.cq-emblem-opt img {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--eng-border);
+}
+.cq-avatar-opt img {
+  width: 32px;
+  height: 38px;
+  border: 1px solid var(--eng-border);
+  background: #2f2b26;
+}
+.cq-emblem-opt span,
+.cq-avatar-opt span {
+  font-family: "Silkscreen", monospace;
+  font-size: 8px;
+  text-align: center;
+}
+.cq-emblem-opt.on,
+.cq-avatar-opt.on {
+  background: #fff6db;
+  border-color: var(--eng-amber);
+  box-shadow: inset 0 0 0 2px var(--eng-amber);
+}
+.cq-team-create-foot {
+  margin-top: 2px;
+}
+.cq-team-create-btn {
+  width: 100%;
+  justify-content: center;
+  padding: 10px 16px !important;
+  font-size: 12px !important;
+}
+
+/* Join Room Box & Preview */
+.cq-join-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cq-join-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+  align-items: center;
+}
+.cq-code-input {
+  text-transform: uppercase;
+  font-family: "Silkscreen", monospace !important;
+  font-size: 16px !important;
+  letter-spacing: 3px;
+  text-align: center;
+}
+.cq-team-preview {
+  background: var(--eng-sand);
+  border: 2px solid var(--eng-border);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cq-preview-empty {
+  font-size: 17px;
+  color: var(--eng-muted);
+  line-height: 1.12;
+}
+.cq-tp-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.cq-tp-id {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cq-tp-id img {
+  border: 1px solid var(--eng-border);
+  background: #172a46;
+}
+.cq-tp-id b {
+  display: block;
+  font-family: "Silkscreen", monospace;
+  font-size: 11px;
+  color: var(--eng-ink);
+}
+.cq-tp-id small {
+  font-size: 15px;
+  color: var(--eng-muted);
+}
+.cq-tp-meta {
+  font-size: 17px;
+  color: var(--eng-ink);
+}
+.cq-tp-roles {
+  font-family: "Silkscreen", monospace;
+  font-size: 9px;
+  color: var(--eng-blue-d);
+}
+.cq-reconnect-box {
+  background: #fff6db;
+  border: 2px solid var(--eng-amber);
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 17px;
+}
+.cq-role-guide-box {
+  background: var(--eng-surface);
+  border: 1px solid var(--eng-border);
+  padding: 10px 12px;
+}
+.cq-role-guide-box h4 {
+  font-family: "Silkscreen", monospace;
+  font-size: 10px;
+  color: var(--eng-red);
+  margin: 0 0 6px;
+}
+.cq-role-guide-box ul {
+  margin: 0;
+  padding-left: 16px;
+  font-size: 17px;
+  line-height: 1.15;
+}
+.cq-role-guide-box li {
+  margin-bottom: 4px;
+}
+
+/* Active Team Room Lobby (#lobbyRoom) */
+.cq-lobby-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.cq-lobby-banner > .cq-frame-in {
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  background: var(--eng-sand) !important;
+}
+.cq-lobby-id {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1 1 320px;
+}
+.cq-lobby-emblem {
+  width: 52px;
+  height: 52px;
+  border: 2px solid var(--eng-border);
+  background: #172a46;
+  flex: none;
+}
+.cq-lobby-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 3px;
+}
+.cq-lobby-callsign,
+.cq-lobby-host,
+.cq-lobby-status,
+.cq-lobby-code-wrap {
+  font-family: "Silkscreen", monospace;
+  font-size: 9px;
+  padding: 2px 6px;
+  border: 1px solid var(--eng-border);
+  background: var(--eng-surface);
+  color: var(--eng-ink);
+}
+.cq-lobby-callsign {
+  background: var(--eng-amber);
+  color: #fff;
+}
+.cq-lobby-status {
+  background: var(--eng-blue);
+  color: #fff;
+}
+.cq-lobby-id h3 {
+  font-family: "Silkscreen", monospace;
+  font-size: 16px;
+  margin: 2px 0;
+  color: var(--eng-ink);
+}
+.cq-lobby-id p {
+  margin: 0;
+  font-size: 18px;
+  color: var(--eng-muted);
+}
+.cq-lobby-mission-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 260px;
+  flex: 0 1 340px;
+}
+.cq-lobby-mmeta {
+  font-family: "Silkscreen", monospace;
+  font-size: 9px;
+  color: var(--eng-blue-d);
+}
+.cq-lobby-invite-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.cq-lobby-grid {
+  display: grid;
+  grid-template-columns: 1.45fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+.cq-lobby-roles-panel > .cq-frame-in {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cq-role-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.role-card.cq-station-card {
+  background: var(--eng-surface);
+  border: 2px solid var(--eng-border);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--eng-ink);
+  opacity: 1;
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease;
+}
+.role-card.cq-station-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--eng-blue);
+}
+.role-card.cq-station-card.mine {
+  background: #fff6db;
+  color: var(--eng-ink);
+  border-color: var(--eng-amber);
+  box-shadow: inset 0 0 0 2px var(--eng-amber);
+}
+.role-card.cq-station-card.taken:not(.mine) {
+  background: var(--eng-sand);
+}
+.cq-st-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  font-family: "Silkscreen", monospace;
+  font-size: 8px;
+}
+.cq-st-badge {
+  color: var(--eng-muted);
+}
+.cq-st-status {
+  padding: 1px 5px;
+  border: 1px solid var(--eng-border);
+}
+.cq-st-status.mine {
+  background: var(--eng-amber);
+  color: #fff;
+}
+.cq-st-status.taken {
+  background: var(--eng-blue);
+  color: #fff;
+}
+.cq-st-status.free {
+  background: var(--eng-ivory);
+  color: var(--eng-green);
+}
+.cq-st-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+.cq-st-title-row b {
+  font-size: 13px;
+  margin: 0;
+}
+.cq-st-appr {
+  font-family: "Silkscreen", monospace;
+  font-size: 8px;
+  padding: 1px 5px;
+  border: 1px solid var(--eng-border);
+  background: var(--eng-sand);
+}
+.cq-st-appr.on {
+  background: var(--eng-green);
+  color: #fff;
+}
+.cq-st-learn {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.1;
+  color: var(--eng-ink);
+}
+.cq-st-subs {
+  font-size: 15px;
+  color: var(--eng-muted);
+  background: rgba(230, 220, 195, 0.55);
+  padding: 4px 6px;
+  border: 1px dashed rgba(42, 37, 32, 0.35);
+}
+.cq-st-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 4px;
+  border-top: 1px solid rgba(42, 37, 32, 0.2);
+  font-size: 16px;
+}
+.cq-st-cta {
+  font-family: "Silkscreen", monospace;
+  font-size: 8px;
+  background: var(--eng-border);
+  color: var(--eng-ivory);
+  padding: 2px 6px;
+}
+
+.cq-lobby-launch-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--eng-sand);
+  border: 2px solid var(--eng-border);
+  padding: 10px 12px;
+}
+.cq-lobby-ready-txt {
+  font-size: 18px;
+  color: var(--eng-ink);
+  line-height: 1.1;
+}
+.cq-lobby-cta-btns {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+#teamReadyBtn.on {
+  background: var(--eng-green);
+  color: #fff;
+  border-color: var(--eng-border);
+}
+#enterRoom {
+  flex: 1 1 240px;
+  justify-content: center;
+  font-size: 12px !important;
+  padding: 10px 14px !important;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Roster & Chat Sidebar */
+.cq-lobby-side {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.cq-lobby-side .cq-side-card > .cq-frame-in {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cq-lobby-side .cq-side-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: "Silkscreen", monospace;
+  font-size: 10px;
+  background: var(--eng-sand);
+  margin: -10px -12px 2px;
+  padding: 6px 12px;
+  border-bottom: 2px solid var(--eng-border);
+}
+.cq-roster-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.cq-roster-row {
+  display: grid;
+  grid-template-columns: 38px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  background: var(--eng-surface);
+  border: 1px solid var(--eng-border);
+  padding: 6px 10px;
+}
+.cq-roster-row.me {
+  background: #fff9e6;
+  border-color: var(--eng-amber);
+}
+.cq-roster-av {
+  width: 38px;
+  height: 45px;
+  border: 1px solid var(--eng-border);
+  background: #2f2b26;
+}
+.cq-roster-name-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.cq-roster-name-line b {
+  font-family: "Silkscreen", monospace;
+  font-size: 11px;
+}
+.cq-host-pill,
+.cq-online-pill,
+.cq-ready-pill {
+  font-family: "Silkscreen", monospace;
+  font-size: 8px;
+  padding: 1px 5px;
+  border: 1px solid var(--eng-border);
+}
+.cq-host-pill {
+  background: var(--eng-amber);
+  color: #fff;
+}
+.cq-online-pill.on {
+  background: #e4f2de;
+  color: var(--eng-green);
+}
+.cq-ready-pill.on {
+  background: var(--eng-green);
+  color: #fff;
+}
+.cq-roster-roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 3px;
+}
+.cq-roster-rbadge {
+  font-family: "Silkscreen", monospace;
+  font-size: 8px;
+  background: var(--eng-sand);
+  border: 1px solid var(--eng-border);
+  padding: 1px 5px;
+}
+.cq-team-chat-log {
+  height: 175px;
+  overflow-y: auto;
+  background: var(--eng-surface);
+  border: 1px solid var(--eng-border);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 17px;
+}
+.cq-chat-msg b {
+  font-family: "Silkscreen", monospace;
+  font-size: 9px;
+  color: var(--eng-blue-d);
+  margin-right: 4px;
+}
+.cq-chat-msg.sys {
+  color: var(--eng-muted);
+  font-style: italic;
+}
+.cq-chat-msg.sys b {
+  color: var(--eng-red);
+}
+.cq-chat-empty {
+  color: var(--eng-muted);
+  font-size: 16px;
+}
+.cq-team-chat-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px;
+}
+.cq-team-chat-form input {
+  background: var(--eng-surface);
+  color: var(--eng-ink);
+  border: 2px solid var(--eng-border);
+  padding: 5px 8px;
+  font-family: "VT323", monospace;
+  font-size: 18px;
+}
+
+/* Shared Engineering Desk Team Panel (#teamDeskPanel inside .col-right) */
+#desk .col-right .review {
+  min-height: 170px;
+}
+#desk .col-right:has(#teamDeskPanel:not(.hidden)) .review {
+  min-height: 128px;
+}
+#desk .col-right .actions:has(.appr) {
+  flex-wrap: wrap;
+  gap: 6px;
+}
+#desk .col-right .actions:has(.appr) .approvals {
+  flex: 1 1 100%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+  margin-right: 0;
+}
+#desk .col-right .actions:has(.appr) .appr {
+  width: auto;
+  height: 28px;
+  font-size: 8px;
+  padding: 2px 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.cq-team-desk-panel {
+  flex: none;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 146px;
+  overflow: hidden;
+}
+.cq-team-desk-panel .doc-head {
+  font-size: 9px;
+  padding: 2px 4px;
+}
+.cq-td-rolebar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.cq-td-rpill {
+  font-family: "Silkscreen", monospace;
+  font-size: 8px;
+  padding: 1px 5px;
+  border: 1px solid var(--eng-border);
+  background: var(--eng-sand);
+  color: var(--eng-muted);
+}
+.cq-td-rpill.mine {
+  background: #fff6db;
+  border-color: var(--eng-amber);
+  color: var(--eng-ink);
+}
+.cq-td-rpill.ok {
+  background: var(--eng-green);
+  color: #fff;
+}
+.cq-td-chat {
+  height: 46px;
+  overflow-y: auto;
+  background: var(--eng-surface);
+  border: 1px solid var(--ink2);
+  padding: 3px 6px;
+  font-size: 15px;
+  line-height: 1.08;
+}
+.cq-td-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px;
+}
+.cq-td-form input {
+  background: var(--eng-surface);
+  color: var(--eng-ink);
+  border: 1px solid var(--eng-border);
+  padding: 2px 6px;
+  font-family: "VT323", monospace;
+  font-size: 16px;
+}
+
+@media (max-width: 1024px) {
+  .cq-gw-pillars {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .cq-gtrack-bar {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .cq-team-setup-grid,
+  .cq-lobby-grid {
+    grid-template-columns: 1fr;
+  }
+  .cq-chapter.cq-genesis-card {
+    grid-template-columns: 1fr;
+  }
+  .cq-gcard-artwrap {
+    width: 100%;
+    height: 120px;
+  }
+  .cq-genesis-card .cq-ch-act {
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 720px) {
+  .cq-gw-pillars {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .cq-gtrack-bar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .cq-gstage-tab {
+    padding: 6px 8px;
+  }
+  .cq-gst-top {
+    font-size: 8px;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .cq-gst-name {
+    font-size: 9px;
+  }
+  .cq-gstage-hero {
+    grid-template-columns: 1fr;
+  }
+  .cq-gstage-banner {
+    width: 100%;
+  }
+  .cq-gstage-leadbar {
+    grid-template-columns: 1fr;
+  }
+  .cq-role-cards-grid,
+  .cq-debrief-grid,
+  .cq-team-form-row,
+  .cq-join-row {
+    grid-template-columns: 1fr;
+  }
+  .cq-emblem-picker {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .cq-avatar-picker {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
 
 

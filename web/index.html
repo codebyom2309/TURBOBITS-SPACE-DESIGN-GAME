@@ -8,15 +8,15 @@
 <meta property="og:title" content="Mission Architect">
 <meta property="og:description" content="A pixel-art space mission design game for NASA Space Apps Challenge 2026 by Team Turbobits">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=VT323&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/style.css?v=20261114e">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Silkscreen:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css?v=20261114o">
 </head>
 <body>
 <div id="stage">
 
   <!-- ============================== TITLE (COSMO QUEST) -->
   <section id="title" class="screen active">
-    <canvas id="titleStars" width="320" height="220" class="px cq-bg-canvas"></canvas>
+    <canvas id="titleStars" width="675" height="380" class="px cq-bg-canvas"></canvas>
     <img id="titlePlanet" class="hidden" alt="">
     <div class="cq-shell">
 
@@ -276,49 +276,102 @@
     </div>
   </section>
 
-  <!-- ============================== STORY CAMPAIGN (PROJECT GENESIS) -->
+  <!-- ============================== STORY CAMPAIGN (PROJECT GENESIS: THE LAST SIGNAL) -->
   <section id="story" class="screen">
-    <div class="cq-subscreen">
+    <div class="cq-subscreen cq-genesis-screen">
       <header class="cq-subhead cq-frame cq-amber">
         <div class="cq-frame-in">
           <div>
-            <span class="cq-kicker">STORY CAMPAIGN</span>
+            <span class="cq-kicker">HORIZON COALITION &middot; INTERPLANETARY SURVIVAL INITIATIVE &middot; <span id="genesisProgressText">0 / 25 MISSIONS</span></span>
             <h2>PROJECT GENESIS: THE LAST SIGNAL</h2>
           </div>
+          <div id="genesisSignalHud" class="cq-genesis-signal-hud"></div>
           <div class="cq-subhead-btns">
-            <button type="button" class="cq-btn-hud" id="storyPrologueBtn">WATCH PROLOGUE</button>
-            <button type="button" class="cq-btn-hud" id="storyBackBtn">MAIN MENU</button>
+            <button type="button" class="cq-btn-hud" id="storyPrologueBtn">REPLAY PROLOGUE FILM</button>
+            <button type="button" class="cq-btn-hud" data-go="team">TEAM ROOM</button>
+            <button type="button" class="cq-btn-amber" id="storyBackBtn">MAIN MENU</button>
           </div>
         </div>
       </header>
-      <div id="storyChapters" class="cq-chapters"></div>
+
+      <!-- World State & Interplanetary Infrastructure Network -->
+      <section id="genesisWorldBar" class="cq-genesis-world cq-frame" aria-label="Horizon Coalition Infrastructure Status"></section>
+
+      <!-- Connected 6-Stage Solar System Journey Track -->
+      <section id="genesisStageTrack" class="cq-stage-map cq-frame" aria-label="Project Genesis Six-Stage Narrative Journey"></section>
+
+      <!-- Active Stage Story Context, Commander Dialogue, Facility Developments & Missions -->
+      <div id="storyChapters" class="cq-genesis-main"></div>
+    </div>
+
+    <!-- Stage Cinematic Introduction / Completion Modal -->
+    <div id="stageCutsceneModal" class="cq-modal hidden" role="dialog" aria-modal="true" aria-labelledby="scModalTitle">
+      <div class="cq-frame cq-amber cq-cutscene-panel">
+        <div class="cq-frame-in">
+          <div class="cq-modal-head">
+            <div>
+              <span class="cq-kicker" id="scModalKicker">HORIZON COALITION BRIEFING TRANSMISSION</span>
+              <h3 id="scModalTitle">STAGE 01 &middot; EARTH OPERATIONS</h3>
+            </div>
+            <button type="button" class="cq-modal-x" id="scModalClose" aria-label="Close">&times;</button>
+          </div>
+          <canvas id="scModalCanvas" width="320" height="140" class="px cq-cutscene-canvas"></canvas>
+          <div id="scModalBody" class="cq-cutscene-body"></div>
+          <div class="cq-modal-actions">
+            <button type="button" class="cq-btn-amber" id="scModalContinue">CONTINUE CAMPAIGN &gt;</button>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- ============================== PROLOGUE FILM (THE LAST SIGNAL) -->
   <section id="prologue" class="screen">
     <div class="cq-subscreen cq-prologue-wrap">
-      <header class="cq-subhead cq-frame">
+      <header class="cq-subhead cq-frame cq-prol-head">
         <div class="cq-frame-in">
-          <div>
-            <span class="cq-kicker">PROLOGUE FILM</span>
-            <h2 id="prolTitle">01 &middot; DEEP SPACE NETWORK &middot; 2026</h2>
+          <div class="cq-prol-heading">
+            <span class="cq-kicker" id="prolSceneKicker">HORIZON COALITION ARCHIVE &middot; SCENE 01 / 06 &middot; <span id="prolTimecode">00:00 / 01:18</span></span>
+            <h2 id="prolTitle">SCENE 01 &mdash; THE BLUE PLANET</h2>
           </div>
-          <div class="cq-subhead-btns">
-            <button type="button" class="cq-btn-amber" id="prolToStoryBtn">START PROJECT GENESIS &gt;</button>
+          <div class="cq-subhead-btns cq-prol-topbtns">
+            <button type="button" class="cq-btn-hud" id="prolSubBtn">SUBTITLES: ON</button>
+            <button type="button" class="cq-btn-hud" id="prolReplayBtn" title="Replay current scene">REPLAY SCENE</button>
+            <button type="button" class="cq-btn-amber" id="prolToStoryBtn">SKIP TO CAMPAIGN &gt;</button>
             <button type="button" class="cq-btn-hud" id="prolBackBtn">MAIN MENU</button>
           </div>
         </div>
       </header>
       <div class="cq-cinema cq-frame">
         <div class="cq-frame-in">
-          <canvas id="prologueCanvas" width="320" height="180" class="px"></canvas>
-          <div class="cq-cinema-caption" id="prolCaption"></div>
+          <div class="cq-cinema-stage">
+            <div class="cq-cinema-bezel">
+              <canvas id="prologueCanvas" width="960" height="540"></canvas>
+            </div>
+            <!-- Final Scene Assignment Overlay -->
+            <div id="prolFinalOverlay" class="cq-prol-final hidden">
+              <div class="cq-prol-final-box">
+                <span class="cq-prol-final-org">HORIZON COALITION &mdash; INTERPLANETARY SURVIVAL INITIATIVE</span>
+                <h1 class="cq-prol-final-game">COSMO QUEST</h1>
+                <h2 class="cq-prol-final-proj">PROJECT GENESIS</h2>
+                <div class="cq-prol-final-sub">THE LAST SIGNAL &middot; YOUR MISSION BEGINS NOW.</div>
+                <p class="cq-prol-final-lead">You have been assigned to the Horizon Coalition Engineering Corps. Protect Earth, build humanity's interplanetary lifeline, and investigate the 1.420 GHz Jovian anomaly.</p>
+                <div class="cq-prol-final-btns">
+                  <button type="button" class="cq-btn-amber cq-prol-enter-btn" id="prolEnterMcBtn">ENTER MISSION CONTROL &gt;</button>
+                  <button type="button" class="cq-btn-hud" id="prolFinalReplayBtn">REPLAY FILM</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="cq-cinema-caption" id="prolCaption" aria-live="polite"></div>
           <div class="cq-cinema-controls">
-            <button type="button" class="cq-btn-hud" id="prolPrevBtn">&lt; PREV</button>
-            <button type="button" class="cq-btn-hud" id="prolPlayBtn">PAUSE</button>
-            <button type="button" class="cq-btn-hud" id="prolNextBtn">NEXT &gt;</button>
-            <div class="cq-prol-timeline" id="prolTimeline"></div>
+            <div class="cq-prol-transbtns">
+              <button type="button" class="cq-btn-hud" id="prolPrevBtn">&lt; PREV</button>
+              <button type="button" class="cq-btn-amber" id="prolPlayBtn">PAUSE</button>
+              <button type="button" class="cq-btn-hud" id="prolNextBtn">NEXT &gt;</button>
+            </div>
+            <div class="cq-prol-timeline" id="prolTimeline" role="group" aria-label="Film scenes timeline"></div>
+            <button type="button" class="cq-btn-hud" id="prolSkipBtn">SKIP &gt;&gt;</button>
           </div>
         </div>
       </div>
@@ -462,27 +515,204 @@
     </div>
   </section>
 
-  <!-- ============================== TEAM ROOM LOBBY -->
+  <!-- ============================== TEAM ROOM (COOPERATIVE SPACECRAFT ENGINEERING) -->
   <section id="team" class="screen">
-    <div class="desk-bg fill"></div>
-    <div class="paper lobby">
-      <h2>Team room</h2>
-      <p>Up to four engineers design one spacecraft together. Each role edits only its own part of the catalog.
-        Every change cancels approvals. Launch needs all four approval stamps.</p>
-      <div class="row">
-        <button class="btn" id="createRoom">Create room</button>
-        <span class="or">or join</span>
-        <input id="roomCode" maxlength="4" placeholder="CODE" class="code-input">
-        <button class="btn" id="joinRoom">Join</button>
+    <div class="cq-subscreen cq-team-screen">
+      <header class="cq-subhead cq-frame cq-amber">
+        <div class="cq-frame-in">
+          <div>
+            <span class="cq-kicker">HORIZON COALITION &middot; FOUR-ENGINEER COOPERATIVE OPERATIONS</span>
+            <h2>TEAM ROOM &amp; COLLABORATIVE MISSION CONTROL</h2>
+          </div>
+          <div class="cq-subhead-btns">
+            <button type="button" class="cq-btn-hud" data-go="story">PROJECT GENESIS</button>
+            <button type="button" class="cq-btn-hud" data-go="free">MISSION LAB</button>
+            <button type="button" class="cq-btn-amber" data-go="title">MAIN MENU</button>
+          </div>
+        </div>
+      </header>
+
+      <p class="err cq-team-err" id="lobbyErr"></p>
+
+      <!-- STEP 1: TEAM FORMATION & JOIN VIEW -->
+      <div id="teamSetupView" class="cq-team-setup-grid">
+        <!-- Left: Establish New Engineering Team -->
+        <div class="cq-frame cq-team-panel">
+          <div class="cq-frame-in">
+            <div class="cq-team-panel-head">
+              <span class="cq-kicker">HOST NEW COOPERATIVE SESSION</span>
+              <h3>ESTABLISH ENGINEERING TEAM</h3>
+              <p>Create your own engineering team under the Horizon Coalition charter. Up to four specialists collaborate on one live spacecraft design.</p>
+            </div>
+
+            <div class="cq-team-form">
+              <div class="cq-team-form-row">
+                <label class="cq-team-field">
+                  <span>ENGINEER CALLSIGN (YOUR NAME)</span>
+                  <input type="text" id="teamPlayerInput" maxlength="20" placeholder="e.g. CDR_VANCE">
+                </label>
+                <label class="cq-team-field">
+                  <span>TEAM CALLSIGN TAG</span>
+                  <input type="text" id="teamCallsignInput" maxlength="8" value="ORB-01" placeholder="ORB-01">
+                </label>
+              </div>
+
+              <label class="cq-team-field">
+                <span>TEAM NAME (YOUR GROUP IDENTITY)</span>
+                <input type="text" id="teamNameInput" maxlength="40" value="Ares Orbital Collective" placeholder="Enter your team name...">
+              </label>
+
+              <label class="cq-team-field">
+                <span>TEAM CHARTER / DESCRIPTION (OPTIONAL)</span>
+                <input type="text" id="teamDescInput" maxlength="90" value="Deep-space propulsion & high-reliability payload integration unit." placeholder="Brief mission focus...">
+              </label>
+
+              <div class="cq-team-form-row">
+                <label class="cq-team-field">
+                  <span>SELECTED MISSION ASSIGNMENT</span>
+                  <select id="teamMissionSelect" class="cq-select"></select>
+                </label>
+                <label class="cq-team-field">
+                  <span>COLLABORATION PROTOCOL</span>
+                  <select id="teamCollabSelect" class="cq-select">
+                    <option value="role_strict">Strict 4-Role Authority (Standard)</option>
+                    <option value="open_coop">Cross-Role Assist (Any Role Edits, 4 Stamps Required)</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="cq-team-form-row">
+                <div class="cq-team-field">
+                  <span>TEAM INSIGNIA EMBLEM</span>
+                  <div id="teamEmblemPicker" class="cq-emblem-picker"></div>
+                </div>
+                <div class="cq-team-field">
+                  <span>ENGINEER AVATAR</span>
+                  <div id="teamAvatarPicker" class="cq-avatar-picker"></div>
+                </div>
+              </div>
+
+              <div class="cq-team-create-foot">
+                <button type="button" class="btn cq-btn-amber cq-team-create-btn" id="createRoom">CREATE TEAM ROOM &gt;</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Join Existing Team Room & Active Session Reconnect -->
+        <div class="cq-frame cq-team-panel">
+          <div class="cq-frame-in">
+            <div class="cq-team-panel-head">
+              <span class="cq-kicker">JOIN EXISTING DISPATCH</span>
+              <h3>JOIN BY INVITE CODE</h3>
+              <p>Enter a 4-letter room code shared by your Mission Host to inspect the team roster, see open specialist roles, and join the session.</p>
+            </div>
+
+            <div class="cq-join-box">
+              <label class="cq-team-field">
+                <span>ROOM INVITE CODE (4 LETTERS)</span>
+                <div class="cq-join-row">
+                  <input id="roomCode" maxlength="4" placeholder="CODE" class="code-input cq-code-input">
+                  <button type="button" class="btn cq-btn-hud" id="previewRoomBtn">INSPECT ROOM</button>
+                  <button type="button" class="btn cq-btn-amber" id="joinRoom">JOIN ROOM &gt;</button>
+                </div>
+              </label>
+
+              <div id="teamPreviewCard" class="cq-team-preview">
+                <div class="cq-preview-empty">Enter a 4-letter room code above to preview the team identity, active mission, and open engineering roles before joining.</div>
+              </div>
+
+              <div id="teamReconnectBox" class="cq-reconnect-box hidden"></div>
+
+              <div class="cq-role-guide-box">
+                <h4>FOUR SPECIALIST ROLES &amp; LAUNCH AUTHORITY</h4>
+                <ul>
+                  <li><b>1. Mission Manager:</b> Launch window, rocket selection, partner agencies &amp; budget oversight.</li>
+                  <li><b>2. Systems Engineer:</b> Spacecraft bus, solar/RTG/battery power, attitude control, propulsion &amp; landing systems.</li>
+                  <li><b>3. Science Lead:</b> Mission science objectives, payload instruments &amp; operational tour duration.</li>
+                  <li><b>4. Comms &amp; Operations:</b> High-gain antennas, ground stations, flight computer &amp; radiation shielding.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div id="lobbyRoom" class="hidden">
-        <h3>Room <span id="lobbyCode" class="code"></span></h3>
-        <p>Claim one or more roles:</p>
-        <div id="roleCards" class="role-cards"></div>
-        <button class="btn big" id="enterRoom">Enter the review room</button>
+
+      <!-- STEP 2: ACTIVE 4-ROLE COOPERATIVE TEAM LOBBY -->
+      <div id="lobbyRoom" class="cq-lobby-wrap hidden">
+        <!-- Team Identity & Mission Header Banner -->
+        <div class="cq-frame cq-lobby-banner">
+          <div class="cq-frame-in">
+            <div class="cq-lobby-id">
+              <img id="lobbyEmblemImg" class="px cq-lobby-emblem" width="48" height="48" alt="Team Emblem">
+              <div>
+                <div class="cq-lobby-tags">
+                  <span class="cq-lobby-callsign" id="lobbyCallsign">ORB-01</span>
+                  <span class="cq-lobby-code-wrap">ROOM CODE: <b id="lobbyCode" class="code">----</b></span>
+                  <span class="cq-lobby-host" id="lobbyHostBadge">HOST: —</span>
+                  <span class="cq-lobby-status" id="lobbyStatusBadge">FORMING TEAM</span>
+                </div>
+                <h3 id="lobbyTeamTitle">ARES ORBITAL COLLECTIVE</h3>
+                <p id="lobbyTeamDesc">Deep-space propulsion &amp; high-reliability payload integration unit.</p>
+              </div>
+            </div>
+
+            <div class="cq-lobby-mission-box">
+              <span class="cq-kicker">ASSIGNED MISSION</span>
+              <select id="lobbyMissionSwitch" class="cq-select"></select>
+              <div id="lobbyMissionMeta" class="cq-lobby-mmeta"></div>
+            </div>
+
+            <div class="cq-lobby-invite-actions">
+              <button type="button" class="btn small cq-btn-hud" id="copyCodeBtn">COPY CODE</button>
+              <button type="button" class="btn small cq-btn-hud" id="copyLinkBtn">COPY INVITE LINK</button>
+              <button type="button" class="btn small cq-btn-hud" id="leaveRoomBtn">LEAVE ROOM</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main 3-Zone Lobby Grid: 4 Specialist Role Slots + Member Roster + Live Team Comms -->
+        <div class="cq-lobby-grid">
+          <div class="cq-frame cq-lobby-roles-panel">
+            <div class="cq-frame-in">
+              <div class="cq-side-head">
+                <span>FOUR SPECIALIST ENGINEERING STATIONS (CLICK TO CLAIM OR ASSIGN)</span>
+                <span id="lobbyRoleCoverage">0 / 4 ROLES ASSIGNED</span>
+              </div>
+              <div id="roleCards" class="role-cards cq-role-cards-grid"></div>
+              <div class="cq-lobby-launch-bar">
+                <div id="lobbyReadinessSummary" class="cq-lobby-ready-txt">Claim at least one engineering role to enter the shared spacecraft workspace.</div>
+                <div class="cq-lobby-cta-btns">
+                  <button type="button" class="btn cq-btn-hud" id="teamReadyBtn">MARK READY</button>
+                  <button type="button" class="btn cq-btn-amber" id="enterRoom">ENTER SHARED WORKSPACE &gt;</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cq-lobby-side">
+            <!-- Active Engineers & Host Management -->
+            <div class="cq-frame cq-side-card">
+              <div class="cq-frame-in">
+                <div class="cq-side-head"><span>TEAM ROSTER &amp; STATUS</span><span id="lobbyMemberCount">1 ENGINEER</span></div>
+                <div id="teamRosterList" class="cq-roster-list"></div>
+              </div>
+            </div>
+
+            <!-- Live Team Comms & Activity Log -->
+            <div class="cq-frame cq-side-card cq-lobby-chat-card">
+              <div class="cq-frame-in">
+                <div class="cq-side-head"><span>TEAM COMMS &amp; ACTIVITY FEED</span></div>
+                <div id="teamLobbyChat" class="cq-team-chat-log"></div>
+                <form id="teamLobbyChatForm" class="cq-team-chat-form" autocomplete="off">
+                  <input type="text" id="teamLobbyChatInput" maxlength="200" placeholder="Send message to team...">
+                  <button type="submit" class="btn small cq-btn-amber">SEND</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <p class="err" id="lobbyErr"></p>
-      <button class="btn" data-go="title">Back</button>
     </div>
   </section>
 
@@ -541,6 +771,19 @@
         <div id="approvals" class="approvals"></div>
         <button class="btn" id="riskBtn">Risk check</button>
         <button class="btn stamp-btn" id="launchBtn">Approve &amp; launch</button>
+      </div>
+      <!-- Cooperative Team Comms & Activity Feed on Shared Engineering Desk -->
+      <div id="teamDeskPanel" class="paper cq-team-desk-panel hidden">
+        <div class="doc-head">
+          <span id="teamDeskTitle">TEAM COMMS &amp; LIVE ACTIVITY</span>
+          <button type="button" class="btn tiny" id="teamDeskLobbyBtn">TEAM LOBBY</button>
+        </div>
+        <div id="teamDeskRoleBar" class="cq-td-rolebar"></div>
+        <div id="teamDeskChat" class="cq-td-chat"></div>
+        <form id="teamDeskChatForm" class="cq-td-form" autocomplete="off">
+          <input type="text" id="teamDeskChatInput" maxlength="200" placeholder="Coordinate with team...">
+          <button type="submit" class="btn tiny">SEND</button>
+        </form>
       </div>
     </div>
 
@@ -639,15 +882,18 @@
     <button class="btn skip" id="skipBtn">Skip</button>
   </section>
 
-  <!-- ============================== NEWSPAPER -->
+  <!-- ============================== NEWSPAPER & PROJECT GENESIS MISSION DEBRIEFING -->
   <section id="news" class="screen">
     <div class="desk-bg fill"></div>
-    <article class="newspaper" id="paper"></article>
-    <div class="news-actions">
-      <button class="btn" id="nRedesign">Redesign</button>
-      <button class="btn" id="nNext">Next mission</button>
-      <button class="btn" id="nCompare">Compare designs</button>
-      <button class="btn" id="nHall">Hall of fame</button>
+    <div class="cq-news-scroll">
+      <article class="newspaper" id="paper"></article>
+      <section id="genesisDebriefPanel" class="cq-debrief-panel" aria-label="Mission Debriefing & Campaign Impact"></section>
+      <div class="news-actions">
+        <button class="btn" id="nRedesign">Redesign</button>
+        <button class="btn" id="nNext">Next mission</button>
+        <button class="btn" id="nCompare">Compare designs</button>
+        <button class="btn" id="nHall">Hall of fame</button>
+      </div>
     </div>
   </section>
 
@@ -727,13 +973,14 @@
   </div>
 
 </div>
-<script src="/sprites.js?v=20261114d"></script>
-<script src="/labs.js?v=20261114d"></script>
-<script src="/scenes.js?v=20261114d"></script>
-<script src="/cosmo.js?v=20261114d"></script>
-<script src="/campaign.js?v=20261114d"></script>
-<script src="/game.js?v=20261114d"></script>
-<script src="/program.js?v=20261114d"></script>
-<script src="/career.js?v=20261114d"></script>
+<script src="/sprites.js?v=20261114o"></script>
+<script src="/labs.js?v=20261114o"></script>
+<script src="/scenes.js?v=20261114o"></script>
+<script src="/prologue.js?v=20261114o"></script>
+<script src="/cosmo.js?v=20261114o"></script>
+<script src="/campaign.js?v=20261114o"></script>
+<script src="/game.js?v=20261114o"></script>
+<script src="/program.js?v=20261114o"></script>
+<script src="/career.js?v=20261114o"></script>
 </body>
 </html>

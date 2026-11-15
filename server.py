@@ -8,8 +8,10 @@ import json
 import math
 import os
 import random
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from http.server import BaseHTTPRequestHandler, SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+import threading
+import time
 from urllib.parse import parse_qs, urlparse
 
 from engine import career_db as CAREER
@@ -25,6 +27,23 @@ from engine.simulate import monte_carlo, simulate
 
 WEB = Path(__file__).resolve().parent / "web"
 ROOMS = RoomStore()
+_INIT_LOCK = threading.Lock()
+_INIT_DONE = False
+
+
+def ensure_db_init() -> None:
+    """Idempotently initialize database schema once per process."""
+    global _INIT_DONE
+    if _INIT_DONE:
+        return
+    with _INIT_LOCK:
+        if _INIT_DONE:
+            return
+        try:
+            db.init_db()
+            _INIT_DONE = True
+        except Exception as e:
+            print(f"Warning: TiDB initialization failed/deferred: {e}")
 
 
 def clean(o):
@@ -81,24 +100,34 @@ def launch(body: dict, user_id: int | None = None) -> dict:
 
 def room_view(code: str) -> dict:
     r = ROOMS.get(code)
+    now = time.time()
+    roster = {
+        p: {
+            "roles": list(i.get("roles", [])),
+            "ready": bool(i.get("ready", False)),
+            "avatar": str(i.get("avatar", "eng1")),
+            "seen": float(i.get("seen", now)),
+            "online": (now - float(i.get("seen", now))) < 35,
+        }
+        for p, i in r["players"].items()
+    }
     return {
         "code": code,
+        "meta": r.get("meta", {}),
         "design": r["design"],
         "version": r["version"],
         "approvals": r["approvals"],
         "players": {p: i["roles"] for p, i in r["players"].items()},
-        "chat": r["chat"][-20:],
+        "roster": roster,
+        "chat": r["chat"][-40:],
         "last_run": r["last_run"],
         "evaluation": evaluate(r["design"]),
     }
 
 
-class Handler(SimpleHTTPRequestHandler):
-    def __init__(self, *a, **kw):
-        super().__init__(*a, directory=str(WEB), **kw)
-
+class ApiHandlerMixin:
     def log_message(self, fmt, *args):  # quieter console
-        if "/api/room/" not in self.path:
+        if "/api/room/" not in getattr(self, "path", ""):
             super().log_message(fmt, *args)
 
     def _json(self, data, status=200):
@@ -135,11 +164,18 @@ class Handler(SimpleHTTPRequestHandler):
         return USERS.get_session(token) if token else None
 
     def end_headers(self):
-        if not self.path.startswith("/api/"):
+        if not getattr(self, "path", "").startswith("/api/"):
             self.send_header("Cache-Control", "no-cache")
         super().end_headers()
 
-    def do_GET(self):
+    def do_OPTIONS(self):
+        self.send_response(204)
+        self.send_header("Allow", "GET, POST, DELETE, OPTIONS")
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+
+    def _handle_api_get(self) -> bool:
+        ensure_db_init()
         u = urlparse(self.path)
         q = {k: v[0] for k, v in parse_qs(u.query).items()}
         sess = self._get_auth_user()
@@ -148,47 +184,67 @@ class Handler(SimpleHTTPRequestHandler):
         try:
             if u.path == "/api/health":
                 if not db.is_available():
-                    return self._json({"status": "ok", "tidb": None, "mode": "in-memory"})
+                    self._json({"status": "ok", "tidb": None, "mode": "in-memory"})
+                    return True
                 try:
                     res = db.fetch_one("SELECT VERSION() as v, DATABASE() as db")
-                    return self._json({"status": "ok", "tidb": res, "mode": "tidb"})
+                    self._json({"status": "ok", "tidb": res, "mode": "tidb"})
+                    return True
                 except Exception as ex:
-                    return self._json({"status": "ok", "tidb": None, "mode": "in-memory", "warning": str(ex)})
+                    self._json({"status": "ok", "tidb": None, "mode": "in-memory", "warning": str(ex)})
+                    return True
 
             if u.path == "/api/catalog":
-                return self._json(catalog())
+                self._json(catalog())
+                return True
 
             if u.path == "/api/leaderboard":
-                return self._json(LB.top(q.get("scenario", "wildfire"), int(q.get("n", 10))))
+                self._json(LB.top(q.get("scenario", "wildfire"), int(q.get("n", 10))))
+                return True
 
             if u.path == "/api/auth/me":
                 if sess:
-                    return self._json({"logged_in": True, "user": sess})
-                return self._json({"logged_in": False, "user": None})
+                    self._json({"logged_in": True, "user": sess})
+                    return True
+                self._json({"logged_in": False, "user": None})
+                return True
 
             if u.path == "/api/designs":
                 player = q.get("player") or (sess["username"] if sess else "anonymous")
                 designs = DESIGNS.list_designs(user_id=user_id, player_name=player)
-                return self._json(designs)
+                self._json(designs)
+                return True
 
             if u.path == "/api/career":
                 player = q.get("player") or (sess["username"] if sess else "anonymous")
                 c_data = CAREER.get_career(user_id=user_id, player_name=player)
-                return self._json(c_data or {})
+                self._json(c_data or {})
+                return True
 
             if u.path.startswith("/api/room/"):
                 code = u.path.rsplit("/", 1)[-1].upper()
                 if not ROOMS.exists(code):
-                    return self._json({"error": "No room with that code."}, 404)
+                    self._json({"error": "No room with that code."}, 404)
+                    return True
+                if q.get("player"):
+                    ROOMS.touch(code, str(q.get("player"))[:20])
                 if int(q.get("since", -1)) == ROOMS.version(code):
-                    return self._json({"unchanged": True, "version": ROOMS.version(code)})
-                return self._json(room_view(code))
+                    self._json({"unchanged": True, "version": ROOMS.version(code)})
+                    return True
+                self._json(room_view(code))
+                return True
 
         except Exception as e:  # noqa: BLE001
-            return self._json({"error": str(e)}, 400)
-        return super().do_GET()
+            self._json({"error": str(e)}, 400)
+            return True
+        return False
+
+    def do_GET(self):
+        if not self._handle_api_get():
+            return super().do_GET()
 
     def do_POST(self):
+        ensure_db_init()
         u = urlparse(self.path)
         sess = self._get_auth_user()
         user_id = sess["user_id"] if sess else None
@@ -256,10 +312,20 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._json(res)
 
             if u.path == "/api/room/create":
-                code = ROOMS.create(b.get("scenario", "wildfire"))
+                host_player = str(b.get("player") or "anonymous")[:20]
+                meta = {
+                    "team_name": b.get("team_name") or "Horizon Engineering Unit",
+                    "callsign": b.get("callsign") or "HZN-01",
+                    "description": b.get("description") or "Horizon Coalition cooperative spacecraft engineering team.",
+                    "emblem": b.get("emblem") or "horizon",
+                    "collab_mode": b.get("collab_mode") or "role_strict",
+                    "host": host_player,
+                }
+                code = ROOMS.create(b.get("scenario", "wildfire"), meta=meta)
                 if b.get("design"):
                     ROOMS.replace_design(code, normalize(b["design"]))
-                ROOMS.join(code, b.get("player", "anonymous"), [])
+                init_roles = [r for r in b.get("roles", []) if r in C.ROLES]
+                ROOMS.join(code, host_player, init_roles, avatar=b.get("avatar"))
                 return self._json(room_view(code))
 
             parts = u.path.strip("/").split("/")  # api/room/CODE/action
@@ -267,13 +333,28 @@ class Handler(SimpleHTTPRequestHandler):
                 code, action = parts[2].upper(), parts[3]
                 if not ROOMS.exists(code):
                     return self._json({"error": "No room with that code."}, 404)
-                p = str(b.get("player", ""))[:20]
+                p = str(b.get("player") or "anonymous")[:20]
                 if action == "join":
                     roles = [r for r in b.get("roles", []) if r in C.ROLES]
                     taken = ROOMS.roles_taken(code, exclude=p)
                     if any(r in taken for r in roles):
                         return self._json({"error": "Role already taken."}, 409)
-                    ROOMS.join(code, p, roles)
+                    ROOMS.join(code, p, roles, avatar=b.get("avatar"), ready=b.get("ready"))
+                elif action == "assign":
+                    target = str(b.get("target") or p)[:20]
+                    roles = [r for r in b.get("roles", []) if r in C.ROLES]
+                    taken = ROOMS.roles_taken(code, exclude=target)
+                    if any(r in taken for r in roles):
+                        return self._json({"error": "Role already taken by another engineer."}, 409)
+                    ROOMS.join(code, target, roles)
+                elif action == "ready":
+                    ROOMS.set_ready(code, p, bool(b.get("ready", True)))
+                elif action == "kick":
+                    target = str(b.get("target") or "")[:20]
+                    if not ROOMS.kick(code, p, target):
+                        return self._json({"error": "Only the room host can remove members."}, 403)
+                elif action == "meta":
+                    ROOMS.update_meta(code, p, b)
                 elif action == "set":
                     if not ROOMS.set_field(code, p, b["field"], b["value"]):
                         return self._json({"error": "That belongs to another role."}, 403)
@@ -288,6 +369,7 @@ class Handler(SimpleHTTPRequestHandler):
         self._json({"error": "not found"}, 404)
 
     def do_DELETE(self):
+        ensure_db_init()
         u = urlparse(self.path)
         sess = self._get_auth_user()
         user_id = sess["user_id"] if sess else None
@@ -300,12 +382,15 @@ class Handler(SimpleHTTPRequestHandler):
         self._json({"error": "not found"}, 404)
 
 
+class Handler(ApiHandlerMixin, SimpleHTTPRequestHandler):
+    def __init__(self, *a, **kw):
+        super().__init__(*a, directory=str(WEB), **kw)
+
+
 def main():
-    try:
-        db.init_db()
+    ensure_db_init()
+    if db.is_available():
         print("Connected to TiDB and verified schema.")
-    except Exception as e:
-        print(f"Warning: TiDB initialization failed/deferred: {e}")
 
     port = int(os.environ.get("PORT", 8600))
     srv = ThreadingHTTPServer(("0.0.0.0", port), Handler)

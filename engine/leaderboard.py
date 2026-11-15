@@ -3,13 +3,18 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import threading
 import time
 from pathlib import Path
 
 from . import db
 
-DEFAULT_PATH = Path(__file__).resolve().parent.parent / "data" / "leaderboard.json"
+DEFAULT_PATH = (
+    Path("/tmp/mission_architect/leaderboard.json")
+    if os.environ.get("VERCEL")
+    else Path(__file__).resolve().parent.parent / "data" / "leaderboard.json"
+)
 _file_lock = threading.Lock()
 logger = logging.getLogger(__name__)
 
