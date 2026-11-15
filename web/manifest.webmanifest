@@ -1,0 +1,62 @@
+{
+  "id": "/",
+  "name": "COSMO QUEST — Project Genesis",
+  "short_name": "COSMO QUEST",
+  "description": "A pixel-art space mission design game for NASA Space Apps Challenge 2026 by Team Turbobits",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#07101f",
+  "background_color": "#07101f",
+  "categories": ["games", "education", "simulation"],
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Story Campaign",
+      "short_name": "Campaign",
+      "description": "Open Project Genesis: The Last Signal",
+      "url": "/#story",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Mission Design Lab",
+      "short_name": "Design Lab",
+      "description": "Build, configure, and simulate spacecraft",
+      "url": "/#free",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Prologue Film",
+      "short_name": "Prologue",
+      "description": "Watch The Last Signal prologue film",
+      "url": "/#prologue",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}

@@ -315,8 +315,13 @@ const S = {
 
 // ---------------------------------------------------------------------------- utils
 async function api(path, body) {
-  const r = await fetch(`/api/${path}`, body ? { method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body) } : undefined);
+  let r;
+  try {
+    r = await fetch(`/api/${path}`, body ? { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body) } : undefined);
+  } catch (_) {
+    throw new Error("Offline — connect to the internet for live simulations, Team Rooms, and Cloud Sync.");
+  }
   const j = await r.json();
   if (!r.ok) throw new Error(j.error || r.statusText);
   return j;
@@ -458,13 +463,36 @@ async function boot() {
       if (typeof refreshStatusBar === "function") refreshStatusBar();
     });
   }
-  S.cat = await api("catalog");
+  const cachedCat = store.get("cachedCatalog", null);
+  if (!navigator.onLine && cachedCat) {
+    S.cat = cachedCat;
+    toast("Offline mode — loaded cached mission catalog.");
+  } else {
+    try {
+      S.cat = await api("catalog");
+      store.set("cachedCatalog", S.cat);
+    } catch (err) {
+      if (!cachedCat) throw err;
+      S.cat = cachedCat;
+      toast("Offline mode — loaded cached mission catalog.");
+    }
+  }
   $$("[data-go]").forEach((b) => b.addEventListener("click", () => go(b.dataset.go)));
   if (typeof initCosmoMenu === "function") initCosmoMenu();
   wireDesk(); wireLobby(); wireNews();
   drawer.sync();
   if (typeof syncCareerFromCloud === "function") syncCareerFromCloud();
-  // direct links for demos/screenshots: #play=<scenario>, #news=<scenario>
+  // direct links for demos/screenshots & PWA shortcuts: #story, #free, #prologue, #play=<scenario>, #news=<scenario>
+  function applySimpleShortcutHash() {
+    if (["#title", "#story", "#free", "#prologue", "#hall", "#hq"].includes(location.hash)) {
+      const target = location.hash.slice(1);
+      go(target === "hq" ? "career" : target);
+      return true;
+    }
+    return false;
+  }
+  applySimpleShortcutHash();
+  window.addEventListener("hashchange", applySimpleShortcutHash);
   if (location.hash === "#sounds") { // sound board for tuning the effects
     const names = { click: "Button (switch)", select: "Card on desk", deselect: "Card picked up", page: "Binder page", paper: "Paper",
       tick: "Teletype strike", error: "Error knocks", suggest: "Pencil taps", pop: "Tutorial rustle", chime: "Desk bell (flight ready)",
@@ -1837,6 +1865,7 @@ const drawer = {
   },
   get(id) { return this.all().find((x) => x.id === id); },
   async sync() {
+    if (!navigator.onLine) return;
     try {
       const serverDesigns = await api(`designs?player=${encodeURIComponent(S.player || "")}`);
       if (Array.isArray(serverDesigns) && serverDesigns.length) {

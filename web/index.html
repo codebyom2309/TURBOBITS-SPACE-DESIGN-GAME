@@ -2,14 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mission Architect</title>
 <meta name="description" content="A pixel-art space mission design game for NASA Space Apps Challenge 2026 by Team Turbobits">
 <meta property="og:title" content="Mission Architect">
 <meta property="og:description" content="A pixel-art space mission design game for NASA Space Apps Challenge 2026 by Team Turbobits">
+<meta name="theme-color" content="#07101f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="COSMO QUEST">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="/icon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Silkscreen:wght@400;700&family=VT323&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/style.css?v=20261114o">
+<link rel="stylesheet" href="/style.css?v=20261114p2">
 </head>
 <body>
 <div id="stage">
@@ -38,6 +46,9 @@
         </div>
 
         <nav class="cq-nav-icons" aria-label="Quick navigation">
+          <button class="cq-install-btn cq-frame cq-amber hidden" id="navInstallBtn" title="Install COSMO QUEST App" aria-label="Install COSMO QUEST Web App">
+            <span class="cq-frame-in"><img class="px" data-cq-icon="download" width="16" height="16" alt=""><span>INSTALL APP</span></span>
+          </button>
           <button class="cq-icon-btn cq-frame" id="navLabBtn" title="Mission Design Lab" aria-label="Mission Design Lab">
             <span class="cq-frame-in"><img class="px" data-cq-icon="gamepad" width="18" height="18" alt=""></span>
           </button>
@@ -245,6 +256,16 @@
             <div class="cq-setting-row">
               <span>Career &amp; Story Data</span>
               <button type="button" class="cq-btn-danger" id="setResetCareerBtn">CLEAR SAVE</button>
+            </div>
+            <div class="cq-setting-row" id="setPwaRow">
+              <div>
+                <span>Web App (PWA)</span>
+                <small id="setPwaStatus" class="cq-pwa-status">READY</small>
+              </div>
+              <div class="cq-pwa-actions">
+                <button type="button" class="cq-btn-hud hidden" id="setPwaUpdateBtn">UPDATE APP</button>
+                <button type="button" class="cq-btn-amber" id="setPwaBtn">INSTALL APP</button>
+              </div>
             </div>
           </div>
           <div id="setResetConfirm" class="cq-confirm hidden">
@@ -973,14 +994,37 @@
   </div>
 
 </div>
-<script src="/sprites.js?v=20261114o"></script>
-<script src="/labs.js?v=20261114o"></script>
-<script src="/scenes.js?v=20261114o"></script>
-<script src="/prologue.js?v=20261114o"></script>
-<script src="/cosmo.js?v=20261114o"></script>
-<script src="/campaign.js?v=20261114o"></script>
-<script src="/game.js?v=20261114o"></script>
-<script src="/program.js?v=20261114o"></script>
-<script src="/career.js?v=20261114o"></script>
+
+<div id="pwaOfflineBar" class="cq-offline-bar hidden" role="status" aria-live="polite">
+  <span class="cq-offline-dot" aria-hidden="true"></span>
+  <span class="cq-offline-msg">OFFLINE MODE &mdash; Cached game files active. Team Room &amp; live simulations need connection.</span>
+  <button type="button" id="pwaOfflineCloseBtn" class="cq-offline-x" aria-label="Dismiss offline notice">&times;</button>
+</div>
+
+<div id="pwaIosModal" class="cq-modal hidden" role="dialog" aria-modal="true" aria-labelledby="pwaGuideTitle">
+  <div class="cq-frame cq-amber cq-modal-panel">
+    <div class="cq-frame-in">
+      <div class="cq-modal-head">
+        <h3 id="pwaGuideTitle">INSTALL ON IPHONE / IPAD</h3>
+        <button type="button" class="cq-modal-x" id="pwaIosCloseBtn" aria-label="Close">&times;</button>
+      </div>
+      <div id="pwaGuideSteps" class="cq-pwa-guide-steps"></div>
+      <div class="cq-modal-actions">
+        <button type="button" class="cq-btn-amber" id="pwaIosOkBtn">GOT IT</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/sprites.js?v=20261114p2"></script>
+<script src="/labs.js?v=20261114p2"></script>
+<script src="/scenes.js?v=20261114p2"></script>
+<script src="/prologue.js?v=20261114p2"></script>
+<script src="/cosmo.js?v=20261114p2"></script>
+<script src="/campaign.js?v=20261114p2"></script>
+<script src="/game.js?v=20261114p2"></script>
+<script src="/program.js?v=20261114p2"></script>
+<script src="/career.js?v=20261114p2"></script>
+<script src="/pwa.js?v=20261114p2"></script>
 </body>
 </html>

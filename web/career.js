@@ -109,7 +109,7 @@ const saveAgency = (a) => {
   }
 };
 async function syncCareerFromCloud() {
-  if (agency() || typeof api !== "function") return;
+  if (!navigator.onLine || agency() || typeof api !== "function") return;
   try {
     const cloud = await api(`career?player=${encodeURIComponent((typeof S !== "undefined" && S.player) || "")}`);
     if (cloud && cloud.name && typeof saveAgency === "function") {

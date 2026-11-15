@@ -21,11 +21,13 @@ const MIME_TYPES = {
   '.mjs': 'application/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
+  '.webmanifest': 'application/manifest+json; charset=utf-8',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.gif': 'image/gif',
   '.svg': 'image/svg+xml',
+  '.webp': 'image/webp',
   '.ico': 'image/x-icon',
   '.txt': 'text/plain; charset=utf-8',
   '.wav': 'audio/wav',
@@ -121,11 +123,15 @@ function serveStatic(req, res, filePath) {
 
     const ext = path.extname(filePath).toLowerCase();
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-    res.writeHead(200, {
+    const headers = {
       'Content-Type': contentType,
       'Content-Length': stats.size,
       'Cache-Control': 'no-store, no-cache, must-revalidate'
-    });
+    };
+    if (path.basename(filePath) === 'sw.js') {
+      headers['Service-Worker-Allowed'] = '/';
+    }
+    res.writeHead(200, headers);
     fs.createReadStream(filePath).pipe(res);
   });
 }

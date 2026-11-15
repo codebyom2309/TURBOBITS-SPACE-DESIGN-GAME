@@ -285,6 +285,11 @@
     },
     play: (r) => {
       r(5, 3, 2, 10, "#0c182c"); r(7, 4, 2, 8, "#0c182c"); r(9, 5, 2, 6, "#0c182c"); r(11, 7, 1, 2, "#0c182c");
+    },
+    download: (r) => {
+      r(7, 2, 2, 6, "#f0be64");
+      r(4, 6, 8, 2, "#f0be64"); r(5, 8, 6, 1, "#f0be64"); r(6, 9, 4, 1, "#f0be64"); r(7, 10, 2, 1, "#f0be64");
+      r(3, 12, 10, 2, "#f3ebd8"); r(3, 10, 2, 2, "#f3ebd8"); r(11, 10, 2, 2, "#f3ebd8");
     }
   };
 
@@ -906,9 +911,19 @@
 
   let _onlineState = navigator.onLine;
   async function checkServerHealth() {
+    if (!navigator.onLine) {
+      _onlineState = false;
+      refreshStatusBar();
+      return;
+    }
     try {
       const r = await fetch("/api/health", { cache: "no-store" });
-      _onlineState = r.ok;
+      if (!r.ok) {
+        _onlineState = false;
+      } else {
+        const d = await r.json().catch(() => ({}));
+        _onlineState = d.status !== "offline";
+      }
     } catch {
       _onlineState = false;
     }

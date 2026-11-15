@@ -164,7 +164,11 @@ class ApiHandlerMixin:
         return USERS.get_session(token) if token else None
 
     def end_headers(self):
-        if not getattr(self, "path", "").startswith("/api/"):
+        req_path = getattr(self, "path", "").split("?", 1)[0]
+        if req_path == "/sw.js":
+            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+            self.send_header("Service-Worker-Allowed", "/")
+        elif not req_path.startswith("/api/"):
             self.send_header("Cache-Control", "no-cache")
         super().end_headers()
 
@@ -383,6 +387,12 @@ class ApiHandlerMixin:
 
 
 class Handler(ApiHandlerMixin, SimpleHTTPRequestHandler):
+    extensions_map = {
+        **SimpleHTTPRequestHandler.extensions_map,
+        ".webmanifest": "application/manifest+json",
+        ".svg": "image/svg+xml",
+    }
+
     def __init__(self, *a, **kw):
         super().__init__(*a, directory=str(WEB), **kw)
 
