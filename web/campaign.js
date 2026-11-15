@@ -1632,9 +1632,24 @@
     $("#bmDossierContent").innerHTML = buildBriefingDetailsHTML(scKey);
     modal.classList.remove("hidden");
 
-    $("#bmCloseBtn").onclick = () => modal.classList.add("hidden");
-    $("#bmCancelBtn").onclick = () => modal.classList.add("hidden");
+    const fullBriefingSpeech = c
+      ? `${c.name}, ${c.org}. ${c.letter.join(" ")}`
+      : `${sc.name}. ${sc.pitch || ""}`;
+    if (window.VOX) {
+      window.VOX.speak(fullBriefingSpeech, scKey);
+    }
+    if ($("#bmNarrateBtn")) {
+      $("#bmNarrateBtn").onclick = () => {
+        if (!window.VOX) return;
+        if (window.VOX.isSpeaking()) window.VOX.stop();
+        else window.VOX.speak(fullBriefingSpeech, scKey, { force: true });
+      };
+    }
+
+    $("#bmCloseBtn").onclick = () => { if (window.VOX) window.VOX.stop(); modal.classList.add("hidden"); };
+    $("#bmCancelBtn").onclick = () => { if (window.VOX) window.VOX.stop(); modal.classList.add("hidden"); };
     $("#bmProceedBtn").onclick = () => {
+      if (window.VOX) window.VOX.stop();
       modal.classList.add("hidden");
       S.mode = mode;
       const prevNoLetter = S.noLetter;

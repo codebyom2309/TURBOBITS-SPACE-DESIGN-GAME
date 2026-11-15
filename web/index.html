@@ -17,7 +17,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Silkscreen:wght@400;700&family=VT323&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/style.css?v=20261114p2">
+<link rel="stylesheet" href="/style.css?v=20261114p8">
 </head>
 <body>
 <div id="stage">
@@ -242,8 +242,31 @@
           </div>
           <div class="cq-settings-list">
             <div class="cq-setting-row">
-              <span>Desk &amp; Telemetry Audio</span>
+              <span>Master Audio</span>
               <button type="button" class="cq-btn-hud" id="setSoundBtn">SOUND FX: ON</button>
+            </div>
+            <div class="cq-setting-row">
+              <span>Master Volume (<b id="setSoundVolVal">80%</b>)</span>
+              <input type="range" id="setSoundVol" class="cq-sound-slider" min="0" max="100" step="5" value="80" aria-label="Master Volume">
+            </div>
+            <div class="cq-setting-row">
+              <span>Typewriter &amp; Typing Audio</span>
+              <button type="button" class="cq-btn-hud" id="setTypeSoundBtn">TYPING SFX: ON</button>
+            </div>
+            <div class="cq-setting-row">
+              <span>Desk &amp; Button Clicks</span>
+              <button type="button" class="cq-btn-hud" id="setUiSoundBtn">UI CLICKS: ON</button>
+            </div>
+            <div class="cq-setting-row">
+              <span>Voice Narration (TTS)</span>
+              <button type="button" class="cq-btn-amber" id="setNarrateBtn">NARRATION: ON</button>
+            </div>
+            <div class="cq-setting-row">
+              <span>Narration Speed &amp; Test</span>
+              <div class="cq-pwa-actions">
+                <button type="button" class="cq-btn-hud" id="setNarrateRateBtn">SPEED: 1.0x</button>
+                <button type="button" class="cq-btn-hud" id="setNarrateTestBtn">TEST VOICE</button>
+              </div>
             </div>
             <div class="cq-setting-row">
               <span>Motion Preference</span>
@@ -356,6 +379,7 @@
             <h2 id="prolTitle">SCENE 01 &mdash; THE BLUE PLANET</h2>
           </div>
           <div class="cq-subhead-btns cq-prol-topbtns">
+            <button type="button" class="cq-btn-hud" id="prolNarrateBtn">VOICE: ON</button>
             <button type="button" class="cq-btn-hud" id="prolSubBtn">SUBTITLES: ON</button>
             <button type="button" class="cq-btn-hud" id="prolReplayBtn" title="Replay current scene">REPLAY SCENE</button>
             <button type="button" class="cq-btn-amber" id="prolToStoryBtn">SKIP TO CAMPAIGN &gt;</button>
@@ -743,7 +767,7 @@
       <div><span id="tbDay" class="tb-day"></span> <span id="tbRoom"></span></div>
       <div id="tbScenario" class="tb-center"></div>
       <div id="mStatus" class="mstatus"></div>
-      <div class="tb-right"><span id="tbBudget"></span><button class="btn small" id="briefingBtn">Briefing</button><button class="btn small" id="designsBtn">Compare</button><button class="btn small" id="helpBtn">Help</button><button class="btn small" id="menuBtn">Menu</button></div>
+      <div class="tb-right"><span id="tbBudget"></span><button class="btn small" id="briefingBtn">Briefing</button><button class="btn small" id="designsBtn">Compare</button><button class="btn small" id="helpBtn">Help</button><button class="btn small" id="tbSoundBtn" type="button" title="Toggle Master Sound">Sound: ON</button><button class="btn small" id="tbNarrateBtn" type="button" title="Toggle Voice Narration">Voice: ON</button><button class="btn small cq-mentor-top-btn" id="aiMentorBtn" type="button">AI Mentor</button><button class="btn small" id="menuBtn">Menu</button></div>
     </header>
 
     <div class="desk-bg under-top"></div>
@@ -751,12 +775,25 @@
     <!-- left: booth + mission request -->
     <div class="col-left">
       <div class="booth">
-        <div class="booth-window">
+        <div class="cq-guide-mode-bar" role="tablist" aria-label="Guidance Mode Switcher">
+          <button type="button" class="cq-guide-mode-btn active" id="modeGuideBtn" role="tab" aria-selected="true">MISSION GUIDE</button>
+          <button type="button" class="cq-guide-mode-btn" id="modeAiHelpBtn" role="tab" aria-selected="false">AI ENGINEERING HELP</button>
+        </div>
+        <div class="booth-window" id="boothGuideWindow">
           <img id="boothPlanet" class="px booth-planet" alt="">
           <img id="clientImg" class="px client" alt="">
         </div>
         <div class="nameplate" id="clientName"></div>
         <div class="speech" id="speech"></div>
+        <div id="boothAiView" class="cq-booth-ai-view hidden">
+          <div class="cq-booth-ai-head">CHIEF ENG. VERA LIN &middot; LIVE MENTOR</div>
+          <div id="boothAiScenario" class="cq-booth-ai-scen">Scenario Telemetry Active</div>
+          <div id="boothAiSummary" class="cq-booth-ai-sum">Click any quick question in the AI Engineering Mentor panel or run a live scenario audit below.</div>
+          <div class="cq-booth-ai-btns">
+            <button type="button" class="btn tiny" id="boothAiAuditBtn">Audit Scenario</button>
+            <button type="button" class="btn tiny" id="boothAiTabBtn">Check Active Tab</button>
+          </div>
+        </div>
       </div>
       <div class="paper request">
         <div class="doc-head"><span>MISSION REQUEST</span><span id="reqId"></span></div>
@@ -832,6 +869,7 @@
         <div class="letter-foot">
           <span id="letterPitch"></span>
           <div class="cq-letter-btns">
+            <button type="button" class="btn small" id="letterNarrateBtn" title="Read Briefing Aloud">Read Aloud</button>
             <button type="button" class="btn small" id="letterBackBtn">Mission list</button>
             <button type="button" class="btn" id="letterGo">Open the mission file &gt;</button>
           </div>
@@ -855,6 +893,17 @@
         <button class="btn" id="mHints">Engineer's handbook (hints)</button>
         <button class="btn" id="mTutorial">Replay tutorial</button>
         <button class="btn" id="mSound">Sound: on</button>
+        <div class="cq-menu-sound-box">
+          <label class="cq-menu-vol-row">
+            <span>Volume: <b id="mSoundVolLabel">80%</b></span>
+            <input type="range" id="mSoundVol" min="0" max="100" step="5" value="80">
+          </label>
+          <div class="cq-menu-sound-toggles">
+            <button type="button" class="btn tiny" id="mTypeSound">Typing SFX: on</button>
+            <button type="button" class="btn tiny" id="mUiSound">UI Clicks: on</button>
+          </div>
+          <button type="button" class="btn tiny" id="mNarrate">Voice Narration: on</button>
+        </div>
         <button class="btn" id="mSave">Save design to the drawer</button>
         <button class="btn" id="mCompare">Compare designs</button>
         <button class="btn" id="mExport">Copy design code</button>
@@ -865,6 +914,84 @@
         <p class="req-small" id="mMsg"></p>
       </div>
     </div>
+
+    <!-- AI Mission Engineering Mentor Docked Panel -->
+    <aside id="aiMentorDrawer" class="paper cq-ai-mentor-drawer hidden" role="dialog" aria-label="AI Mission Engineering Mentor">
+      <div class="doc-head cq-ai-mentor-head">
+        <div class="cq-ai-head-title">
+          <span class="cq-ai-status-dot" id="aiMentorDot" aria-hidden="true"></span>
+          <span title="AI Mission Engineering Mentor">AI ENG. MENTOR</span>
+        </div>
+        <div class="cq-ai-head-actions">
+          <span id="aiMentorModelTag" class="cq-ai-model-tag" title="Chief Engineer Vera Lin · Groq Llama-3.3-70B">LLAMA-3.3-70B</span>
+          <button type="button" class="btn tiny" id="aiNarrateBtn" title="Toggle AI Mentor Voice Narration">Voice: ON</button>
+          <button type="button" class="btn tiny" id="aiMentorClearBtn" title="Reset conversation for this mission">Reset</button>
+          <button type="button" class="btn tiny" id="aiMentorCloseBtn" title="Return to Mission Guide">Guide &times;</button>
+        </div>
+      </div>
+
+      <!-- Current Mission Context Telemetry Strip -->
+      <div class="cq-ai-ctx-bar" id="aiMentorCtxBar">
+        <div class="cq-ai-ctx-top">
+          <strong id="aiCtxMission">Mission Telemetry</strong>
+          <span id="aiCtxReadiness" class="cq-ai-readiness-badge">CHECKING...</span>
+        </div>
+        <div class="cq-ai-ctx-pills">
+          <span class="cq-ai-pill"><b>MASS:</b> <em id="aiCtxMass">-</em></span>
+          <span class="cq-ai-pill"><b>POWER:</b> <em id="aiCtxPower">-</em></span>
+          <span class="cq-ai-pill"><b>BUDGET:</b> <em id="aiCtxBudget">-</em></span>
+          <span class="cq-ai-pill"><b>SCIENCE:</b> <em id="aiCtxScience">-</em></span>
+        </div>
+        <div id="aiCtxChangeNotice" class="cq-ai-change-notice hidden">
+          <span>Spacecraft configuration modified since last analysis.</span>
+          <button type="button" class="btn tiny" id="aiReanalyzeBtn">Re-analyze Design</button>
+        </div>
+      </div>
+
+      <!-- Friendly Callsign / Name Greeting Bar -->
+      <div class="cq-ai-user-bar" id="aiUserBar">
+        <span class="cq-ai-user-lbl">CALLSIGN: <b id="aiUserNameDisplay">Bro / Sis</b></span>
+        <div class="cq-ai-user-controls">
+          <button type="button" class="btn tiny cq-ai-nick-btn" data-ai-nick="Bro" title="Address me as Bro">Bro</button>
+          <button type="button" class="btn tiny cq-ai-nick-btn" data-ai-nick="Sis" title="Address me as Sis">Sis</button>
+          <input type="text" id="aiUserNameInput" class="cq-ai-name-input" maxlength="24" placeholder="Your name..." aria-label="Your name for AI Mentor">
+          <button type="button" class="btn tiny" id="aiUserNameSaveBtn">Save</button>
+        </div>
+      </div>
+
+      <!-- Active Subsystem & Quick Actions Bar -->
+      <div class="cq-ai-subbar">
+        <span id="aiActiveTabLabel" class="cq-ai-sublabel">Subsystem: Overview</span>
+        <div class="cq-ai-subbtns">
+          <button type="button" class="btn tiny" id="aiInspectTabBtn" title="Inspect currently selected workbench tab">Inspect Tab</button>
+          <button type="button" class="btn tiny" id="aiDiagnoseBtn" title="Run full spacecraft design audit">Design Audit</button>
+        </div>
+      </div>
+
+      <!-- Suggested Quick Questions -->
+      <div class="cq-ai-quick-wrap" id="aiQuickWrap">
+        <div class="cq-ai-quick-label">
+          <span>QUICK QUESTIONS</span>
+          <button type="button" id="aiQuickToggleBtn" class="cq-ai-quick-toggle" aria-expanded="true">HIDE &#9652;</button>
+        </div>
+        <div class="cq-ai-quick-list" id="aiQuickQuestions"></div>
+      </div>
+
+      <!-- Conversation History -->
+      <div class="cq-ai-chat-log" id="aiChatHistory" aria-live="polite"></div>
+
+      <!-- Question Input Form -->
+      <form id="aiMentorForm" class="cq-ai-form" autocomplete="off">
+        <input
+          type="text"
+          id="aiQuestionInput"
+          maxlength="600"
+          placeholder="Ask Vera about your spacecraft..."
+          aria-label="Ask AI Mission Engineering Mentor"
+        >
+        <button type="submit" class="btn small cq-ai-send-btn" id="aiSendBtn">ASK MENTOR</button>
+      </form>
+    </aside>
   </section>
 
   <div id="research" class="modal hidden">
@@ -911,6 +1038,7 @@
       <section id="genesisDebriefPanel" class="cq-debrief-panel" aria-label="Mission Debriefing & Campaign Impact"></section>
       <div class="news-actions">
         <button class="btn" id="nRedesign">Redesign</button>
+        <button class="btn cq-btn-news-mentor" id="nMentorBtn" type="button">Ask AI Mentor About Flight</button>
         <button class="btn" id="nNext">Next mission</button>
         <button class="btn" id="nCompare">Compare designs</button>
         <button class="btn" id="nHall">Hall of fame</button>
@@ -986,6 +1114,7 @@
         </div>
         <div id="bmDossierContent" class="cq-bm-body"></div>
         <div class="cq-modal-actions">
+          <button type="button" class="cq-btn-hud" id="bmNarrateBtn">READ BRIEFING ALOUD</button>
           <button type="button" class="cq-btn-hud" id="bmCancelBtn">BACK TO MISSIONS</button>
           <button type="button" class="cq-btn-amber" id="bmProceedBtn">OPEN THE MISSION FILE &gt;</button>
         </div>
@@ -993,6 +1122,15 @@
     </div>
   </div>
 
+</div>
+
+<!-- Global Floating Narration & Sound Quick-Control Pill (Accessible on Every Screen) -->
+<div id="globalNarrationBar" class="cq-global-narrate-bar" role="region" aria-label="Global Voice Narration Controls">
+  <button type="button" id="globalNarrateToggleBtn" class="cq-gn-btn" title="Enable or disable Voice Narration from anywhere">
+    <span class="cq-gn-dot" id="globalNarrateDot" aria-hidden="true"></span>
+    <span id="globalNarrateLabel">VOICE: ON</span>
+  </button>
+  <button type="button" id="globalNarrateStopBtn" class="cq-gn-stop hidden" title="Stop current spoken narration">STOP</button>
 </div>
 
 <div id="pwaOfflineBar" class="cq-offline-bar hidden" role="status" aria-live="polite">
@@ -1016,15 +1154,16 @@
   </div>
 </div>
 
-<script src="/sprites.js?v=20261114p2"></script>
-<script src="/labs.js?v=20261114p2"></script>
-<script src="/scenes.js?v=20261114p2"></script>
-<script src="/prologue.js?v=20261114p2"></script>
-<script src="/cosmo.js?v=20261114p2"></script>
-<script src="/campaign.js?v=20261114p2"></script>
-<script src="/game.js?v=20261114p2"></script>
-<script src="/program.js?v=20261114p2"></script>
-<script src="/career.js?v=20261114p2"></script>
-<script src="/pwa.js?v=20261114p2"></script>
+<script src="/sprites.js?v=20261114p8"></script>
+<script src="/labs.js?v=20261114p8"></script>
+<script src="/scenes.js?v=20261114p8"></script>
+<script src="/prologue.js?v=20261114p8"></script>
+<script src="/cosmo.js?v=20261114p8"></script>
+<script src="/campaign.js?v=20261114p8"></script>
+<script src="/game.js?v=20261114p8"></script>
+<script src="/program.js?v=20261114p8"></script>
+<script src="/career.js?v=20261114p8"></script>
+<script src="/mentor.js?v=20261114p8"></script>
+<script src="/pwa.js?v=20261114p8"></script>
 </body>
 </html>

@@ -567,7 +567,7 @@ html.title-mode .screen.active {
   align-items: center;
   justify-content: center;
   padding: 16px;
-  z-index: 60;
+  z-index: 125;
 }
 .cq-modal-panel {
   width: min(460px, 100%);
@@ -883,7 +883,7 @@ html.title-mode .screen.active {
   display: flex; justify-content: space-between; align-items: center; padding: 0 12px; border-bottom: 2px solid #000;
   font-family: "Silkscreen"; font-size: 13px; z-index: 5; }
 .tb-center { color: var(--gold); }
-.tb-right { display: flex; gap: 14px; align-items: center; }
+.tb-right { display: flex; gap: 6px; align-items: center; }
 .col-left { position: absolute; top: 46px; left: 10px; width: 300px; bottom: 10px; display: flex; flex-direction: column; gap: 10px; }
 .col-mid { position: absolute; top: 46px; left: 320px; width: 530px; bottom: 10px; display: flex; flex-direction: column; }
 .col-right { position: absolute; top: 46px; left: 860px; right: 10px; bottom: 10px; display: flex; flex-direction: column; gap: 8px; }
@@ -983,8 +983,8 @@ html.title-mode .screen.active {
 .appr.mine { cursor: pointer; border-color: var(--paper); color: var(--paper); }
 .appr.on { border: 3px solid var(--green); color: var(--paperL); background: var(--greenD); transform: rotate(-6deg); }
 .toast { position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--ink); color: var(--paper);
-  padding: 8px 14px; border: 2px solid var(--paper); z-index: 20; }
-.modal { position: absolute; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; z-index: 30; }
+  padding: 8px 14px; border: 2px solid var(--paper); z-index: 140; }
+.modal { position: absolute; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; z-index: 120; }
 .modal-box { padding: 20px; width: 380px; display: flex; flex-direction: column; gap: 10px; }
 
 /* ------------------------------------------------ program manifest */
@@ -1167,9 +1167,9 @@ html.mobile table.cmp { font-size: 16px; } html.mobile table.cmp td:first-child 
 .hrow { display: grid; grid-template-columns: 40px 1fr 140px 60px 80px 110px; gap: 8px; padding: 4px 0; border-bottom: 1px dashed var(--ink2); align-items: center; }
 
 /* ------------------------------------------------ tutorial */
-.tut-focus { z-index: 40 !important; box-shadow: 0 0 0 3px var(--gold), 0 0 0 4000px rgba(10,8,6,.62) !important; }
+.tut-focus { z-index: 122 !important; box-shadow: 0 0 0 3px var(--gold), 0 0 0 4000px rgba(10,8,6,.62) !important; }
 .btn.tut-focus { position: relative; }
-.tut { position: absolute; z-index: 60; width: 520px; display: grid; grid-template-columns: 90px 1fr; gap: 10px;
+.tut { position: absolute; z-index: 130; width: 520px; display: grid; grid-template-columns: 90px 1fr; gap: 10px;
   background: var(--paperL); border: 3px solid var(--ink); box-shadow: 6px 6px 0 rgba(0,0,0,.6); padding: 10px; }
 .tut-img { width: 90px; height: 108px; border: 2px solid var(--ink); }
 .tut-name { font-family: "Silkscreen"; font-size: 12px; background: var(--gold); border: 2px solid var(--ink); padding: 2px 6px; }
@@ -1240,19 +1240,24 @@ html.mobile .hrow > :nth-child(3), html.mobile .hrow > :nth-child(6) { display: 
 
 /* desk */
 html.mobile #desk.active { display: flex; flex-direction: column; padding-bottom: 76px; }
-html.mobile .topbar { position: sticky; top: 0; height: auto; flex-wrap: wrap; gap: 4px 10px; padding: 6px 8px; font-size: 10px; }
+html.mobile .topbar { position: sticky; top: 0; height: auto; flex-wrap: wrap; gap: 4px 8px; padding: 6px 8px; font-size: 10px; z-index: 30; }
+html.mobile .tb-right { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; justify-content: flex-end; margin-left: auto; }
+html.mobile #tbBudget, html.mobile #tbSoundBtn, html.mobile #tbNarrateBtn { display: none !important; }
+html.mobile .topbar .btn.small { min-height: 26px; padding: 3px 6px; font-size: 9.5px; box-shadow: 1px 1px 0 #000; }
 html.mobile .tb-center { order: 3; width: 100%; }
 html.mobile .mstatus { display: flex; order: 4; width: 100%; justify-content: space-between; gap: 4px; font-family: "VT323"; font-size: 17px; }
 html.mobile .ms { display: inline-flex; gap: 3px; align-items: center; padding: 0 4px; border: 1px solid #5d5349; }
 html.mobile .ms.warn { background: #6b4e14; } html.mobile .ms.bad { background: #6f1f19; }
 html.mobile .col-left, html.mobile .col-mid, html.mobile .col-right { position: static; width: auto; inset: auto; margin: 8px 8px 0; }
-html.mobile .booth { display: grid; grid-template-columns: 96px 1fr; gap: 6px; }
-html.mobile .booth-window { height: 116px; grid-row: span 2; }
+html.mobile .booth { display: grid; grid-template-columns: 96px 1fr; gap: 6px; align-items: start; }
+html.mobile .booth .cq-guide-mode-bar { grid-column: 1 / -1; margin-bottom: 2px; }
+html.mobile .booth-window { grid-column: 1; grid-row: 2 / span 2; height: 116px; }
 html.mobile .client { width: 80px; height: 96px; }
 html.mobile .booth-planet { width: 40px; height: 40px; }
-html.mobile .nameplate { margin-top: 0; }
-html.mobile .speech { margin-top: 0; min-height: 0; }
+html.mobile .nameplate { grid-column: 2; grid-row: 2; margin-top: 0; align-self: start; }
+html.mobile .speech { grid-column: 2; grid-row: 3; margin-top: 0; min-height: 84px; }
 html.mobile .speech::before { display: none; }
+html.mobile .booth .cq-booth-ai-view { grid-column: 1 / -1; }
 html.mobile .request { flex: none; }
 html.mobile .goal .gl { width: 40%; }
 html.mobile .tabs { flex-wrap: nowrap; overflow-x: auto; padding-left: 0; scrollbar-width: none; }
@@ -5214,8 +5219,1106 @@ html.title-mode body.pwa-offline .cq-subscreen {
   }
 }
 
+/* ============================================================================
+   AI MISSION ENGINEERING MENTOR — Warm Retro Technical Clipboard & Mode Toggle
+   ============================================================================ */
+.cq-guide-mode-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: #141923;
+  border-bottom: 2px solid var(--ink);
+  padding: 2px;
+}
 
+.cq-guide-mode-btn {
+  background: #232a3a;
+  color: #c8bfab;
+  border: 1px solid #3c465c;
+  padding: 4px 4px;
+  font-family: "Silkscreen", monospace;
+  font-size: 8px;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  text-align: center;
+  line-height: 1.15;
+}
 
+.cq-guide-mode-btn:hover {
+  background: #2f384d;
+  color: #fff3d2;
+}
 
+.cq-guide-mode-btn.active {
+  background: var(--amber);
+  color: var(--ink);
+  border-color: #fff3d2;
+  font-weight: 700;
+}
 
+.cq-mentor-top-btn {
+  background: #2b2316 !important;
+  color: #f6d38b !important;
+  border-color: var(--amber) !important;
+}
+
+.cq-mentor-top-btn.active,
+.cq-mentor-top-btn:hover {
+  background: var(--amber) !important;
+  color: var(--ink) !important;
+}
+
+.cq-btn-news-mentor {
+  background: #2b2316 !important;
+  color: #f6d38b !important;
+  border-color: var(--amber) !important;
+}
+
+.cq-btn-news-mentor:hover {
+  background: var(--amber) !important;
+  color: var(--ink) !important;
+}
+
+.cq-ai-mentor-drawer {
+  position: absolute;
+  top: 38px;
+  right: 8px;
+  bottom: 8px;
+  width: min(465px, 44vw);
+  z-index: 36;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  box-shadow: -6px 6px 0 rgba(10, 14, 22, 0.55);
+  overflow: hidden;
+}
+
+.cq-ai-mentor-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 5px 8px;
+  background: #1c2230;
+  color: #f6efe0;
+  border-bottom: 2px solid var(--amber);
+}
+
+.cq-ai-head-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: "Silkscreen", monospace;
+  font-size: 9px;
+  letter-spacing: 0.3px;
+  color: #f6d38b;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.cq-ai-status-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--amber);
+  box-shadow: 0 0 6px var(--amber);
+  flex: none;
+}
+
+.cq-ai-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+}
+
+.cq-ai-head-actions .btn.tiny {
+  white-space: nowrap;
+  flex: none;
+  padding: 2px 5px;
+  font-size: 8.5px;
+  line-height: 1.1;
+}
+
+.cq-ai-model-tag {
+  font-family: "Silkscreen", monospace;
+  font-size: 7px;
+  padding: 2px 5px;
+  background: #2b3347;
+  color: #dfd5be;
+  border: 1px solid #4a5570;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 108px;
+  flex: none;
+}
+
+.cq-ai-ctx-bar {
+  background: var(--paper2);
+  border-bottom: 2px solid var(--ink);
+  padding: 4px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cq-ai-ctx-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.cq-ai-ctx-top strong {
+  font-family: "Silkscreen", monospace;
+  font-size: 8.5px;
+  color: var(--ink);
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cq-ai-readiness-badge {
+  font-family: "Silkscreen", monospace;
+  font-size: 7.5px;
+  padding: 1px 5px;
+  border: 1px solid var(--ink);
+  background: var(--paperL);
+  white-space: nowrap;
+  flex: none;
+}
+
+.cq-ai-ready-ok {
+  background: #d8f0df;
+  color: #195930;
+  border-color: var(--ok);
+}
+
+.cq-ai-ready-bad {
+  background: #f9dcd8;
+  color: #8a2119;
+  border-color: var(--bad);
+}
+
+.cq-ai-ctx-pills {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 3px;
+}
+
+.cq-ai-pill {
+  background: var(--paperL);
+  border: 1px solid #b8ad95;
+  padding: 2px 4px;
+  font-family: "VT323", monospace;
+  font-size: 14px;
+  line-height: 1.05;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cq-ai-pill b {
+  font-family: "Silkscreen", monospace;
+  font-size: 6.5px;
+  color: var(--ink2);
+  display: block;
+}
+
+.cq-ai-pill em {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.cq-ai-change-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  background: #fff2cf;
+  border: 1px solid var(--gold);
+  padding: 2px 6px;
+  font-family: "VT323", monospace;
+  font-size: 14.5px;
+  color: #593d08;
+}
+
+.cq-ai-subbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 3px 8px;
+  background: #e3d7bc;
+  border-bottom: 1px solid #b8ad95;
+}
+
+.cq-ai-sublabel {
+  font-family: "Silkscreen", monospace;
+  font-size: 8px;
+  color: var(--ink2);
+  min-width: 0;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cq-ai-subbtns {
+  display: flex;
+  gap: 4px;
+  flex: none;
+}
+
+.cq-ai-subbtns .btn.tiny {
+  white-space: nowrap;
+  flex: none;
+  padding: 2px 6px;
+  font-size: 8.5px;
+  line-height: 1.1;
+}
+
+.cq-ai-quick-wrap {
+  padding: 4px 8px;
+  background: var(--paperL);
+  border-bottom: 1px solid #b8ad95;
+}
+
+.cq-ai-quick-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: "Silkscreen", monospace;
+  font-size: 7px;
+  color: var(--ink2);
+  margin-bottom: 3px;
+}
+
+.cq-ai-quick-toggle {
+  background: transparent;
+  border: none;
+  color: var(--blue);
+  font-family: "Silkscreen", monospace;
+  font-size: 7px;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+.cq-ai-quick-toggle:hover {
+  color: var(--ink);
+}
+
+.cq-ai-quick-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3px;
+}
+
+.cq-ai-quick-list.collapsed {
+  display: none;
+}
+
+.cq-ai-qbtn {
+  background: var(--paper2);
+  color: var(--ink);
+  border: 1px solid var(--ink2);
+  padding: 3px 4px;
+  font-family: "Silkscreen", monospace;
+  font-size: 7px;
+  line-height: 1.15;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+.cq-ai-qbtn:hover {
+  background: var(--amber);
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.cq-ai-qbtn-sim {
+  background: #2b2316;
+  color: #f6d38b;
+  border-color: var(--gold);
+}
+
+.cq-ai-chat-log {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--paper);
+}
+
+.cq-ai-msg {
+  border: 1px solid #b8ad95;
+  background: var(--paperL);
+  padding: 5px 7px;
+}
+
+.cq-ai-msg-user {
+  background: #e7dec8;
+  border-left: 3px solid var(--blue);
+}
+
+.cq-ai-msg-mentor {
+  background: var(--paperL);
+  border-left: 3px solid var(--gold);
+}
+
+.cq-ai-msg-loading {
+  opacity: 0.85;
+  border-style: dashed;
+}
+
+.cq-ai-msg-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-family: "Silkscreen", monospace;
+  font-size: 7px;
+  color: var(--ink2);
+  border-bottom: 1px solid #d8ceb8;
+  padding-bottom: 3px;
+  margin-bottom: 4px;
+}
+
+.cq-ai-src-badge {
+  background: #e3d7bc;
+  color: var(--ink);
+  padding: 1px 4px;
+  border: 1px solid #b8ad95;
+  white-space: nowrap;
+}
+
+.cq-ai-msg-body {
+  font-family: "VT323", monospace;
+  font-size: 16.5px;
+  line-height: 1.18;
+  color: var(--ink);
+}
+
+.cq-ai-h4 {
+  font-family: "Silkscreen", monospace;
+  font-size: 8.5px;
+  color: var(--ink);
+  background: #e9dfc8;
+  padding: 2px 5px;
+  border-left: 3px solid var(--ink);
+  margin: 3px 0;
+}
+
+.cq-ai-h5 {
+  font-family: "Silkscreen", monospace;
+  font-size: 7.5px;
+  color: var(--ink2);
+  margin: 5px 0 2px;
+}
+
+.cq-ai-p {
+  margin: 2px 0;
+}
+
+.cq-ai-ul {
+  margin: 2px 0 4px 15px;
+  padding: 0;
+}
+
+.cq-ai-ul li {
+  margin-bottom: 2px;
+}
+
+.cq-ai-code {
+  font-family: "VT323", monospace;
+  font-size: 15.5px;
+  background: #e6dcc4;
+  border: 1px solid #c5b99e;
+  padding: 0 3px;
+  color: #161a24;
+}
+
+.cq-ai-tag {
+  display: inline-block;
+  font-family: "Silkscreen", monospace;
+  font-size: 7px;
+  padding: 1px 4px;
+  margin-right: 4px;
+  border: 1px solid var(--ink);
+}
+
+.cq-ai-tag-bad {
+  background: #f9dcd8;
+  color: #8a2119;
+  border-color: var(--bad);
+}
+
+.cq-ai-tag-warn {
+  background: #fff1cf;
+  color: #7a4b06;
+  border-color: var(--warn);
+}
+
+.cq-ai-tag-calc {
+  background: #dde9f7;
+  color: #1d4472;
+  border-color: var(--blue);
+}
+
+.cq-ai-tag-req {
+  background: #e6decb;
+  color: var(--ink);
+}
+
+.cq-ai-tag-rec {
+  background: #daf0e1;
+  color: #195930;
+  border-color: var(--ok);
+}
+
+.cq-ai-tag-concept {
+  background: #f4e6c3;
+  color: #634308;
+  border-color: var(--gold);
+}
+
+.cq-ai-tag-sim {
+  background: #2b2316;
+  color: #f6d38b;
+  border-color: var(--amber);
+}
+
+.cq-ai-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px;
+  padding: 5px 8px;
+  background: var(--paper2);
+  border-top: 2px solid var(--ink);
+}
+
+.cq-ai-form input {
+  background: var(--paperL);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  padding: 4px 7px;
+  font-family: "VT323", monospace;
+  font-size: 16.5px;
+  min-width: 0;
+}
+
+.cq-ai-send-btn {
+  background: var(--amber) !important;
+  color: var(--ink) !important;
+  border-color: var(--ink) !important;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Booth AI Engineering Help Live Summary View */
+.cq-booth-ai-view {
+  background: var(--paperL);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  padding: 7px 8px;
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-height: 170px;
+}
+
+.booth.cq-booth-ai-active .cq-booth-ai-view {
+  min-height: 210px;
+}
+
+.cq-booth-ai-head {
+  font-family: "Silkscreen", monospace;
+  font-size: 8px;
+  color: var(--ink);
+  background: var(--amber);
+  padding: 2px 5px;
+  border: 1px solid var(--ink);
+  letter-spacing: 0.4px;
+}
+
+.cq-booth-ai-scen {
+  font-family: "Silkscreen", monospace;
+  font-size: 8px;
+  color: var(--blue);
+  border-bottom: 1px dashed #b8ad95;
+  padding-bottom: 3px;
+}
+
+.cq-booth-ai-sum {
+  font-family: "VT323", monospace;
+  font-size: 15px;
+  line-height: 1.15;
+  color: var(--ink);
+  flex: 1;
+}
+
+.cq-booth-ai-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+/* Sound Settings Controls in Global Settings Modal & Desk Menu */
+.cq-sound-slider-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 150px;
+}
+
+.cq-sound-slider {
+  flex: 1;
+  accent-color: var(--cq-amber, #e0a342);
+  cursor: pointer;
+}
+
+.cq-sound-val {
+  font-family: "Silkscreen", monospace;
+  font-size: 10px;
+  min-width: 38px;
+  text-align: right;
+  color: var(--cq-amber-hi, #ffd166);
+}
+
+.cq-menu-sound-box {
+  background: var(--paper2);
+  border: 1px solid var(--ink);
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cq-menu-vol-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-family: "Silkscreen", monospace;
+  font-size: 9px;
+  color: var(--ink);
+}
+
+.cq-menu-vol-row input[type="range"] {
+  flex: 1;
+  max-width: 140px;
+  accent-color: var(--amber);
+  cursor: pointer;
+}
+
+.cq-menu-sound-toggles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+}
+
+/* Friendly Callsign / Name Greeting Bar & Interactive Quick Links in AI Mentor */
+.cq-ai-user-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 5px;
+  padding: 4px 8px;
+  background: #ece3cc;
+  border-bottom: 1px solid #b8ad95;
+}
+
+.cq-ai-user-lbl {
+  font-family: "Silkscreen", monospace;
+  font-size: 7.5px;
+  color: var(--ink2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.cq-ai-user-lbl b {
+  color: var(--blue);
+}
+
+.cq-ai-user-controls {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex: none;
+  justify-content: flex-end;
+}
+
+.cq-ai-nick-btn.active {
+  background: var(--amber) !important;
+  color: var(--ink) !important;
+  font-weight: 700;
+}
+
+.cq-ai-name-input {
+  width: 96px;
+  background: var(--paperL);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  padding: 2px 4px;
+  font-family: "VT323", monospace;
+  font-size: 14px;
+}
+
+.cq-ai-inline-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: "Silkscreen", monospace;
+  font-size: 7.5px;
+  background: #dde9f7;
+  color: #163d6b;
+  border: 1px solid #2f5a8c;
+  padding: 1px 5px;
+  margin: 1px 3px;
+  cursor: pointer;
+  vertical-align: middle;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.cq-ai-inline-link:hover {
+  background: var(--amber);
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.cq-ai-qlinks-bar {
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1px dashed #b8ad95;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cq-ai-qlinks-lbl {
+  font-family: "Silkscreen", monospace;
+  font-size: 7px;
+  color: var(--ink2);
+  letter-spacing: 0.4px;
+}
+
+.cq-ai-qlinks-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.cq-ai-qlink-btn {
+  font-family: "Silkscreen", monospace;
+  font-size: 7.5px;
+  background: #e9dfc8;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  padding: 2px 5px;
+  cursor: pointer;
+  box-shadow: 1px 1px 0 var(--ink);
+  transition: background-color 120ms ease, transform 80ms ease;
+}
+
+.cq-ai-qlink-btn:hover {
+  background: var(--amber);
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+
+/* Global Persistent Voice Narration Control Pill & Per-Message Listen Controls */
+.cq-global-narrate-bar {
+  position: fixed;
+  left: 14px;
+  bottom: 14px;
+  z-index: 150;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(14, 24, 42, 0.94);
+  border: 2px solid #d4a644;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.65);
+  padding: 4px 6px;
+  pointer-events: auto;
+  white-space: nowrap;
+}
+
+.cq-global-narrate-bar.is-speaking {
+  border-color: #6cc24a;
+  box-shadow: 0 0 12px rgba(108, 194, 74, 0.45), 3px 3px 0 rgba(0, 0, 0, 0.65);
+}
+
+.cq-gn-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: #f4efe2;
+  border: none;
+  padding: 2px 5px;
+  font-family: "Silkscreen", monospace;
+  font-size: 9px;
+  cursor: pointer;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cq-gn-btn:hover {
+  color: #ffd166;
+}
+
+.cq-gn-dot {
+  width: 8px;
+  height: 8px;
+  background: #8a322a;
+  border: 1px solid #f4efe2;
+  display: inline-block;
+  flex: none;
+}
+
+.cq-gn-dot.on {
+  background: #6cc24a;
+}
+
+.cq-gn-dot.speaking {
+  background: #ffd166;
+  animation: cqVoicePulse 0.8s infinite alternate;
+}
+
+@keyframes cqVoicePulse {
+  from {
+    transform: scale(0.9);
+    opacity: 0.75;
+  }
+  to {
+    transform: scale(1.25);
+    opacity: 1;
+  }
+}
+
+.cq-gn-stop {
+  background: #a8322a;
+  color: #fff;
+  border: 1px solid #f4efe2;
+  padding: 2px 6px;
+  font-family: "Silkscreen", monospace;
+  font-size: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cq-gn-stop:hover {
+  background: #d94f3d;
+}
+
+.cq-ai-msg-head-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.cq-ai-listen-btn {
+  font-family: "Silkscreen", monospace;
+  font-size: 7px;
+  background: #e9dfc8;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  padding: 1px 5px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 120ms ease;
+}
+
+.cq-ai-listen-btn:hover,
+.cq-ai-listen-btn.speaking {
+  background: var(--amber);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.cq-voice-rate-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cq-tb-voice.active,
+.cq-ai-voice-btn.active {
+  background: var(--amber) !important;
+  color: var(--ink) !important;
+  font-weight: 700;
+}
+
+/* ============================================================================
+   MOBILE & TABLET RESPONSIVE FIXES FOR AI MENTOR, BOOTH & VOICE CONTROLS
+   Applies to both html.mobile (set by fit() in game.js) and @media <= 820px
+   ============================================================================ */
+html.mobile.mentor-open-root,
+html.mobile.mentor-open-root body {
+  overflow: hidden !important;
+  height: 100dvh !important;
+}
+
+html.mobile .cq-ai-mentor-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: auto;
+  height: 100dvh;
+  max-height: 100dvh;
+  z-index: 95;
+  border-width: 2px;
+  box-shadow: none;
+}
+
+html.mobile .cq-ai-mentor-drawer .btn,
+html.mobile .cq-ai-mentor-drawer .btn.small,
+html.mobile .cq-ai-mentor-drawer .btn.tiny {
+  min-height: 22px;
+  padding: 2px 5px;
+  font-size: 8px;
+  line-height: 1.1;
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+html.mobile .cq-ai-mentor-head {
+  padding: 5px 6px;
+  gap: 4px;
+}
+
+html.mobile .cq-ai-head-title {
+  font-size: 8.5px;
+  letter-spacing: 0.2px;
+  min-width: 0;
+}
+
+html.mobile #aiMentorModelTag {
+  display: none !important;
+}
+
+html.mobile .cq-ai-head-actions {
+  gap: 3px;
+  flex: none;
+}
+
+html.mobile .cq-ai-ctx-bar {
+  padding: 3px 6px;
+  gap: 2px;
+}
+
+html.mobile .cq-ai-ctx-top strong {
+  font-size: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+html.mobile .cq-ai-readiness-badge {
+  font-size: 7px;
+  padding: 1px 4px;
+  white-space: nowrap;
+  flex: none;
+}
+
+html.mobile .cq-ai-ctx-pills {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 3px;
+}
+
+html.mobile .cq-ai-pill {
+  padding: 1px 3px;
+  font-size: 13px;
+}
+
+html.mobile .cq-ai-pill b {
+  font-size: 6.5px;
+}
+
+html.mobile .cq-ai-user-bar {
+  padding: 3px 6px;
+  gap: 4px;
+  flex-wrap: nowrap;
+}
+
+html.mobile .cq-ai-user-lbl {
+  font-size: 7px;
+  white-space: nowrap;
+}
+
+html.mobile .cq-ai-name-input {
+  width: 72px;
+  padding: 1px 4px;
+  font-size: 14px;
+  height: 22px;
+}
+
+html.mobile .cq-ai-subbar {
+  padding: 3px 6px;
+  gap: 4px;
+}
+
+html.mobile .cq-ai-sublabel {
+  font-size: 7.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1;
+}
+
+html.mobile .cq-ai-subbtns {
+  gap: 3px;
+  flex: none;
+}
+
+html.mobile .cq-ai-quick-wrap {
+  padding: 3px 6px;
+}
+
+html.mobile .cq-ai-quick-label {
+  font-size: 6.5px;
+  margin-bottom: 2px;
+}
+
+html.mobile .cq-ai-quick-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px;
+  overflow: visible;
+}
+
+html.mobile .cq-ai-quick-list.collapsed {
+  display: none;
+}
+
+html.mobile .cq-ai-qbtn {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 3px 4px;
+  font-size: 7px;
+}
+
+html.mobile .cq-ai-chat-log {
+  flex: 1;
+  min-height: 0;
+  padding: 6px;
+  gap: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+
+html.mobile .cq-ai-msg-head {
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+html.mobile .cq-ai-form {
+  padding: 4px 6px;
+  gap: 4px;
+}
+
+html.mobile .cq-ai-form input {
+  font-size: 16px;
+  padding: 4px 6px;
+  min-width: 0;
+}
+
+html.mobile .cq-ai-form .cq-ai-send-btn {
+  min-height: 30px;
+  padding: 4px 8px;
+  font-size: 9px;
+}
+
+html.mobile .cq-global-narrate-bar {
+  left: auto;
+  right: 8px;
+  bottom: 58px;
+  z-index: 28;
+  padding: 2px 5px;
+}
+
+html.mobile body.mentor-open .cq-global-narrate-bar {
+  display: none !important;
+}
+
+@media (max-width: 820px) {
+  .topbar {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 6px 8px;
+    gap: 4px 8px;
+  }
+  .tb-right {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+    justify-content: flex-end;
+    margin-left: auto;
+  }
+  #tbBudget, #tbSoundBtn, #tbNarrateBtn {
+    display: none !important;
+  }
+  .booth .cq-guide-mode-bar,
+  .booth .cq-booth-ai-view {
+    grid-column: 1 / -1;
+  }
+  .cq-ai-mentor-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: 100dvh;
+    max-height: 100dvh;
+    z-index: 95;
+  }
+  #aiMentorModelTag {
+    display: none !important;
+  }
+  .cq-ai-ctx-pills {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 3px;
+  }
+  .cq-ai-quick-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3px;
+  }
+  .cq-ai-qbtn {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cq-global-narrate-bar {
+    left: auto;
+    right: 8px;
+    bottom: 58px;
+    z-index: 28;
+    padding: 2px 5px;
+  }
+  body.mentor-open .cq-global-narrate-bar {
+    display: none !important;
+  }
+}
 

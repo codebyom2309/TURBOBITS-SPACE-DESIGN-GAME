@@ -102,13 +102,14 @@
       const c = ensure();
       if (!c) return;
       try {
+        const voxOn = Boolean(window.VOX && typeof window.VOX.enabled === "function" && window.VOX.enabled());
         master = c.createGain();
         master.gain.setValueAtTime(0.0001, c.currentTime);
-        master.gain.exponentialRampToValueAtTime(0.075, c.currentTime + 1.2);
+        master.gain.exponentialRampToValueAtTime(voxOn ? 0.042 : 0.075, c.currentTime + 1.2);
 
         padFilter = c.createBiquadFilter();
         padFilter.type = "lowpass";
-        padFilter.frequency.setValueAtTime(400, c.currentTime);
+        padFilter.frequency.setValueAtTime(360, c.currentTime);
         padFilter.Q.value = 1.0;
 
         padA = c.createOscillator();
@@ -176,6 +177,7 @@
       if (!isSoundEnabled()) return;
       const c = ensure();
       if (!c || c.state !== "running" || !noiseBuf) return;
+      const voxOn = Boolean(window.VOX && typeof window.VOX.enabled === "function" && window.VOX.enabled());
       const t = c.currentTime;
       const src = c.createBufferSource();
       src.buffer = noiseBuf;
@@ -185,7 +187,7 @@
       bp.Q.value = 3.2;
       const g = c.createGain();
       g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.022, t + 0.003);
+      g.gain.exponentialRampToValueAtTime(voxOn ? 0.008 : 0.022, t + 0.003);
       g.gain.exponentialRampToValueAtTime(0.0001, t + 0.024);
       src.connect(bp).connect(g).connect(c.destination);
       src.start(t, Math.random() * 0.4);
@@ -1009,11 +1011,11 @@
 
   // -------------------------------------------------------------------------- The 6 Cinematic Animated Scenes (78s Total)
   const PROLOGUE_SCENES = [
-    // SCENE 01 — THE BLUE PLANET (10s)
+    // SCENE 01 — THE BLUE PLANET (16s)
     {
       num: "SCENE 01",
       title: "SCENE 01 — THE BLUE PLANET",
-      duration: 10,
+      duration: 16,
       subtitles: [
         [0.0, 0.34, "For centuries, we believed Earth's balance would never break."],
         [0.34, 0.66, "From orbit, the blue planet still looks peaceful."],
@@ -1110,11 +1112,11 @@
       }
     },
 
-    // SCENE 02 — THE WARNING (12s) — Wildfire Valley -> Ocean Cyclone -> Coalition Operations
+    // SCENE 02 — THE WARNING (19s) — Wildfire Valley -> Ocean Cyclone -> Coalition Operations
     {
       num: "SCENE 02",
       title: "SCENE 02 — THE WARNING",
-      duration: 12,
+      duration: 19,
       subtitles: [
         [0.0, 0.36, "Across every continent, megafires, extreme storms, and severe droughts are straining our lifeline networks."],
         [0.36, 0.70, "Even our best satellites are hitting dangerous blind spots in coverage and communications."],
@@ -1358,11 +1360,11 @@
       }
     },
 
-    // SCENE 03 — THE LAST SIGNAL (13s)
+    // SCENE 03 — THE LAST SIGNAL (18s)
     {
       num: "SCENE 03",
       title: "SCENE 03 — THE LAST SIGNAL",
-      duration: 13,
+      duration: 18,
       subtitles: [
         [0.0, 0.35, "Then, in late 2026, deep-space listening stations locked onto an unexplained transmission."],
         [0.35, 0.72, "Every 72 minutes, a structured 1.420 GHz pulse repeats from the direction of Jupiter."],
@@ -1534,11 +1536,11 @@
       }
     },
 
-    // SCENE 04 — THE COALITION (13s)
+    // SCENE 04 — THE COALITION (18s)
     {
       num: "SCENE 04",
       title: "SCENE 04 — THE COALITION",
-      duration: 13,
+      duration: 18,
       subtitles: [
         [0.0, 0.34, "Faced with crisis at home and a mystery beyond, space agencies united as the Horizon Coalition."],
         [0.34, 0.72, "Their shared goal: build an interplanetary network to protect Earth and trace the signal's source."],
@@ -1690,11 +1692,11 @@
       }
     },
 
-    // SCENE 05 — PROJECT GENESIS (17s) — Smooth Outward Planetary Odyssey
+    // SCENE 05 — PROJECT GENESIS (28s) — Smooth Outward Planetary Odyssey
     {
       num: "SCENE 05",
       title: "SCENE 05 — PROJECT GENESIS",
-      duration: 17,
+      duration: 28,
       subtitles: [
         [0.0, 0.16, "Step by step, humanity set out to expand beyond low Earth orbit."],
         [0.16, 0.30, "First, guard our home world from space."],
@@ -1973,11 +1975,11 @@
       }
     },
 
-    // SCENE 06 — FINAL SCENE: YOUR ASSIGNMENT (13s)
+    // SCENE 06 — FINAL SCENE: YOUR ASSIGNMENT (17s)
     {
       num: "FINAL SCENE",
       title: "FINAL SCENE — YOUR ASSIGNMENT",
-      duration: 13,
+      duration: 17,
       subtitles: [
         [0.0, 0.34, "Every mission begins right here at the engineering desk."],
         [0.34, 0.72, "Every orbit, sensor, battery, and gram of fuel decides whether a spacecraft survives."],
@@ -2179,10 +2181,14 @@
   let subtitlesOn = true;
   let timelineBuilt = false;
 
-  // Typewriter reveal state per subtitle line
+  // Typewriter reveal & voice synchronization state per subtitle line
   let activeSubKey = "";
+  let activeSubIdx = 0;
   let subElapsedSec = 0;
+  let subHoldSec = 0;
+  let speechTailSec = 0;
   let lastTickChar = 0;
+  const TYPE_CHARS_PER_SEC = 36;
 
   const totalSec = () => PROLOGUE_SCENES.reduce((a, s) => a + s.duration, 0);
   const elapsedSec = () => {
@@ -2211,6 +2217,9 @@
         sceneIdx = +btn.dataset.ps;
         sceneProg = 0;
         activeSubKey = "";
+        activeSubIdx = 0;
+        subHoldSec = 0;
+        speechTailSec = 0;
         const ov = document.getElementById("prolFinalOverlay");
         if (ov) ov.classList.add("hidden");
         updateHud(0);
@@ -2268,14 +2277,23 @@
         break;
       }
     }
+    activeSubIdx = subIdx;
 
     const key = `${sceneIdx}_${subIdx}`;
     if (key !== activeSubKey) {
       activeSubKey = key;
       subElapsedSec = reducedMotion() ? 99 : 0;
+      subHoldSec = 0;
+      speechTailSec = 0;
       lastTickChar = 0;
-    } else if (!paused && subtitlesOn) {
-      subElapsedSec += dtSec;
+      if (!paused && window.VOX && typeof window.VOX.speak === "function") {
+        window.VOX.speak(subLine, "prologue", { silentChime: true, key: `prol_${key}` });
+      }
+    } else if (!paused) {
+      subHoldSec += dtSec;
+      if (subtitlesOn) {
+        subElapsedSec += dtSec;
+      }
     }
 
     const capEl = document.getElementById("prolCaption");
@@ -2296,7 +2314,7 @@
           capCursorEl.style.display = "none";
         }
       } else {
-        const charsToShow = Math.min(subLine.length, Math.max(1, Math.floor(subElapsedSec * 52)));
+        const charsToShow = Math.min(subLine.length, Math.max(1, Math.floor(subElapsedSec * TYPE_CHARS_PER_SEC)));
         const typingDone = charsToShow >= subLine.length;
 
         if (!paused && dtSec > 0 && charsToShow > lastTickChar) {
@@ -2371,12 +2389,36 @@
     if (!paused) {
       totalTimeSec += dtSec;
       const sc = PROLOGUE_SCENES[sceneIdx] || PROLOGUE_SCENES[0];
-      sceneProg += dtSec / Math.max(4, sc.duration);
+      const curSub = sc.subtitles[clamp(activeSubIdx, 0, sc.subtitles.length - 1)] || sc.subtitles[0];
+      const subEnd = curSub ? curSub[1] : 1.0;
+      const subTxt = curSub ? curSub[2] : "";
+      const gateProg = Math.min(0.996, subEnd - 0.003);
+
+      const voxEnabled = Boolean(window.VOX && typeof window.VOX.enabled === "function" && window.VOX.enabled());
+      const voxSpeaking = Boolean(voxEnabled && typeof window.VOX.isSpeaking === "function" && window.VOX.isSpeaking());
+      const stillTyping = Boolean(subtitlesOn && !reducedMotion() && subElapsedSec * TYPE_CHARS_PER_SEC < subTxt.length);
+
+      if (voxSpeaking && subHoldSec < 18) {
+        speechTailSec = 0.24;
+      } else if (speechTailSec > 0) {
+        speechTailSec = Math.max(0, speechTailSec - dtSec);
+      }
+
+      let nextProg = sceneProg + dtSec / Math.max(4, sc.duration);
+      // Hold at the end of the current subtitle window until both typewriter and voice narration finish
+      if (((voxSpeaking && subHoldSec < 18) || stillTyping || speechTailSec > 0) && nextProg >= gateProg) {
+        nextProg = Math.max(sceneProg, gateProg);
+      }
+      sceneProg = nextProg;
+
       if (sceneProg >= 1) {
         if (sceneIdx < PROLOGUE_SCENES.length - 1) {
           sceneProg = 0;
           sceneIdx++;
           activeSubKey = "";
+          activeSubIdx = 0;
+          subHoldSec = 0;
+          speechTailSec = 0;
           if (typeof SFX !== "undefined") SFX.beep(false);
         } else {
           sceneProg = 1;
@@ -2412,6 +2454,9 @@
     }
     lastTs = 0;
     PrologueAudio.stop();
+    if (window.VOX && typeof window.VOX.stop === "function") {
+      window.VOX.stop();
+    }
   }
 
   function openPrologue() {
@@ -2421,6 +2466,9 @@
     sceneProg = 0;
     totalTimeSec = 0;
     activeSubKey = "";
+    activeSubIdx = 0;
+    subHoldSec = 0;
+    speechTailSec = 0;
     paused = reducedMotion();
     const ov = document.getElementById("prolFinalOverlay");
     if (ov) ov.classList.add("hidden");
@@ -2434,6 +2482,9 @@
     sceneProg = 0;
     totalTimeSec = 0;
     activeSubKey = "";
+    activeSubIdx = 0;
+    subHoldSec = 0;
+    speechTailSec = 0;
     paused = false;
     const ov = document.getElementById("prolFinalOverlay");
     if (ov) ov.classList.add("hidden");
@@ -2445,6 +2496,9 @@
   function replayCurrentScene() {
     sceneProg = 0;
     activeSubKey = "";
+    activeSubIdx = 0;
+    subHoldSec = 0;
+    speechTailSec = 0;
     paused = false;
     const ov = document.getElementById("prolFinalOverlay");
     if (ov) ov.classList.add("hidden");
@@ -2459,6 +2513,9 @@
       return;
     }
     paused = !paused;
+    if (!paused) {
+      activeSubKey = "";
+    }
     updateHud(0);
     drawFrame();
     if (!paused) startRaf();
@@ -2471,6 +2528,9 @@
     sceneIdx = Math.max(0, sceneIdx - 1);
     sceneProg = 0;
     activeSubKey = "";
+    activeSubIdx = 0;
+    subHoldSec = 0;
+    speechTailSec = 0;
     updateHud(0);
     drawFrame();
     if (!paused) startRaf();
@@ -2481,6 +2541,9 @@
       sceneIdx++;
       sceneProg = 0;
       activeSubKey = "";
+      activeSubIdx = 0;
+      subHoldSec = 0;
+      speechTailSec = 0;
       const ov = document.getElementById("prolFinalOverlay");
       if (ov) ov.classList.add("hidden");
       updateHud(0);

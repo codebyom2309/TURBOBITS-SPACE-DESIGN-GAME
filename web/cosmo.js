@@ -999,8 +999,7 @@
   function openSettingsModal() {
     const m = $("#settingsModal");
     if (!m) return;
-    const sndOn = store.get("sound", true);
-    if ($("#setSoundBtn")) $("#setSoundBtn").textContent = sndOn ? "SOUND FX: ON" : "SOUND FX: OFF";
+    if (typeof window.soundLabel === "function") window.soundLabel();
     if ($("#setMotionVal")) $("#setMotionVal").textContent = reducedMotion() ? "REDUCED (OS)" : "STANDARD";
     if ($("#setResetConfirm")) $("#setResetConfirm").classList.add("hidden");
     m.classList.remove("hidden");
@@ -1058,6 +1057,9 @@
       `;
     }
     modal.classList.remove("hidden");
+    if (window.VOX) {
+      window.VOX.speak(`${lore.introTitle}. ${lore.lead}. ${lore.introLines.join(" ")}`, "stage");
+    }
 
     const cv = $("#scModalCanvas");
     if (!cv) return;
@@ -1566,8 +1568,54 @@
     wire("#setSoundBtn", () => {
       const next = !store.get("sound", true);
       store.set("sound", next);
-      $("#setSoundBtn").textContent = next ? "SOUND FX: ON" : "SOUND FX: OFF";
-      if (typeof soundLabel === "function") soundLabel();
+      if (typeof window.soundLabel === "function") window.soundLabel();
+      if (next) SFX.chime();
+    });
+    const volEl = $("#setSoundVol");
+    if (volEl) {
+      volEl.addEventListener("input", (e) => {
+        const v = Number(e.target.value);
+        store.set("soundVolume", v);
+        if (v > 0 && !store.get("sound", true)) store.set("sound", true);
+        if (typeof window.soundLabel === "function") window.soundLabel();
+        SFX.click();
+      });
+    }
+    wire("#setTypeSoundBtn", () => {
+      const next = !store.get("soundTypewriter", true);
+      store.set("soundTypewriter", next);
+      if (typeof window.soundLabel === "function") window.soundLabel();
+      if (next) SFX.type();
+    });
+    wire("#setUiSoundBtn", () => {
+      const next = !store.get("soundUI", true);
+      store.set("soundUI", next);
+      if (typeof window.soundLabel === "function") window.soundLabel();
+      if (next) SFX.click();
+    });
+    wire("#setNarrateBtn", () => {
+      if (window.VOX) window.VOX.toggle();
+    });
+    wire("#setNarrateRateBtn", () => {
+      if (window.VOX) {
+        const nextRate = window.VOX.cycleRate();
+        window.VOX.speak(`Voice speed set to ${nextRate}x.`, "mentor", { force: true });
+      }
+    });
+    wire("#setNarrateTestBtn", () => {
+      if (window.VOX) {
+        const scName = (typeof S !== "undefined" && S && S.design && S.cat && S.cat.SCENARIOS[S.design.scenario])
+          ? S.cat.SCENARIOS[S.design.scenario].name
+          : "Wildfire Watch";
+        window.VOX.speak(
+          `Hello! I am Chief Engineer Vera Lin. Voice narration is active and aligned with your current mission, ${scName}. You can turn voice on or off from the bottom-left bar or settings anytime.`,
+          "mentor",
+          { force: true }
+        );
+      }
+    });
+    wire("#prolNarrateBtn", () => {
+      if (window.VOX) window.VOX.toggle();
     });
     wire("#setResetTutBtn", () => {
       store.set("tutorialDone", false);
@@ -1599,6 +1647,7 @@
     // Stage Cutscene Modal close buttons
     const closeStageCutscene = () => {
       clearInterval(_cutsceneTimer);
+      if (window.VOX) window.VOX.stop();
       if ($("#stageCutsceneModal")) $("#stageCutsceneModal").classList.add("hidden");
     };
     wire("#scModalClose", closeStageCutscene);

@@ -312,6 +312,7 @@ const S = {
   room: null, version: -1, myRoles: [], approvals: {}, players: {}, lastRunSeen: null, poll: null,
   result: null, introShown: false,
 };
+window.S = S;
 
 // ---------------------------------------------------------------------------- utils
 async function api(path, body) {
@@ -330,13 +331,17 @@ const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* private mode */ } },
 };
+window.store = store;
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // Physical desk sounds, synthesized from filtered noise (no audio files, no electronic beeps):
 // wooden knocks, switch clicks, paper rustle, typewriter strikes, a desk bell, the rubber stamp.
 const SFX = (() => {
   let ctx = null, buf = null;
-  const on = () => store.get("sound", true);
+  const on = () => store.get("sound", true) && Number(store.get("soundVolume", 80)) > 0;
+  const volMult = () => Math.max(0, Math.min(1.25, Number(store.get("soundVolume", 80)) / 80));
+  const uiOn = () => on() && store.get("soundUI", true);
+  const typeOn = () => on() && store.get("soundTypewriter", true);
   const ac = () => {
     if (!on()) return null;
     try { ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); } catch { return null; }
@@ -350,11 +355,12 @@ const SFX = (() => {
   // a burst of noise through one filter; decay sets how long it rings
   function burst({ at = 0, type = "bandpass", freq = 1000, q = 1, vol = 0.3, attack = 0.001, decay = 0.05, sweep = null }) {
     const c = ac(); if (!c) return;
+    const scaledVol = Math.max(0.0002, vol * volMult());
     const t = c.currentTime + at, src = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
     src.buffer = buf; src.loop = true;
     f.type = type; f.frequency.setValueAtTime(freq, t); f.Q.value = q;
     if (sweep) f.frequency.exponentialRampToValueAtTime(sweep, t + attack + decay);
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + attack);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(scaledVol, t + attack);
     g.gain.exponentialRampToValueAtTime(0.0001, t + attack + decay);
     src.connect(f).connect(g).connect(c.destination);
     src.start(t, Math.random() * 0.5); src.stop(t + attack + decay + 0.02);
@@ -371,30 +377,485 @@ const SFX = (() => {
   return {
     thud() { knock(110, 0.9, 0, 0.16); knock(220, 0.5, 0, 0.08); burst({ type: "lowpass", freq: 600, vol: 0.5, decay: 0.09 }); rustle(0.08, 0.06, 0.02); },
     whoosh() { burst({ type: "bandpass", freq: 300, q: 0.7, vol: 0.22, attack: 0.5, decay: 0.8, sweep: 2600 }); rustle(0.5, 0.08, 0.7); },
-    tick() { snap(2600, 0.12); knock(1700, 0.12, 0.004, 0.025); },                                  // teletype strike
+    tick() { if (!typeOn()) return; snap(2600, 0.12); knock(1700, 0.12, 0.004, 0.025); },                   // teletype strike
     rumble() { burst({ type: "lowpass", freq: 160, vol: 0.55, attack: 0.3, decay: 3.4, sweep: 60 }); },
-    paper() { rustle(0.18, 0.1); },
-    click() { snap(3200, 0.18); snap(2400, 0.1, 0.035); },                                          // switch press + release
-    select() { knock(190, 0.45, 0, 0.06); rustle(0.1, 0.07, 0.01, 3200); },                       // card laid on the desk
-    deselect() { rustle(0.12, 0.08, 0, 2800); knock(260, 0.25, 0.08, 0.04); },                     // card picked up
-    page() { rustle(0.22, 0.11, 0, 2000); },                                                       // binder page turned
-    error() { knock(120, 0.6, 0, 0.09); knock(120, 0.6, 0.13, 0.09); },                            // two dull knocks
-    chime() { bell(1650, 0.14); },                                                                  // desk service bell
-    ding() { bell(2200, 0.07); },                                                                   // small bell
+    paper() { if (!uiOn()) return; rustle(0.18, 0.1); },
+    click() { if (!uiOn()) return; snap(3200, 0.18); snap(2400, 0.1, 0.035); },                              // switch press + release
+    select() { if (!uiOn()) return; knock(190, 0.45, 0, 0.06); rustle(0.1, 0.07, 0.01, 3200); },             // card laid on the desk
+    deselect() { if (!uiOn()) return; rustle(0.12, 0.08, 0, 2800); knock(260, 0.25, 0.08, 0.04); },          // card picked up
+    page() { if (!uiOn()) return; rustle(0.22, 0.11, 0, 2000); },                                            // binder page turned
+    error() { knock(120, 0.6, 0, 0.09); knock(120, 0.6, 0.13, 0.09); },                                      // two dull knocks
+    chime() { bell(1650, 0.14); },                                                                           // desk service bell
+    ding() { bell(2200, 0.07); },                                                                            // small bell
     beep(hi) { if (hi) { snap(1500, 0.3); knock(600, 0.5, 0, 0.12); } else { snap(2500, 0.2); knock(900, 0.25, 0.005, 0.03); } }, // relay clack
     boom() { burst({ type: "lowpass", freq: 900, vol: 0.8, decay: 2.2, sweep: 40 }); knock(60, 0.8, 0, 0.6); },
-    pop() { rustle(0.09, 0.08, 0, 3500); },
-    suggest() { knock(1400, 0.18, 0, 0.03); knock(1400, 0.18, 0.09, 0.03); },                      // pencil taps
-    door(steps = 2) {                                                                              // latch, footsteps, door shuts
+    pop() { if (!uiOn()) return; rustle(0.09, 0.08, 0, 3500); },
+    suggest() { knock(1400, 0.18, 0, 0.03); knock(1400, 0.18, 0.09, 0.03); },                                // pencil taps
+    door(steps = 2) {                                                                                        // latch, footsteps, door shuts
       snap(2200, 0.2); knock(700, 0.25, 0.01, 0.03);
       for (let i = 0; i < steps; i++) { knock(140, 0.35, 0.12 + i * 0.16, 0.06); burst({ at: 0.12 + i * 0.16, type: "lowpass", freq: 400, vol: 0.15, decay: 0.04 }); }
       knock(95, 0.5, 0.16 + steps * 0.16, 0.12); snap(1800, 0.12, 0.17 + steps * 0.16);
     },
-    type() { snap(2800 + Math.random() * 900, 0.05); knock(1200 + Math.random() * 400, 0.06, 0.003, 0.015); }, // soft typewriter key
+    type() { if (!typeOn()) return; snap(2800 + Math.random() * 900, 0.05); knock(1200 + Math.random() * 400, 0.06, 0.003, 0.015); }, // soft typewriter key
   };
 })();
+window.SFX = SFX;
+
+// ============================================================================
+// VOX — Scenario-Aligned Voice Narration Engine (Web Speech API + Comms Audio)
+// Speaks AI Mentor guidance (Chief Eng. Vera Lin), Client Briefings, Booth
+// Guide hints, Prologue Film captions, Stage Cutscenes, and Flight Debriefs.
+// Can be toggled ON/OFF or stopped from anywhere in the app.
+// ============================================================================
+const VOX = (() => {
+  const synth = typeof window !== "undefined" && "speechSynthesis" in window ? window.speechSynthesis : null;
+  let voices = [];
+  let speaking = false;
+  let activeKey = "";
+  let activeSpeakerLabel = "";
+  let fallbackTimer = null;
+  let keepAliveTimer = null;
+  let currentUtterance = null;
+  let speakSeq = 0;
+
+  const FEMALE_CLIENTS = new Set([
+    "wildfire", "lunar_ice", "asteroid_prospector", "asteroid_sample",
+    "mars_rover", "orbital_outpost", "mars_base", "crew_transport",
+    "exoplanet_hunter", "europa", "ocean_biosphere", "lunar_relay",
+    "metallic_psyche", "titan_orbiter"
+  ]);
+
+  const CLIENT_PITCH = {
+    wildfire: 1.02,
+    storm_watch: 0.92,
+    lunar_ice: 1.06,
+    landing_scout: 0.96,
+    asteroid_prospector: 1.04,
+    venus_clouds: 0.90,
+    mars_climate: 0.95,
+    lunar_lander: 0.94,
+    asteroid_sample: 1.03,
+    mars_rover: 1.05,
+    orbital_outpost: 1.00,
+    lunar_base: 0.93,
+    mars_base: 1.01,
+    iss_resupply: 0.97,
+    crew_transport: 1.04,
+    exoplanet_hunter: 1.06,
+    europa: 1.02,
+    ocean_biosphere: 1.03,
+    gnss_constellation: 0.93,
+    space_debris: 0.95,
+    lunar_relay: 1.07,
+    kinetic_impactor: 0.96,
+    metallic_psyche: 1.04,
+    mars_areosat: 0.92,
+    titan_orbiter: 1.03,
+  };
+
+  function loadVoices() {
+    if (!synth) return [];
+    try {
+      const list = synth.getVoices() || [];
+      if (list.length) voices = list;
+    } catch (_) {}
+    return voices;
+  }
+
+  if (synth) {
+    loadVoices();
+    if (typeof synth.addEventListener === "function") {
+      synth.addEventListener("voiceschanged", loadVoices);
+    } else {
+      synth.onvoiceschanged = loadVoices;
+    }
+  }
+
+  function scoreVoice(v, preferGender) {
+    const name = `${v.name || ""} ${v.voiceURI || ""}`.toLowerCase();
+    const lang = (v.lang || "").toLowerCase();
+    let s = 0;
+    if (lang.startsWith("en-us") || lang.startsWith("en_us")) s += 35;
+    else if (lang.startsWith("en-gb") || lang.startsWith("en_gb")) s += 34;
+    else if (lang.startsWith("en")) s += 25;
+    else s -= 45;
+
+    if (/natural|neural|online|wavenet|premium|enhanced/.test(name)) s += 26;
+    if (/google|microsoft|apple|siri/.test(name)) s += 14;
+    if (v.localService) s += 4;
+
+    const isGoogleDefaultUS = /google us english/.test(name) && !/male/.test(name);
+    const isFemale = isGoogleDefaultUS || /female|aria|jenny|sonia|samantha|victoria|karen|moira|tessa|fiona|veena|zira|susan|hazel|libby|natasha|clara|ava|allison|emma|salli|joanna|kimberly|kendra|ivy|michelle|steffie/.test(name);
+    const isMale = /\bmale\b|guy|ryan|christopher|eric|steffan|roger|andrew|brian|davis|jason|tony|daniel|alex|fred|david|mark|george|james|rishi|aaron|arthur|matthew|justin|joey|oliver|thomas|liam/.test(name);
+    const isDeepMale = /guy|christopher|roger|eric|steffan|andrew|brian|davis|uk english male|daniel|alex|david|george|fred|mark|matthew|james|arthur/.test(name);
+
+    if (preferGender === "female") {
+      if (isFemale) s += 34;
+      if (isMale) s -= 28;
+    } else if (preferGender === "male_heavy") {
+      if (isDeepMale) s += 56;
+      else if (isMale) s += 42;
+      else s -= 24;
+      if (isFemale) s -= 45;
+    } else if (preferGender === "male") {
+      if (isMale) s += 36;
+      if (isFemale) s -= 28;
+    }
+    return s;
+  }
+
+  function pickVoice(preferGender = "female", seedOffset = 0) {
+    const list = loadVoices();
+    if (!list.length) return null;
+    const ranked = [...list].sort((a, b) => scoreVoice(b, preferGender) - scoreVoice(a, preferGender));
+    if (preferGender === "male_heavy") {
+      return ranked[0];
+    }
+    const top = ranked.slice(0, Math.min(3, ranked.length));
+    return top[seedOffset % top.length] || ranked[0];
+  }
+
+  function resolveProfile(roleOrScenario) {
+    const rateSetting = Number(store.get("narrationRate", 1.0)) || 1.0;
+    const volSetting = Math.max(0.1, Math.min(1.0, Number(store.get("soundVolume", 80)) / 100));
+    const key = String(roleOrScenario || (S && S.design && S.design.scenario) || "mentor").toLowerCase();
+
+    if (key === "mentor" || key === "vera") {
+      return {
+        voice: pickVoice("female", 0),
+        pitch: 1.05,
+        rate: Math.max(0.8, Math.min(1.35, 1.02 * rateSetting)),
+        volume: volSetting,
+        label: "Vera Lin (AI Mentor)",
+      };
+    }
+    if (key === "prologue" || key === "cinema") {
+      return {
+        voice: pickVoice("male_heavy", 0),
+        pitch: 0.76,
+        rate: Math.max(0.82, Math.min(1.22, 0.94 * rateSetting)),
+        volume: volSetting,
+        label: "Project Genesis Narrator",
+      };
+    }
+    if (key === "debrief" || key === "news") {
+      return {
+        voice: pickVoice("male", 1),
+        pitch: 0.92,
+        rate: Math.max(0.8, Math.min(1.3, 0.98 * rateSetting)),
+        volume: volSetting,
+        label: "Mission Review Broadcast",
+      };
+    }
+    if (key === "stage" || key === "cutscene") {
+      return {
+        voice: pickVoice("male_heavy", 0),
+        pitch: 0.82,
+        rate: Math.max(0.82, Math.min(1.25, 0.95 * rateSetting)),
+        volume: volSetting,
+        label: "Horizon Stage Director",
+      };
+    }
+
+    const scKey = CLIENTS[key] ? key : ((S && S.design && S.design.scenario) || "wildfire");
+    const isFem = FEMALE_CLIENTS.has(scKey);
+    const pitch = CLIENT_PITCH[scKey] || (isFem ? 1.03 : 0.92);
+    const clientObj = CLIENTS[scKey];
+    return {
+      voice: pickVoice(isFem ? "female" : "male", scKey.length % 2),
+      pitch,
+      rate: Math.max(0.8, Math.min(1.35, 1.0 * rateSetting)),
+      volume: volSetting,
+      label: clientObj ? clientObj.name : "Mission Director",
+    };
+  }
+
+  function cleanForSpeech(raw) {
+    if (!raw) return "";
+    return String(raw)
+      .replace(/\[\[([a-z_]+):([^|\]]+)\|([^\]]+)\]\]/gi, "$3")
+      .replace(/\[CRITICAL BLOCKER[^\]]*\]/gi, "Critical Blocker: ")
+      .replace(/\[WARNING[^\]]*\]/gi, "Warning: ")
+      .replace(/\[CALCULATED[^\]]*\]/gi, "")
+      .replace(/\[MISSION REQUIREMENTS[^\]]*\]/gi, "")
+      .replace(/\[MENTOR[^\]]*\]/gi, "")
+      .replace(/\[AEROSPACE CONCEPT[^\]]*\]/gi, "Aerospace Concept: ")
+      .replace(/\[SIMULATION[^\]]*\]/gi, "Simulation: ")
+      .replace(/\[COMPONENT[^\]]*\]/gi, "")
+      .replace(/\[ENGINEERING VALIDATION[^\]]*\]/gi, "")
+      .replace(/#{1,6}\s*/g, "")
+      .replace(/\*\*([^*]+)\*\*/g, "$1")
+      .replace(/\*([^*]+)\*/g, "$1")
+      .replace(/`([^`]+)`/g, "$1")
+      .replace(/Δv/g, "delta v")
+      .replace(/(\d+(?:\.\d+)?)\s*M\$/g, "$1 million dollars")
+      .replace(/\$(\d+(?:\.\d+)?)\s*M\b/g, "$1 million dollars")
+      .replace(/(\d+(?:\.\d+)?)\s*Wh\b/g, "$1 watt hours")
+      .replace(/(\d+(?:\.\d+)?)\s*W\b/g, "$1 watts")
+      .replace(/(\d+(?:\.\d+)?)\s*Gb\/day\b/gi, "$1 gigabits per day")
+      .replace(/(\d+(?:\.\d+)?)\s*Mbps\b/gi, "$1 megabits per second")
+      .replace(/(\d+(?:\.\d+)?)\s*kg\b/g, "$1 kilograms")
+      .replace(/(\d+(?:\.\d+)?)\s*km\/h\b/gi, "$1 kilometers per hour")
+      .replace(/(\d+(?:\.\d+)?)\s*km\b/g, "$1 kilometers")
+      .replace(/(\d+(?:\.\d+)?)\s*m\/s\b/g, "$1 meters per second")
+      .replace(/(\d+(?:\.\d+)?)\s*AU\b/g, "$1 astronomical units")
+      .replace(/\bGHz\b/gi, "gigahertz")
+      .replace(/\bIsp\b/g, "I S P")
+      .replace(/\bRTGs\b/g, "R T Gs")
+      .replace(/\bRTG\b/g, "R T G")
+      .replace(/\bADCS\b/g, "attitude control")
+      .replace(/\bEDL\b/g, "entry, descent, and landing")
+      .replace(/\bbro\/sis\b/gi, "my friend")
+      .replace(/[→←↑↓·•]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function isEnabled() {
+    return store.get("sound", true) !== false && store.get("narration", true) !== false;
+  }
+
+  function clearTimers() {
+    if (fallbackTimer) {
+      clearTimeout(fallbackTimer);
+      fallbackTimer = null;
+    }
+    if (keepAliveTimer) {
+      clearInterval(keepAliveTimer);
+      keepAliveTimer = null;
+    }
+  }
+
+  function stop() {
+    speakSeq++;
+    clearTimers();
+    currentUtterance = null;
+    if (typeof window !== "undefined") window.__cqActiveUtterance = null;
+    if (synth) {
+      try {
+        if (synth.speaking || synth.pending) {
+          synth.cancel();
+        }
+      } catch (_) {}
+    }
+    speaking = false;
+    activeKey = "";
+    activeSpeakerLabel = "";
+    syncUI();
+  }
+
+  function speak(rawText, roleOrScenario = "mentor", opts = {}) {
+    if (!opts.force && !isEnabled()) return false;
+    if (typeof location !== "undefined" && location.hash === "#selftest" && !opts.force) return false;
+    const cleaned = cleanForSpeech(rawText);
+    if (!cleaned) return false;
+
+    // Cancel any previous speech cleanly
+    clearTimers();
+    if (synth) {
+      try {
+        if (synth.speaking || synth.pending || currentUtterance) {
+          synth.cancel();
+        }
+        if (synth.paused) {
+          synth.resume();
+        }
+      } catch (_) {}
+    }
+
+    const mySeq = ++speakSeq;
+    const profile = resolveProfile(roleOrScenario);
+    activeKey = opts.key || String(roleOrScenario || "mentor");
+    activeSpeakerLabel = profile.label || "";
+    speaking = true;
+    syncUI(activeSpeakerLabel);
+
+    if (store.get("sound", true) !== false && !opts.silentChime) {
+      SFX.ding();
+    }
+
+    const finishThisUtterance = () => {
+      if (mySeq !== speakSeq) return;
+      clearTimers();
+      currentUtterance = null;
+      if (typeof window !== "undefined") window.__cqActiveUtterance = null;
+      speaking = false;
+      activeKey = "";
+      activeSpeakerLabel = "";
+      syncUI();
+      if (typeof opts.onEnd === "function") {
+        try { opts.onEnd(); } catch (_) {}
+      }
+    };
+
+    if (!synth || typeof SpeechSynthesisUtterance === "undefined") {
+      fallbackTimer = setTimeout(
+        finishThisUtterance,
+        Math.min(7500, Math.max(1800, cleaned.length * 55))
+      );
+      return true;
+    }
+
+    try {
+      const utter = new SpeechSynthesisUtterance(cleaned.slice(0, 1400));
+      currentUtterance = utter;
+      if (typeof window !== "undefined") window.__cqActiveUtterance = utter;
+
+      if (profile.voice) {
+        utter.voice = profile.voice;
+        if (profile.voice.lang) utter.lang = profile.voice.lang;
+      } else {
+        utter.lang = "en-US";
+      }
+      utter.pitch = profile.pitch;
+      utter.rate = profile.rate;
+      utter.volume = profile.volume;
+
+      utter.onend = () => {
+        finishThisUtterance();
+      };
+      utter.onerror = (ev) => {
+        // Ignore canceled/interrupted events if a newer utterance has superseded this one
+        if (mySeq !== speakSeq) return;
+        finishThisUtterance();
+      };
+
+      // Safety watchdog & Chromium 14-second pause workaround
+      const maxDurationMs = Math.max(8500, Math.min(45000, Math.round((cleaned.length / Math.max(0.75, profile.rate)) * 115) + 3500));
+      fallbackTimer = setTimeout(finishThisUtterance, maxDurationMs);
+      keepAliveTimer = setInterval(() => {
+        if (mySeq !== speakSeq) return;
+        if (synth && synth.speaking && synth.paused) {
+          try { synth.resume(); } catch (_) {}
+        }
+      }, 3500);
+
+      synth.speak(utter);
+      return true;
+    } catch (_) {
+      finishThisUtterance();
+      return false;
+    }
+  }
+
+  function setEnabled(val) {
+    const next = Boolean(val);
+    store.set("narration", next);
+    if (next && !store.get("sound", true)) {
+      store.set("sound", true);
+    }
+    if (!next) {
+      stop();
+    }
+    syncUI();
+    if (typeof window.soundLabel === "function") window.soundLabel();
+    return next;
+  }
+
+  function toggle() {
+    const next = !isEnabled();
+    setEnabled(next);
+    if (next) {
+      toast("Voice Narration: ON — Aligned with active mission & AI Mentor");
+      speak("Voice narration enabled. Ready to assist on your mission.", "mentor", { force: true });
+    } else {
+      toast("Voice Narration: OFF");
+    }
+    return next;
+  }
+
+  function cycleRate() {
+    const rates = [0.9, 1.0, 1.15];
+    const cur = Number(store.get("narrationRate", 1.0)) || 1.0;
+    const idx = rates.findIndex((r) => Math.abs(r - cur) < 0.04);
+    const next = rates[(idx + 1) % rates.length];
+    store.set("narrationRate", next);
+    syncUI();
+    if (typeof window.soundLabel === "function") window.soundLabel();
+    return next;
+  }
+
+  function syncUI(speakerLabel) {
+    const on = isEnabled();
+    const rate = Number(store.get("narrationRate", 1.0)) || 1.0;
+    const rateTxt = rate < 0.95 ? "0.9x (CALM)" : rate > 1.08 ? "1.15x (BRISK)" : "1.0x (NATURAL)";
+
+    const gBar = $("#globalNarrationBar");
+    const gDot = $("#globalNarrateDot");
+    const gLbl = $("#globalNarrateLabel");
+    const gStop = $("#globalNarrateStopBtn");
+    const gToggle = $("#globalNarrateToggleBtn");
+
+    if (gBar) gBar.classList.toggle("is-speaking", speaking && on);
+    if (gDot) {
+      gDot.classList.toggle("on", on);
+      gDot.classList.toggle("speaking", speaking && on);
+    }
+    if (gToggle) {
+      gToggle.setAttribute("aria-pressed", on ? "true" : "false");
+    }
+    if (gLbl) {
+      const lbl = speakerLabel || activeSpeakerLabel;
+      if (!on) gLbl.textContent = "VOICE: OFF";
+      else if (speaking) gLbl.textContent = lbl ? `SPEAKING · ${lbl.split(" ")[0].toUpperCase()}` : "SPEAKING";
+      else gLbl.textContent = "VOICE: ON";
+    }
+    if (gStop) {
+      gStop.classList.toggle("hidden", !speaking);
+    }
+
+    if ($("#tbNarrateBtn")) {
+      $("#tbNarrateBtn").textContent = `Voice: ${on ? "ON" : "OFF"}`;
+      $("#tbNarrateBtn").classList.toggle("active", on);
+    }
+    if ($("#aiNarrateBtn")) {
+      $("#aiNarrateBtn").textContent = `VOICE: ${on ? "ON" : "OFF"}`;
+      $("#aiNarrateBtn").classList.toggle("active", on);
+    }
+    if ($("#prolNarrateBtn")) {
+      $("#prolNarrateBtn").textContent = `VOICE: ${on ? "ON" : "OFF"}`;
+      $("#prolNarrateBtn").classList.toggle("active", on);
+    }
+    if ($("#mNarrate")) {
+      $("#mNarrate").textContent = `Voice Narration: ${on ? "on" : "off"}`;
+    }
+    if ($("#setNarrateBtn")) {
+      $("#setNarrateBtn").textContent = `VOICE NARRATION: ${on ? "ON" : "OFF"}`;
+    }
+    if ($("#setNarrateRateBtn")) {
+      $("#setNarrateRateBtn").textContent = rateTxt;
+    }
+
+    $$(".cq-ai-listen-btn").forEach((btn) => {
+      const k = btn.getAttribute("data-ai-speak-key") || "";
+      const isThis = speaking && k && k === activeKey;
+      btn.textContent = isThis ? "\u23F9 STOP" : "\uD83D\uDD0A LISTEN";
+      btn.classList.toggle("speaking", isThis);
+    });
+  }
+
+  return {
+    enabled: isEnabled,
+    setEnabled,
+    toggle,
+    cycleRate,
+    speak,
+    stop,
+    syncUI,
+    isSpeaking: () => speaking,
+    getActiveKey: () => activeKey,
+  };
+})();
+window.VOX = VOX;
 // every button gets a soft mechanical click
 document.addEventListener("click", (e) => { if (e.target.closest(".btn:not(:disabled)")) SFX.click(); }, true);
+// global keyboard typing feedback in text inputs when Typing SFX is enabled
+document.addEventListener("keydown", (e) => {
+  if (!e.target || (e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA")) return;
+  if (e.key && (e.key.length === 1 || e.key === "Backspace" || e.key === "Enter")) {
+    SFX.type();
+  }
+}, true);
 
 function toast(msg, ms = 2600) {
   const t = $("#toast"); t.innerHTML = msg; t.classList.remove("hidden");
@@ -753,6 +1214,7 @@ function renderAll() {
   syncEngineerIntroState();
   renderTop(); renderRequest(); renderTabs(); renderBinder(); drawBlueprint(); renderClient();
   if (typeof renderTeamDeskPanel === "function") renderTeamDeskPanel();
+  if (window.CQ_MENTOR && typeof window.CQ_MENTOR.onDesignOrEvalUpdated === "function") window.CQ_MENTOR.onDesignOrEvalUpdated();
   if (S.ev) renderEval();
 }
 
@@ -765,6 +1227,7 @@ function renderEval() {
   S._prevOk = S.ev.ok; S._prevMet = met;
   renderTop(); renderRequest(); renderReview(); renderClient(); renderBinder(); drawBlueprint(); renderApprovals();
   if (typeof renderTeamDeskPanel === "function") renderTeamDeskPanel();
+  if (window.CQ_MENTOR && typeof window.CQ_MENTOR.onDesignOrEvalUpdated === "function") window.CQ_MENTOR.onDesignOrEvalUpdated();
 }
 
 function renderTop() {
@@ -1026,7 +1489,18 @@ function typeSpeech(text) {
     if (n >= text.length) clearInterval(typeSpeech._iv);
   };
   typeSpeech._iv = setInterval(step, 28); step();
-  el.onclick = () => { clearInterval(typeSpeech._iv); el.textContent = text; };
+  el.onclick = () => {
+    clearInterval(typeSpeech._iv);
+    el.textContent = text;
+    if (window.VOX && S && S.design) window.VOX.speak(text, S.design.scenario, { force: true });
+  };
+  // Speak client booth line automatically if desk is active, letter modal is closed, and AI Mentor drawer is closed
+  const deskActive = $("#desk") && $("#desk").classList.contains("active");
+  const letterHidden = !$("#letter") || $("#letter").classList.contains("hidden");
+  const mentorHidden = !$("#aiMentorDrawer") || $("#aiMentorDrawer").classList.contains("hidden");
+  if (deskActive && letterHidden && mentorHidden && window.VOX && S && S.design) {
+    window.VOX.speak(text, S.design.scenario, { silentChime: true });
+  }
 }
 
 // ---------------------------------------------------------------------------- incoming letter (mission start)
@@ -1064,7 +1538,24 @@ function openLetter(then) {
     }
     finish();
   })();
-  $("#letterGo").onclick = () => { openLetter.token++; m.classList.add("hidden"); SFX.page(); if (then) then(); };
+  const fullLetterText = `${c.name}, ${c.org}. ${c.letter.join(" ")}`;
+  if (window.VOX && S && S.design) {
+    window.VOX.speak(fullLetterText, S.design.scenario);
+  }
+  if ($("#letterNarrateBtn")) {
+    $("#letterNarrateBtn").onclick = () => {
+      if (!window.VOX) return;
+      if (window.VOX.isSpeaking()) window.VOX.stop();
+      else window.VOX.speak(fullLetterText, (S && S.design && S.design.scenario) || "wildfire", { force: true });
+    };
+  }
+  $("#letterGo").onclick = () => {
+    openLetter.token++;
+    if (window.VOX) window.VOX.stop();
+    m.classList.add("hidden");
+    SFX.page();
+    if (then) then();
+  };
 }
 
 function renderRequest() {
@@ -1109,7 +1600,11 @@ function goLab(id) {
   const b = $("#binder"); b.scrollTop = 0;
   b.classList.remove("walk-l", "walk-r"); void b.offsetWidth; b.classList.add(to > from ? "walk-r" : "walk-l");
   SFX.door(Math.min(4, Math.abs(to - from)));
+  if (window.CQ_MENTOR && typeof window.CQ_MENTOR.onDesignOrEvalUpdated === "function") {
+    window.CQ_MENTOR.onDesignOrEvalUpdated();
+  }
 }
+window.goLab = goLab;
 let _labFrame = 0;
 setInterval(() => {
   const c = document.getElementById("labCanvas");
@@ -1387,6 +1882,8 @@ function jumpToEngineeringField(tabId, field) {
     }
   });
 }
+window.jumpToEngineeringField = jumpToEngineeringField;
+window.openLetter = openLetter;
 
 function renderApprovals() {
   const el = $("#approvals");
@@ -1773,6 +2270,60 @@ function wireDesk() {
   $("#mHints").onclick = () => { $("#menu").classList.add("hidden"); openHints(); };
   $("#mTutorial").onclick = () => { $("#menu").classList.add("hidden"); endTutorial(false); startTutorial(S.mode !== "team"); };
   $("#mSound").onclick = () => { store.set("sound", !store.get("sound", true)); soundLabel(); };
+  if ($("#tbSoundBtn")) {
+    $("#tbSoundBtn").onclick = () => {
+      store.set("sound", !store.get("sound", true));
+      soundLabel();
+      toast(store.get("sound", true) ? "Master Sound: ON" : "Master Sound: Muted");
+    };
+  }
+  if ($("#mSoundVol")) {
+    $("#mSoundVol").oninput = (e) => {
+      store.set("soundVolume", Number(e.target.value));
+      if (Number(e.target.value) > 0 && !store.get("sound", true)) store.set("sound", true);
+      soundLabel();
+      SFX.click();
+    };
+  }
+  if ($("#mTypeSound")) {
+    $("#mTypeSound").onclick = () => {
+      store.set("soundTypewriter", !store.get("soundTypewriter", true));
+      soundLabel();
+      SFX.type();
+    };
+  }
+  if ($("#mUiSound")) {
+    $("#mUiSound").onclick = () => {
+      store.set("soundUI", !store.get("soundUI", true));
+      soundLabel();
+      SFX.click();
+    };
+  }
+  if ($("#mNarrate")) {
+    $("#mNarrate").onclick = () => {
+      if (window.VOX) window.VOX.toggle();
+      soundLabel();
+    };
+  }
+  if ($("#tbNarrateBtn")) {
+    $("#tbNarrateBtn").onclick = () => {
+      if (window.VOX) window.VOX.toggle();
+      soundLabel();
+    };
+  }
+  if ($("#globalNarrateToggleBtn")) {
+    $("#globalNarrateToggleBtn").onclick = () => {
+      if (window.VOX) window.VOX.toggle();
+      soundLabel();
+    };
+  }
+  if ($("#globalNarrateStopBtn")) {
+    $("#globalNarrateStopBtn").onclick = () => {
+      if (window.VOX) window.VOX.stop();
+      SFX.click();
+    };
+  }
+  soundLabel();
   $("#hbClose").onclick = () => $("#hints").classList.add("hidden");
   $("#mQuit").onclick = () => { $("#menu").classList.add("hidden"); endTutorial(false); stopPoll(); S.room = null; show("title"); };
   $("#mReset").onclick = () => {
@@ -1974,7 +2525,28 @@ function loadDesign(design) {
 }
 
 // ---------------------------------------------------------------------------- engineer's handbook (hints per stage)
-function soundLabel() { $("#mSound").textContent = `Sound: ${store.get("sound", true) ? "on" : "off"}`; }
+function soundLabel() {
+  const on = store.get("sound", true);
+  const vol = Number(store.get("soundVolume", 80));
+  const typeOn = store.get("soundTypewriter", true);
+  const uiOn = store.get("soundUI", true);
+  if (!on && window.VOX && window.VOX.isSpeaking()) {
+    window.VOX.stop();
+  }
+  if ($("#mSound")) $("#mSound").textContent = `Sound: ${on ? "on" : "off"} (${vol}%)`;
+  if ($("#tbSoundBtn")) $("#tbSoundBtn").textContent = `Sound: ${on ? "ON" : "OFF"}`;
+  if ($("#mSoundVol")) $("#mSoundVol").value = String(vol);
+  if ($("#mSoundVolLabel")) $("#mSoundVolLabel").textContent = `${vol}%`;
+  if ($("#mTypeSound")) $("#mTypeSound").textContent = `Typing SFX: ${typeOn ? "on" : "off"}`;
+  if ($("#mUiSound")) $("#mUiSound").textContent = `UI Clicks: ${uiOn ? "on" : "off"}`;
+  if ($("#setSoundBtn")) $("#setSoundBtn").textContent = `SOUND FX: ${on ? "ON" : "OFF"}`;
+  if ($("#setSoundVol")) $("#setSoundVol").value = String(vol);
+  if ($("#setSoundVolVal")) $("#setSoundVolVal").textContent = `${vol}%`;
+  if ($("#setTypeSoundBtn")) $("#setTypeSoundBtn").textContent = `TYPING SFX: ${typeOn ? "ON" : "OFF"}`;
+  if ($("#setUiSoundBtn")) $("#setUiSoundBtn").textContent = `UI CLICKS: ${uiOn ? "ON" : "OFF"}`;
+  if (window.VOX) window.VOX.syncUI();
+}
+window.soundLabel = soundLabel;
 const STAGE_AREAS = { launch: ["launch"], orbit: ["schedule"], bus: ["bus"], power: ["power"], adcs: ["adcs"],
   prop: ["propulsion"], edl: ["edl"], partners: ["partners"], comms: ["comms"], computer: ["radiation"], instr: ["science"], review: ["cost"] };
 const STAGES = () => [...tabs(), { id: "review", label: "Review & launch", icon: "check", fields: [],
@@ -2016,6 +2588,7 @@ function openHints(stageId) {
   if (goBtn) goBtn.onclick = () => { $("#hints").classList.add("hidden"); S.tab = st.id; renderTabs(); renderBinder(); };
   $("#hints").classList.remove("hidden");
 }
+window.openHints = openHints;
 
 function stageTips(id) {
   const c = S.cat, ev = S.ev, d = S.design, sc = scen(), dest = c.DESTINATIONS[destKey()], orbits = c.ORBITS[destKey()];
@@ -2731,6 +3304,10 @@ function showNews(res) {
     $("#paper").appendChild(box);
   }
   if (typeof renderGenesisDebrief === "function") renderGenesisDebrief(res);
+  if (window.VOX) {
+    const debriefSpeech = `${hl}. ${sub} Grade ${sc.grade}, ${sc.total} points. ${c.name} says: ${c.quotes[tone]}`;
+    window.VOX.speak(debriefSpeech, "debrief");
+  }
 }
 
 // Spinning-newspaper intro, then the grade stamp slams down and the score counts up.

@@ -20,12 +20,24 @@ from engine import db
 from engine import designs as DESIGNS
 from engine import leaderboard as LB
 from engine import users as USERS
+from engine.mentor import DEFAULT_GROQ_MODEL, get_groq_config, handle_mission_assistant_request
 from engine.model import blank_design, default_design, evaluate, normalize
 from engine.rooms import FIELD_OWNER, RoomStore
 from engine.scoring import score
 from engine.simulate import monte_carlo, simulate
 
 WEB = Path(__file__).resolve().parent / "web"
+_ENV_FILE = Path(__file__).resolve().parent / ".env"
+if _ENV_FILE.exists():
+    try:
+        for _line in _ENV_FILE.read_text(encoding="utf-8").splitlines():
+            _s = _line.strip()
+            if _s and not _s.startswith("#") and "=" in _s:
+                _k, _v = _s.split("=", 1)
+                os.environ.setdefault(_k.strip(), _v.strip().strip('"').strip("'"))
+    except Exception:
+        pass
+
 ROOMS = RoomStore()
 _INIT_LOCK = threading.Lock()
 _INIT_DONE = False
@@ -202,6 +214,17 @@ class ApiHandlerMixin:
                 self._json(catalog())
                 return True
 
+            if u.path == "/api/ai/status":
+                api_key, model_id = get_groq_config()
+                has_key = bool(api_key)
+                self._json({
+                    "ok": True,
+                    "configured": has_key,
+                    "model": model_id,
+                    "mode": "groq" if has_key else "deterministic_fallback",
+                })
+                return True
+
             if u.path == "/api/leaderboard":
                 self._json(LB.top(q.get("scenario", "wildfire"), int(q.get("n", 10))))
                 return True
@@ -298,6 +321,10 @@ class ApiHandlerMixin:
             # Existing game endpoints
             if u.path == "/api/evaluate":
                 return self._json(evaluate(b.get("design", {})))
+
+            if u.path == "/api/ai/mission-assistant":
+                status_code, resp_payload = handle_mission_assistant_request(b)
+                return self._json(resp_payload, status_code)
 
             if u.path == "/api/risk":
                 return self._json(monte_carlo(normalize(b.get("design", {})), 200))

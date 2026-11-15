@@ -1,4 +1,4 @@
-const CACHE_VER = "20261114p2";
+const CACHE_VER = "20261114p8";
 const SHELL_CACHE = `cosmo-quest-shell-${CACHE_VER}`;
 const API_CACHE = `cosmo-quest-api-${CACHE_VER}`;
 const FONT_CACHE = `cosmo-quest-fonts-${CACHE_VER}`;
@@ -16,6 +16,7 @@ const CORE_ASSETS = [
   `/game.js?v=${CACHE_VER}`,
   `/program.js?v=${CACHE_VER}`,
   `/career.js?v=${CACHE_VER}`,
+  `/mentor.js?v=${CACHE_VER}`,
   `/pwa.js?v=${CACHE_VER}`,
   "/manifest.webmanifest",
   "/icon.svg",
